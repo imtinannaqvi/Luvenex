@@ -1,0 +1,250 @@
+"use client";
+
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  ReactNode,
+} from "react";
+import { toast } from "react-toastify";
+import { apiFetch } from "@/lib/api";
+import { getToken, getUser } from "@/lib/auth";
+import { connectSocket } from "@/lib/socket"; // 👈 for instant notifications
+
+/**
+ * Map a notification `type` (whatever your notification.service.js sets)
+ * to the sidebar href where its badge should appear.
+ *
+ * NOTE: the Messages badge is NOT driven from here — it comes from the
+ * live /api/messages/unread-count endpoint below, so it goes up and down
+ * as threads are read. `new_message` notifications only power the toast.
+ */
+const TYPE_TO_HREF: Record<string, string> = {
+  campaign_created: "/app/discover-campaigns",
+  campaign_updated: "/app/discover-campaigns",
+  new_campaign: "/app/discover-campaigns",
+  application_received: "/app/campaigns",
+  new_application: "/app/campaigns",
+  gig_created: "/app/gigs",
+  new_gig: "/app/gigs",
+};
+
+const MESSAGES_HREF = "/app/messages";
+
+type Noti = {
+  _id: string;
+  type?: string;
+  title?: string;
+  message?: string;
+  isRead?: boolean;
+  createdAt?: string;
+};
+
+type Ctx = {
+  notifications: Noti[];
+  unreadCount: number;
+  messageUnread: number;
+  badgeCounts: Record<string, number>;
+  markAsRead: (id: string) => Promise<void>;
+  markAllAsRead: () => Promise<void>;
+  reload: () => void;
+};
+
+const NotificationsContext = createContext<Ctx | null>(null);
+
+export function NotificationsProvider({
+  children,
+  pollMs = 30000,
+}: {
+  children: ReactNode;
+  pollMs?: number;
+}) {
+  const [notifications, setNotifications] = useState<Noti[]>([]);
+  const [messageUnread, setMessageUnread] = useState(0);
+  const seen = useRef<Set<string>>(new Set());
+  const primed = useRef(false);
+  // When this session started — used to make sure the poll never toasts
+  // notifications that already existed before the page was opened.
+  const mountedAt = useRef<number>(Date.now());
+
+  const role = getUser()?.role as "brand" | "influencer" | undefined;
+
+  // Route a notification (that isn't a message) to a sidebar href.
+  const hrefFor = (n: Noti): string | undefined => {
+    if (n.type && TYPE_TO_HREF[n.type]) return TYPE_TO_HREF[n.type];
+
+    const text = `${n.title || ""} ${n.message || ""}`.toLowerCase();
+    if (text.includes("appl")) {
+      return role === "brand" ? "/app/campaigns" : "/app/applications";
+    }
+    if (text.includes("gig")) return "/app/gigs";
+    if (text.includes("campaign")) {
+      return role === "brand" ? "/app/campaigns" : "/app/discover-campaigns";
+    }
+    return undefined;
+  };
+
+  // Full load — used by the poll. Only toasts notifications that were
+  // created AFTER this session started, so old unread rows never re-toast.
+  const load = async () => {
+    try {
+      const data = await apiFetch("/api/notifications", { token: getToken()! });
+      const list: Noti[] = data.notifications || [];
+      setNotifications(list);
+
+      if (!primed.current) {
+        list.forEach((n) => seen.current.add(n._id));
+        primed.current = true;
+      } else {
+        list
+          .filter((n) => !seen.current.has(n._id))
+          .forEach((n) => {
+            seen.current.add(n._id);
+            if (n.isRead) return;
+            // Skip anything created before this session opened.
+            if (
+              n.createdAt &&
+              new Date(n.createdAt).getTime() < mountedAt.current
+            ) {
+              return;
+            }
+            const msg = n.title
+              ? n.message
+                ? `${n.title} — ${n.message}`
+                : n.title
+              : n.message || "New notification";
+            toast.info(msg, { position: "top-center" });
+          });
+      }
+    } catch {
+      // ignore transient errors
+    }
+
+    try {
+      const mc = await apiFetch("/api/messages/unread-count", {
+        token: getToken()!,
+      });
+      setMessageUnread(mc.count || 0);
+    } catch {
+      // ignore
+    }
+  };
+
+  // Silent refresh — updates the bell + counts WITHOUT firing toasts.
+  // Used by the socket handler, which shows its own single toast, so we
+  // don't want load()'s batch of "unseen" toasts firing on top of it.
+  const refreshSilently = async () => {
+    try {
+      const data = await apiFetch("/api/notifications", { token: getToken()! });
+      const list: Noti[] = data.notifications || [];
+      list.forEach((n) => seen.current.add(n._id)); // mark all seen → no re-toasts
+      setNotifications(list);
+    } catch {
+      // ignore
+    }
+    try {
+      const mc = await apiFetch("/api/messages/unread-count", {
+        token: getToken()!,
+      });
+      setMessageUnread(mc.count || 0);
+    } catch {
+      // ignore
+    }
+  };
+
+  useEffect(() => {
+    load();
+    const id = setInterval(load, pollMs);
+    return () => clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Instant updates: server pushes a "notification" event to this user's
+  // personal room → show ONE toast from the payload and refresh counts
+  // silently (so old unread notifications don't re-toast in a pile).
+  useEffect(() => {
+    const socket = connectSocket();
+    const onNotification = (n: Noti) => {
+      const msg = n?.title
+        ? n.message
+          ? `${n.title} — ${n.message}`
+          : n.title
+        : n?.message || "New notification";
+      toast.info(msg, { position: "top-center" });
+      refreshSilently();
+    };
+    socket.on("notification", onNotification);
+    return () => {
+      socket.off("notification", onNotification);
+      // Do NOT disconnect — the socket is shared app-wide.
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const markAsRead = async (id: string) => {
+    try {
+      await apiFetch(`/api/notifications/${id}/read`, {
+        token: getToken()!,
+        method: "PATCH",
+      });
+      setNotifications((prev) =>
+        prev.map((n) => (n._id === id ? { ...n, isRead: true } : n))
+      );
+    } catch {}
+  };
+
+  const markAllAsRead = async () => {
+    try {
+      await apiFetch(`/api/notifications/read-all`, {
+        token: getToken()!,
+        method: "PATCH",
+      });
+      setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
+    } catch {}
+  };
+
+  // Message notifications are represented by the Messages sidebar badge, so
+  // they're excluded from the bell's unread count to avoid double-counting.
+  const unreadCount = notifications.filter(
+    (n) => !n.isRead && n.type !== "new_message"
+  ).length;
+
+  // Per-href badge counts from notifications…
+  const badgeCounts: Record<string, number> = {};
+  for (const n of notifications) {
+    if (n.isRead) continue;
+    const href = hrefFor(n);
+    if (!href || href === MESSAGES_HREF) continue; // messages handled below
+    badgeCounts[href] = (badgeCounts[href] || 0) + 1;
+  }
+  // …then overlay the live message count.
+  if (messageUnread > 0) badgeCounts[MESSAGES_HREF] = messageUnread;
+
+  return (
+    <NotificationsContext.Provider
+      value={{
+        notifications,
+        unreadCount,
+        messageUnread,
+        badgeCounts,
+        markAsRead,
+        markAllAsRead,
+        reload: load,
+      }}
+    >
+      {children}
+    </NotificationsContext.Provider>
+  );
+}
+
+export function useNotifications() {
+  const ctx = useContext(NotificationsContext);
+  if (!ctx) {
+    throw new Error(
+      "useNotifications must be used inside <NotificationsProvider>"
+    );
+  }
+  return ctx;
+}
