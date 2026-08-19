@@ -308,10 +308,10 @@ if (loading) {
   );
 }
 
-  const TABS = [
+ const TABS = [
     { key: "edit", label: "Personal Info", icon: FiUser },
     { key: "portfolio", label: "Portfolio", icon: FiImage },
-    ...(isInfluencer ? [{ key: "social", label: "Social Accounts", icon: FiShare2 }] : []),
+    ...(isInfluencer ? [{ key: "social" as const, label: "Social Accounts", icon: FiShare2 }] : []),
     { key: "settings", label: "Security & Privacy", icon: FiShield },
   ] as const;
 
