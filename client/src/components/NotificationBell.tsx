@@ -91,7 +91,7 @@ export default function NotificationBell() {
                         {n.message}
                       </p>
                       <p className="text-[10px] text-muted/70 mt-1">
-                        {new Date(n.createdAt).toLocaleDateString()}
+                        {n.createdAt ? new Date(n.createdAt).toLocaleDateString() : ""}
                       </p>
                     </div>
                   </div>
