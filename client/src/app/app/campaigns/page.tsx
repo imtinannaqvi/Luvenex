@@ -165,8 +165,8 @@ const removeDeliverable = (index: number) => {
     {/* Campaign list — only shown when the form is closed */}
     {!showForm && (
       campaigns.length === 0 ? (
-        <div className="bg-paper border border-line rounded-2xl p-8 text-center">
-          <p className="text-muted text-sm">No campaigns posted yet.</p>
+        <div className="bg-background border border-line rounded-2xl p-8 text-center">
+          <p className="text-foreground text-sm">No campaigns posted yet.</p>
         </div>
       ) : (
         <div className="space-y-3">
