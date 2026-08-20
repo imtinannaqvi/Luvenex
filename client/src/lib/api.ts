@@ -18,6 +18,7 @@ async function tryRefresh(): Promise<string | null> {
       headers: {
         "Content-Type": "application/json",
       },
+      cache: "no-store",
       body: JSON.stringify({ refreshToken }),
     });
 
@@ -56,6 +57,12 @@ export async function apiFetch(
   const res = await fetch(`${API_URL}${path}`, {
     method,
     headers,
+    // IMPORTANT: without this, the browser's HTTP cache can serve a
+    // previously logged-in user's response for the same GET URL
+    // (e.g. /api/applications/me) even after a different user's token
+    // is sent, since the cache key does not include the Authorization
+    // header unless the server sends "Vary: Authorization".
+    cache: "no-store",
     body: isFormData ? body : body ? JSON.stringify(body) : undefined,
   });
 

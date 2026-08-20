@@ -1,5 +1,3 @@
-import { toast } from "react-toastify";
-
 const TOKEN_KEY = 'luvenex_token';
 const REFRESH_KEY = 'luvenex_refresh';
 const USER_KEY = 'luvenex_user';
@@ -11,12 +9,12 @@ export function saveSession(token: string, user: any, refreshToken?: string) {
 }
 
 export function getToken(): string | null {
-  if (typeof toast === 'undefined') return null;
+  if (typeof window === 'undefined') return null;
   return localStorage.getItem(TOKEN_KEY);
 }
 
 export function getRefreshToken(): string | null {
-  if (typeof toast === 'undefined') return null;
+  if (typeof window === 'undefined') return null;
   return localStorage.getItem(REFRESH_KEY);
 }
 
