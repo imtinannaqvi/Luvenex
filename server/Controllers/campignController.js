@@ -31,10 +31,19 @@ export const getCampaigns = async (req, res) => {
     if (req.query.brandId) filter.brandId = req.query.brandId;
 
     const campaigns = await Campaign.find(filter)
-      .populate('brandId', 'name')
+      .populate('brandId', 'name status')
       .sort({ createdAt: -1 });
 
-    res.json({ campaigns });
+    // Filter out orphaned campaigns (brand account deleted directly in the DB,
+    // so populate() returns null for brandId) AND campaigns from banned/suspended
+    // brands. We only exclude explicit banned/suspended values rather than
+    // requiring status === 'active', since normal accounts may not have an
+    // explicit status set by default.
+    const validCampaigns = campaigns.filter(
+      (c) => c.brandId != null && !['banned', 'suspended'].includes(c.brandId.status)
+    );
+
+    res.json({ campaigns: validCampaigns });
   } catch (err) {
     res.status(500).json({ error: { message: err.message } });
   }

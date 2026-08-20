@@ -81,29 +81,26 @@ export default function DiscoverPage() {
   const hasActiveFilters = Boolean(q || niche || minRating || sort);
 
   return (
-    <div className="relative overflow-hidden bg-black text-white min-h-screen px-4 sm:px-6 lg:px-8 py-8 sm:py-12 selection:bg-red-600 selection:text-white">
+    <div className="relative overflow-hidden bg-background text-foreground min-h-screen px-4 sm:px-6 lg:px-8 py-8 sm:py-12 selection:bg-red-600 selection:text-white">
       <div className="absolute -top-32 -left-32 w-80 h-80 sm:w-[500px] sm:h-[500px] bg-red-600/30 rounded-full blur-[100px] sm:blur-[160px] pointer-events-none z-0" />
-            <div className="absolute -bottom-32 -right-32 w-80 h-80 sm:w-[500px] sm:h-[500px] bg-red-600/30 rounded-full blur-[100px] sm:blur-[160px] pointer-events-none z-0" />
-
+      <div className="absolute -bottom-32 -right-32 w-80 h-80 sm:w-[500px] sm:h-[500px] bg-red-600/30 rounded-full blur-[100px] sm:blur-[160px] pointer-events-none z-0" />
 
       <div className="relative z-10 max-w-7xl mx-auto space-y-8 sm:space-y-10">
-        
-        <div className="text-center max-w-2xl mx-auto space-y-2 sm:space-y-3 border-b border-zinc-800/80 pb-6 sm:pb-8">
-      
-          <h1 className="text-3xl sm:text-4xl font-extrabold italic text-white tracking-tight">
+        <div className="text-center max-w-2xl mx-auto space-y-2 sm:space-y-3 border-b border-border-color pb-6 sm:pb-8">
+          <h1 className="text-3xl sm:text-4xl font-extrabold italic text-foreground tracking-tight">
             Discover <span className="text-red-600">Creators</span>
           </h1>
-          <p className="text-zinc-400 text-xs sm:text-sm md:text-base px-2">
-            Connect with vetted creators for your brand — backed by  transparent metrics, <br /> real reviews, and trackable deals.
+          <p className="text-foreground text-xs sm:text-sm md:text-base px-2">
+            Connect with vetted creators for your brand — backed by transparent metrics, <br /> real reviews, and trackable deals.
           </p>
         </div>
 
         {/* ── Search & Filter Controls ── */}
-        <div className="bg-zinc-950/90 border border-zinc-800 rounded-xl p-3 sm:p-5 shadow-2xl backdrop-blur-sm">
+        <div className="bg-surface border border-border-color rounded-xl p-3 sm:p-5 shadow-2xl backdrop-blur-sm">
           <form onSubmit={handleSearch} className="flex flex-col lg:flex-row gap-3">
             <div className="relative flex-1">
               <svg
-                className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500"
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -115,7 +112,7 @@ export default function DiscoverPage() {
                 placeholder="Search creator handle or bio..."
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-zinc-800 bg-black text-white text-xs sm:text-sm placeholder-zinc-500 focus:outline-none focus:border-red-600 transition"
+                className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-border-color bg-background text-foreground text-xs sm:text-sm placeholder-zinc-500 focus:outline-none focus:border-red-600 transition"
               />
             </div>
 
@@ -125,13 +122,13 @@ export default function DiscoverPage() {
                 placeholder="Niche (e.g. tech)"
                 value={niche}
                 onChange={(e) => setNiche(e.target.value)}
-                className="px-3.5 py-2.5 rounded-lg border border-zinc-800 bg-black text-white text-xs sm:text-sm placeholder-zinc-500 focus:outline-none focus:border-red-600 transition w-full lg:w-40"
+                className="px-3.5 py-2.5 rounded-lg border border-border-color bg-background text-foreground text-xs sm:text-sm placeholder-zinc-500 focus:outline-none focus:border-red-600 transition w-full lg:w-40"
               />
 
               <select
                 value={minRating}
                 onChange={(e) => setMinRating(e.target.value)}
-                className="px-3.5 py-2.5 rounded-lg border border-zinc-800 bg-black text-white text-xs sm:text-sm focus:outline-none focus:border-red-600 transition w-full cursor-pointer"
+                className="px-3.5 py-2.5 rounded-lg border border-border-color bg-background text-foreground text-xs sm:text-sm focus:outline-none focus:border-red-600 transition w-full cursor-pointer"
               >
                 <option value="">Any rating</option>
                 <option value="4">★ 4.0 & above</option>
@@ -141,7 +138,7 @@ export default function DiscoverPage() {
               <select
                 value={sort}
                 onChange={(e) => setSort(e.target.value)}
-                className="px-3.5 py-2.5 rounded-lg border border-zinc-800 bg-black text-white text-xs sm:text-sm focus:outline-none focus:border-red-600 transition w-full cursor-pointer"
+                className="px-3.5 py-2.5 rounded-lg border border-border-color bg-background text-foreground text-xs sm:text-sm focus:outline-none focus:border-red-600 transition w-full cursor-pointer"
               >
                 <option value="">Newest</option>
                 <option value="rating"> Highest rated</option>
@@ -160,7 +157,7 @@ export default function DiscoverPage() {
                 <button
                   type="button"
                   onClick={handleReset}
-                  className="px-4 py-2.5 rounded-lg border border-zinc-800 hover:border-zinc-600 bg-black text-zinc-400 hover:text-white text-xs sm:text-sm font-medium transition active:scale-95"
+                  className="px-4 py-2.5 rounded-lg border border-border-color hover:border-surface bg-background text-foreground hover:text-foreground text-xs sm:text-sm font-medium transition active:scale-95"
                 >
                   Clear
                 </button>
@@ -173,22 +170,22 @@ export default function DiscoverPage() {
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
             {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="bg-zinc-950/80 border border-zinc-900 rounded-xl p-6 flex flex-col items-center animate-pulse space-y-4">
-                <div className="w-16 h-16 rounded-full bg-zinc-800" />
-                <div className="h-4 bg-zinc-800 rounded w-1/2" />
-                <div className="h-3 bg-zinc-900 rounded w-1/3" />
-                <div className="h-3 bg-zinc-900 rounded w-full" />
+              <div key={i} className="bg-surface border border-border-color rounded-xl p-6 flex flex-col items-center animate-pulse space-y-4">
+                <div className="w-16 h-16 rounded-full bg-card" />
+                <div className="h-4 bg-card rounded w-1/2" />
+                <div className="h-3 bg-surface rounded w-1/3" />
+                <div className="h-3 bg-surface rounded w-full" />
               </div>
             ))}
           </div>
         ) : profiles.length === 0 ? (
-          <div className="bg-zinc-950/80 border border-zinc-800 rounded-xl p-8 sm:p-12 text-center space-y-4 max-w-md mx-auto my-12 shadow-2xl">
-            <div className="w-12 h-12 rounded-full bg-red-950/40 border border-red-800/50 flex items-center justify-center text-red-500 font-bold text-lg mx-auto">
+          <div className="bg-surface border border-border-color rounded-xl p-8 sm:p-12 text-center space-y-4 max-w-md mx-auto my-12 shadow-2xl">
+            <div className="w-12 h-12 rounded-full bg-surface border border-red-800/50 flex items-center justify-center text-red-500 font-bold text-lg mx-auto">
               !
             </div>
             <div className="space-y-1">
-              <h3 className="text-base font-bold text-white">No creators found</h3>
-              <p className="text-xs text-zinc-400">
+              <h3 className="text-base font-bold text-foreground">No creators found</h3>
+              <p className="text-xs text-foreground">
                 No creators matched your search criteria. Try adjusting your parameters.
               </p>
             </div>
@@ -208,10 +205,10 @@ export default function DiscoverPage() {
                 <Link
                   key={p._id}
                   href={`/creator/${p.handle}`}
-                  className="group relative bg-zinc-950/80 border border-zinc-800 hover:border-red-600 border-t-2 hover:border-t-red-600 transition-all duration-300 rounded-xl p-5 sm:p-6 flex flex-col items-center text-center justify-between backdrop-blur-sm"
+                  className="group relative bg-surface border border-border-color hover:border-red-600 border-t-2 hover:border-t-red-600 transition-all duration-300 rounded-xl p-5 sm:p-6 flex flex-col items-center text-center justify-between backdrop-blur-sm"
                 >
                   {p.isVerified && (
-                    <div className="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-red-950/60 border border-red-800/40 text-red-400 text-[10px] font-semibold flex items-center gap-1">
+                    <div className="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-surface border border-red-800/40 text-red-400 text-[10px] font-semibold flex items-center gap-1">
                       <svg className="w-3 h-3 fill-red-500" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                       </svg>
@@ -225,58 +222,58 @@ export default function DiscoverPage() {
                         <img
                           src={`${process.env.NEXT_PUBLIC_API_URL}${p.avatarUrl}`}
                           alt={p.handle}
-                          className="w-16 h-16 rounded-full object-cover ring-2 ring-zinc-800 group-hover:ring-red-600 transition duration-300"
+                          className="w-16 h-16 rounded-full object-cover ring-2 ring-surface group-hover:ring-red-600 transition duration-300"
                         />
                       ) : (
-                        <div className="w-16 h-16 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center text-red-500 font-bold text-lg group-hover:border-red-600 transition duration-300">
+                        <div className="w-16 h-16 rounded-full bg-surface border border-border-color flex items-center justify-center text-red-500 font-bold text-lg group-hover:border-red-600 transition duration-300">
                           {p.handle?.[0]?.toUpperCase() || "?"}
                         </div>
                       )}
                     </div>
 
-                    <p className="font-bold text-base text-white truncate max-w-full group-hover:text-red-500 transition-colors">
+                    <p className="font-bold text-base text-foreground truncate max-w-full group-hover:text-red-500 transition-colors">
                       @{p.handle}
                     </p>
 
-                    <p className="text-xs text-zinc-400 line-clamp-2 leading-relaxed mt-1 mb-4 min-h-[2.5rem]">
+                    <p className="text-xs text-foreground line-clamp-2 leading-relaxed mt-1 mb-4 min-h-[2.5rem]">
                       {p.bio || "No bio summary provided."}
                     </p>
                   </div>
 
-                  <div className="w-full pt-4 border-t border-zinc-900 flex flex-col items-center space-y-3">
+                  <div className="w-full pt-4 border-t border-border-color flex flex-col items-center space-y-3">
                     <div className="flex flex-wrap justify-center gap-1.5">
                       {(p.niches || []).slice(0, 2).map((n: string) => (
                         <span
                           key={n}
-                          className="text-[10px] font-medium px-2.5 py-0.5 rounded-full bg-red-950/40 text-red-400 border border-red-800/40"
+                          className="text-[12px] font-medium px-2.5 py-0.5 rounded-full bg-background text-red-400 border border-red-800/40"
                         >
                           {n}
                         </span>
                       ))}
                       {(p.niches || []).length > 2 && (
-                        <span className="text-[10px] text-zinc-500 px-1 py-0.5">
+                        <span className="text-[10px] text-foreground px-1 py-0.5">
                           +{(p.niches || []).length - 2}
                         </span>
                       )}
                     </div>
 
-                    <div className="w-full grid grid-cols-3 gap-1 pt-3 border-t border-zinc-900/80 text-center">
+                    <div className="w-full grid grid-cols-3 gap-1 pt-3 border-t border-border-color text-center">
                       <div>
-                        <span className="block text-[9px] uppercase tracking-wider text-zinc-500 font-medium">Rating</span>
-                        <span className="text-xs font-semibold text-white flex items-center justify-center gap-0.5 mt-0.5">
+                        <span className="block text-[9px] uppercase tracking-wider text-foreground font-medium">Rating</span>
+                        <span className="text-xs font-semibold text-foreground flex items-center justify-center gap-0.5 mt-0.5">
                           <span className="text-amber-400 text-[10px]">★</span>
                           {p.avgRating ? p.avgRating.toFixed(1) : "—"}
                         </span>
                       </div>
-                      <div className="border-x border-zinc-900">
+                      <div className="border-x border-border-color">
                         <span className="block text-[9px] uppercase tracking-wider text-zinc-500 font-medium">Followers</span>
-                        <span className="text-xs font-semibold text-white mt-0.5 block">
+                        <span className="text-xs font-semibold text-foreground mt-0.5 block">
                           {formatFollowers(p.followersCount)}
                         </span>
                       </div>
                       <div>
-                        <span className="block text-[9px] uppercase tracking-wider text-zinc-500 font-medium">Deals</span>
-                        <span className="text-xs font-semibold text-white mt-0.5 block">
+                        <span className="block text-[9px] uppercase tracking-wider text-foreground font-medium">Deals</span>
+                        <span className="text-xs font-semibold text-foreground mt-0.5 block">
                           {p.completedDeals ?? 0}
                         </span>
                       </div>
@@ -291,7 +288,7 @@ export default function DiscoverPage() {
                 <button
                   onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
                   disabled={page === 1}
-                  className="px-3 py-2 sm:px-3.5 rounded-lg bg-zinc-950 border border-zinc-800 text-xs font-medium text-white hover:border-red-600 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                  className="px-3 py-2 sm:px-3.5 rounded-lg bg-surface border border-border-color text-xs font-medium text-foreground hover:border-red-600 disabled:opacity-40 disabled:cursor-not-allowed transition"
                 >
                   Previous
                 </button>
@@ -303,8 +300,8 @@ export default function DiscoverPage() {
                       onClick={() => setPage(p)}
                       className={`w-8 h-8 rounded-lg text-xs font-semibold transition shrink-0 ${
                         p === page
-                          ? "bg-red-600 text-white"
-                          : "bg-zinc-950 border border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-700"
+                          ? "bg-red-600 text-foreground"
+                          : "bg-surface border border-border-color text-zinc-400 hover:text-foreground hover:border-border-color"
                       }`}
                     >
                       {p}
@@ -315,7 +312,7 @@ export default function DiscoverPage() {
                 <button
                   onClick={() => setPage((prev) => Math.min(prev + 1, pagination.totalPages))}
                   disabled={page === pagination.totalPages}
-                  className="px-3 py-2 sm:px-3.5 rounded-lg bg-zinc-950 border border-zinc-800 text-xs font-medium text-white hover:border-red-600 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                  className="px-3 py-2 sm:px-3.5 rounded-lg bg-card border border-border-color text-xs font-medium text-foreground hover:border-red-600 disabled:opacity-40 disabled:cursor-not-allowed transition"
                 >
                   Next
                 </button>

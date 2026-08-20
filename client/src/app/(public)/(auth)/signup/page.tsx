@@ -61,7 +61,7 @@ const handleSubmit = async (e: React.FormEvent) => {
       <div className="absolute -bottom-16 -right-16 w-44 h-44 bg-primary/50 rounded-full blur-3xl pointer-events-none" />
 
       
-        <div className="relative z-10 w-full bg-surface rounded-2xl shadow-2xl p-8 backdrop-blur-xl">
+        <div className="relative z-10 w-full bg-ink/40 rounded-2xl shadow-2xl p-8 backdrop-blur-xl">
           <div className="flex justify-center mb-4">
             <img src="/luvenex-logo-black.png" alt="Luvenex" className="h-12 w-auto" />
           </div>
@@ -171,7 +171,7 @@ const handleSubmit = async (e: React.FormEvent) => {
               />
             </div>
             <div>
-  <label className="block text-sm font-medium text-foreground mb-1.5">Password</label>
+  <label className="block text-sm font-medium text-foreground mb-1.5"> Confirm Password</label>
   <input
     type="password"
     value={password}

@@ -18,7 +18,7 @@ function BlogImage({
   if (!src || errored) {
     return (
       <div
-        className={`${className} bg-gradient-to-br from-zinc-900 via-zinc-950 to-black flex items-center justify-center`}
+        className={`${className} bg-gradient-to-br from-surface via-card to-background flex items-center justify-center`}
       >
         <span className="text-red-600 text-3xl font-black">L</span>
       </div>
@@ -94,14 +94,9 @@ export default function BlogListingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-white px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+    <div className="min-h-screen bg-background text-foreground px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
       <div className="max-w-6xl mx-auto">
-
-
         <div className="text-center max-w-2xl mx-auto mb-10">
-
-       
-
           <h1 className="text-xl text-foreground sm:text-3xl lg:text-3xl font-black tracking-tight">
             Luvenex{" "}
             <span className="text-red-600">
@@ -113,7 +108,6 @@ export default function BlogListingPage() {
             Insights, ideas, and stories about creators, brands, <br /> digital
             marketing, and building meaningful collaborations.
           </p>
-
         </div>
 
         {/* ================= SEARCH ================= */}
@@ -123,7 +117,6 @@ export default function BlogListingPage() {
           className="max-w-lg mx-auto mb-12"
         >
           <div className="flex gap-2">
-
             <input
               type="text"
               placeholder="Search articles..."
@@ -135,9 +128,9 @@ export default function BlogListingPage() {
                 py-3
                 rounded-xl
                 border
-                border-zinc-800
-                bg-zinc-950
-                text-white
+                border-border-color
+                bg-card
+                text-foreground
                 text-sm
                 placeholder:text-zinc-600
                 focus:outline-none
@@ -166,7 +159,6 @@ export default function BlogListingPage() {
             >
               Search
             </button>
-
           </div>
         </form>
 
@@ -174,64 +166,53 @@ export default function BlogListingPage() {
 
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7">
-
             {Array.from({ length: 6 }).map((_, i) => (
               <div
                 key={i}
                 className="
-                  bg-background
+                  bg-surface
                   rounded-2xl
                   overflow-hidden
                   shadow-xl
                   animate-pulse
                 "
               >
-                <div className="h-56 bg-background" />
+                <div className="h-56 bg-surface" />
 
                 <div className="p-5">
-
                   <div className="h-3 w-20 bg-zinc-300 rounded mb-4" />
-
                   <div className="h-5 w-full bg-zinc-300 rounded mb-2" />
-
                   <div className="h-5 w-4/5 bg-zinc-300 rounded mb-5" />
-
                   <div className="h-3 w-24 bg-zinc-300 rounded" />
-
                 </div>
               </div>
             ))}
-
           </div>
         ) : (
           <>
             {/* ================= NO POSTS ================= */}
 
             {posts.length === 0 ? (
-              <div className="max-w-md mx-auto bg-background border border-zinc-800 rounded-2xl p-12 text-center">
-
-                <div className="w-14 h-14 mx-auto mb-5 rounded-full bg-background border border-red-900/50 flex items-center justify-center">
+              <div className="max-w-md mx-auto bg-surface border border-border-color rounded-2xl p-12 text-center">
+                <div className="w-14 h-14 mx-auto mb-5 rounded-full bg-surface border border-red-900/50 flex items-center justify-center">
                   <span className="text-red-600 text-xl font-black">
                     L
                   </span>
                 </div>
 
-                <h3 className="text-lg font-bold text-white mb-2">
+                <h3 className="text-lg font-bold text-foreground mb-2">
                   No posts found
                 </h3>
 
                 <p className="text-sm text-zinc-500">
                   Try searching with a different keyword.
                 </p>
-
               </div>
             ) : (
               <>
-
                 {/* ================= SECTION TITLE ================= */}
 
                 <div className="flex items-center justify-between mb-6">
-
                   <div>
                     <h2 className="text-xl sm:text-2xl font-black text-foreground">
                       {q ? "Search Results" : "Latest Articles"}
@@ -243,14 +224,10 @@ export default function BlogListingPage() {
                   <span className="text-sm text-zinc-600">
                     {posts.length} {posts.length === 1 ? "article" : "articles"}
                   </span>
-
                 </div>
 
-
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7">
-
                   {posts.map((post) => (
-
                     <Link
                       key={post._id}
                       href={`/blog/${post.slug}`}
@@ -258,25 +235,22 @@ export default function BlogListingPage() {
                         group
                         flex
                         flex-col
-                        bg-background
+                        bg-surface
                         rounded-md
                         overflow-hidden
                         border
-                        border-zinc-800
+                        border-border-color
                         shadow-xl
                         shadow-black/40
                         transition-all
                         duration-300
                         hover:-translate-y-1
-                      
                         hover:shadow-primary/20
                       "
                     >
-
                       {/* ================= IMAGE ================= */}
 
-                      <div className="relative w-full h-56 overflow-hidden bg-zinc-900">
-
+                      <div className="relative w-full h-56 overflow-hidden bg-surface">
                         <BlogImage
                           src={
                             post.image
@@ -296,28 +270,23 @@ export default function BlogListingPage() {
 
                         {/* Image Overlay */}
 
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-70" />
-
-
+                        <div className="absolute inset-0 bg-gradient-to-t from-background/50 via-transparent to-transparent opacity-70" />
                       </div>
 
                       {/* ================= CARD CONTENT ================= */}
 
                       <div className="p-5 sm:p-6 flex flex-col flex-1">
-
                         {/* Author + Date */}
 
-                        <div className="flex items-center gap-3 textwhite text-md mb-4">
-
+                        <div className="flex items-center gap-3 text-foreground text-md mb-4">
                           {post.author && (
                             <div className="flex items-center gap-1.5">
-
                               <div
                                 className="
                                   w-6
                                   h-6
                                   rounded-full
-                                  bg-background
+                                  bg-card
                                   text-foreground
                                   flex
                                   items-center
@@ -332,7 +301,6 @@ export default function BlogListingPage() {
                               <span className="truncate max-w-[120px]">
                                 {post.author}
                               </span>
-
                             </div>
                           )}
 
@@ -353,7 +321,6 @@ export default function BlogListingPage() {
                               )}
                             </span>
                           </div>
-
                         </div>
 
                         {/* Title */}
@@ -419,20 +386,14 @@ export default function BlogListingPage() {
                             →
                           </span>
                         </div>
-
                       </div>
-
                     </Link>
-
                   ))}
-
                 </div>
-
               </>
             )}
           </>
         )}
-
       </div>
     </div>
   );

@@ -35,9 +35,9 @@ export default function ServicesMarquee() {
   // One full pass of all the words (rendered twice for a seamless loop)
   const Row = () => (
     <div className="flex items-center shrink-0">
-      {names.map((name, i) => (
+      {names.main ? names : names.map((name, i) => (
         <div key={i} className="flex items-center">
-          <span className="uppercase font-black italic tracking-tight text-transparent text-5xl sm:text-7xl lg:text-7xl [-webkit-text-stroke:1.5px_rgba(255,255,255,0.9)]">
+          <span className="uppercase font-black italic tracking-tight text-transparent text-5xl sm:text-7xl lg:text-7xl [-webkit-text-stroke:1.5px_var(--foreground)]">
             {name}
           </span>
           <Sparkle />
@@ -47,20 +47,20 @@ export default function ServicesMarquee() {
   );
 
   return (
-    <section className="relative overflow-hidden  py-16 sm:py-24">
+    <section className="relative overflow-hidden py-16 sm:py-24 bg-background text-foreground">
       {/* wavy vector lines in the background */}
-     <div className="pointer-events-none absolute inset-0 z-0  overflow-hidden">
-  <img
-    src="/images/vector4.webp"
-    alt=""
-    aria-hidden="true"
-    className="w-[140%] max-w-none opacity-100 select-none [filter:brightness(5)_contrast(1.2)] animate-[moveLeftRight_20s_linear_infinite]"
-  />
-</div>
+      <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+        <img
+          src="/images/vector4.webp"
+          alt=""
+          aria-hidden="true"
+          className="w-[140%] max-w-none opacity-100 select-none [filter:brightness(5)_contrast(1.2)] animate-[moveLeftRight_20s_linear_infinite]"
+        />
+      </div>
 
-      {/* soft fade edges so text appears/disappears smoothly */}
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-20 sm:w-40 bg-gradient-to-r from-black to-transparent z-20" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-20 sm:w-40 bg-gradient-to-l from-black to-transparent z-20" />
+      {/* soft fade edges so text appears/disappears smoothly using theme background */}
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-20 sm:w-40 bg-gradient-to-r from-background to-transparent z-20" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-20 sm:w-40 bg-gradient-to-l from-background to-transparent z-20" />
 
       {/* the scrolling text */}
       <div className="relative z-10 flex w-max marquee-text">

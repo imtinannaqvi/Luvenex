@@ -85,8 +85,7 @@ const sectionRef = useRef<HTMLDivElement>(null);
 return (
 <div
   ref={sectionRef}
-  style={{ background: "linear-gradient(180deg, #151515 0%, #3e3a3a 100%)" }}
-  className="relative min-h-screen text-foreground flex flex-col justify-center py-16 px-6 lg:px-16 overflow-hidden"
+  className="relative min-h-screen bg-background text-foreground flex flex-col justify-center py-16 px-6 lg:px-16 overflow-hidden dark:bg-[linear-gradient(180deg,#151515_0%,#3e3a3a_100%)]"
 >    {/* ambient glow, fades in with the section */}
     <div
       className={`absolute top-1/4 left-1/2 -translate-x-1/2 w-[500px] h-[500px]  rounded-full blur-[150px] pointer-events-none transition-opacity duration-1500 ${
@@ -105,7 +104,7 @@ return (
         <h1 className="text-3xl sm:text-3xl font-black italic text-foreground mb-4">
           Get In Touch
         </h1>
-        <p className="text-zinc-400 text-md sm:text-base">
+        <p className="text-foreground text-md sm:text-base">
           Contact us for any inquiries, partnerships, or support needs.
         </p>
       </div>
@@ -119,7 +118,7 @@ return (
             <button
               type="button"
               onClick={() => setSubmitted(false)}
-              className="mt-4 px-6 py-2.5 rounded-xl bg-white text-black font-semibold text-xs hover:bg-surface transition cursor-pointer"
+              className="mt-4 px-6 py-2.5 rounded-xl bg-white text-foreground font-semibold text-xs hover:bg-surface transition cursor-pointer"
             >
               Send Another Message
             </button>
@@ -143,7 +142,7 @@ return (
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Enter your name"
-                  className="w-full bg-transparent border-0 border-b border-border-color focus:border-foreground text-foreground text-sm px-0 py-3 focus:outline-none transition-colors placeholder:text-zinc-600"
+                  className="w-full bg-transparent border-0 border-b  border-border-color focus:border-border-color text-foreground text-sm px-0 py-3 focus:outline-none transition-colors placeholder:text-foreground"
                 />
               </div>
 

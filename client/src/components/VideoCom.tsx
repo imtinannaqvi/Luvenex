@@ -76,7 +76,7 @@ export default function VideoCom() {
           const entranceZ = inView ? 0 : -400; // comes from "behind"
           const entranceOpacity = inView ? 1 : 0;
           const entranceScale = inView ? 1 : 0.7;
-          const delay = inView ? Math.abs(distFromCenter) * 100 : 0; // ms, staggered outward from center
+          const delay = inView ? i * 220 : 0; // ms, sequential left-to-right so each video appears one by one
 
           return (
             <div
@@ -90,8 +90,8 @@ export default function VideoCom() {
                 transform: `translateX(${entranceX}px) translateZ(${entranceZ}px) scale(${entranceScale})`,
                 opacity: entranceOpacity,
                 transitionProperty: "transform, opacity",
-                transitionDuration: "800ms",
-                transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
+                transitionDuration: "1600ms",
+                transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
                 transitionDelay: `${delay}ms`,
               }}
             >

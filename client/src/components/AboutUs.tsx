@@ -109,40 +109,49 @@ const AboutUs = () => {
         </div>
 
         {/* Right Column */}
-        <div 
-          onClick={() => setRightActive(!rightActive)}
-          className="relative group w-full h-[550px] overflow-hidden rounded-sm border border-white/10 shadow-2xl cursor-pointer"
-        >
-          <img
-            src="/images/pexels-edmond-dantes-4345990.jpg"
-            alt=""
-            className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 ${
-              rightActive ? "opacity-0 scale-110" : "group-hover:opacity-0 group-hover:scale-110"
-            }`}
-          />
+        <div className="relative w-full h-[550px]">
+          <div
+            onClick={() => setRightActive(!rightActive)}
+            className="group relative w-full h-full overflow-hidden rounded-sm border border-white/10 shadow-2xl cursor-pointer"
+          >
+            <img
+              src="/images/pexels-edmond-dantes-4345990.jpg"
+              alt=""
+              className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 ${
+                rightActive ? "opacity-0 scale-110" : "group-hover:opacity-0 group-hover:scale-110"
+              }`}
+            />
 
-          <img
-            src="/images/pexels-edmond-dantes-4347017.jpg"
-            alt=""
-            className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 scale-110 ${
-              rightActive ? "opacity-100 scale-100" : "opacity-0 scale-110 group-hover:opacity-100 group-hover:scale-100"
-            }`}
-          />
+            <img
+              src="/images/pexels-edmond-dantes-4347017.jpg"
+              alt=""
+              className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 scale-110 ${
+                rightActive ? "opacity-100 scale-100" : "opacity-0 scale-110 group-hover:opacity-100 group-hover:scale-100"
+              }`}
+            />
 
-          {/* Frosted Glass */}
-          <div className={`absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-white/5 backdrop-blur-[2px] transition-all duration-700 ${
-            rightActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-          }`}></div>
+            {/* Frosted Glass */}
+            <div className={`absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-white/5 backdrop-blur-[2px] transition-all duration-700 ${
+              rightActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+            }`}></div>
+          </div>
 
+          {/* Button lives OUTSIDE the overflow-hidden box so it can float on top of the corner */}
           <button
             onClick={(e) => {
               e.stopPropagation();
               router.push("/about");
             }}
-            className="absolute bottom-0 right-1 z-30 w-32 h-32 rounded-full bg-red-600 hover:bg-red-700 text-white font-bold flex flex-col items-center justify-center shadow-[0_20px_60px_rgba(239,68,68,.45)] transition-all duration-300 hover:scale-105 border-4 border-black cursor-pointer"
+            className="group/btn absolute -bottom-4 -right-4 sm:-bottom-5 sm:-right-5 z-30 w-20 h-20 sm:w-24 sm:h-24 rounded-full cursor-pointer"
           >
-            <span className="text-sm">Explore Us</span>
-            <span className="text-xl mt-1">↗</span>
+            {/* Soft pulsing glow ring behind the button */}
+            <span className="absolute inset-0 rounded-full bg-red-600 animate-ping opacity-30"></span>
+
+            {/* Main button surface */}
+            <span className="relative flex h-full w-full flex-col items-center justify-center rounded-full bg-gradient-to-br from-red-500 to-red-700 text-white ring-2 ring-white/20 shadow-[0_10px_40px_rgba(239,68,68,.5)] transition-all duration-300 group-hover/btn:scale-110 group-hover/btn:shadow-[0_15px_50px_rgba(239,68,68,.65)]">
+              <span className="text-[11px] sm:text-xs font-semibold tracking-wide">Explore Us</span>
+              <span className="text-base sm:text-lg mt-0.5 transition-transform duration-300 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5">↗</span>
+            </span>
           </button>
         </div>
 

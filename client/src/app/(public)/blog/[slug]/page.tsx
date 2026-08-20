@@ -22,7 +22,7 @@ export default function BlogArticlePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="w-8 h-8 border-2 border-red-600/20 border-t-red-600 rounded-full animate-spin" />
       </div>
     );
@@ -30,9 +30,9 @@ export default function BlogArticlePage() {
 
   if (error || !post) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center text-center px-6">
+      <div className="min-h-screen bg-background flex items-center justify-center text-center px-6">
         <div>
-          <p className="text-white font-semibold">Post not found</p>
+          <p className="text-foreground font-semibold">Post not found</p>
           <Link href="/blog" className="text-red-500 text-sm hover:underline mt-2 inline-block">
             ← Back to blog
           </Link>
@@ -44,15 +44,15 @@ export default function BlogArticlePage() {
   const cleanContent = DOMPurify.sanitize(post.content || "");
 
   return (
-    <div className="bg-black text-white min-h-screen px-4 sm:px-6 py-12 sm:py-16 overflow-x-hidden">
+    <div className="bg-background text-foreground min-h-screen px-4 sm:px-6 py-12 sm:py-16 overflow-x-hidden">
       <article className="max-w-3xl mx-auto w-full">
-        <Link href="/blog" className="text-xs text-zinc-500 hover:text-white transition">
+        <Link href="/blog" className="text-xs text-foreground hover:text-foreground transition">
           ← Back to blog
         </Link>
 
         {/* ── Featured image ── */}
         {post.image && (
-          <div className="mt-6 w-full h-64 sm:h-80 lg:h-[420px] rounded-2xl overflow-hidden border border-zinc-800">
+          <div className="mt-6 w-full h-64 sm:h-80 lg:h-[420px] rounded-2xl overflow-hidden border border-border-color">
             <img
               src={`${process.env.NEXT_PUBLIC_API_URL}${post.image}`}
               alt={post.title}
@@ -64,7 +64,7 @@ export default function BlogArticlePage() {
         {/* ── Meta ── */}
         <div className="mt-8">
           {post.category && (
-            <span className="text-xl  text-red-500 font-semibold">
+            <span className="text-xl text-red-500 font-semibold">
               {post.category}
             </span>
           )}
@@ -73,10 +73,10 @@ export default function BlogArticlePage() {
             {post.title}
           </h1>
 
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-zinc-400 mt-4">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-foreground mt-4">
             {post.author && (
               <span className="flex items-center gap-2">
-                <span className="w-6 h-6 rounded-full bg-zinc-800 flex items-center justify-center text-[11px] font-bold text-white">
+                <span className="w-6 h-6 rounded-full bg-card flex items-center justify-center text-[11px] font-bold text-foreground">
                   {post.author[0]?.toUpperCase()}
                 </span>
                 {post.author}
@@ -98,7 +98,7 @@ export default function BlogArticlePage() {
                 <Link
                   key={tag}
                   href={`/blog?tag=${tag}`}
-                  className="text-xs px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-300 hover:border-red-600 hover:text-white transition"
+                  className="text-xs px-3 py-1 rounded-full bg-surface border border-border-color text-foreground hover:border-red-600 hover:text-foreground transition"
                 >
                   #{tag}
                 </Link>
@@ -109,10 +109,10 @@ export default function BlogArticlePage() {
 
         {/* ── Content (rendered HTML from the editor) ── */}
         <div
-          className="mt-10 prose prose-invert max-w-none w-full break-words text-zinc-300 leading-relaxed
-                     prose-headings:text-white prose-strong:text-white prose-a:text-red-500
+          className="mt-10 prose prose-invert max-w-none w-full break-words text-foreground leading-relaxed
+                     prose-headings:text-foreground prose-strong:text-foreground prose-a:text-red-500
                      prose-p:break-words prose-p:[overflow-wrap:anywhere]
-                     prose-img:rounded-xl prose-img:border prose-img:border-zinc-800 prose-img:my-6
+                     prose-img:rounded-xl prose-img:border prose-img:border-border-color prose-img:my-6
                      prose-img:max-h-[420px] prose-img:w-auto prose-img:max-w-full prose-img:mx-auto prose-img:block"
           style={{ overflowWrap: "anywhere", wordBreak: "break-word" }}
           dangerouslySetInnerHTML={{ __html: cleanContent }}
@@ -124,7 +124,7 @@ export default function BlogArticlePage() {
             {post.secondaryImages.map((img: string, i: number) => (
               <div
                 key={i}
-                className="aspect-[4/3] rounded-xl overflow-hidden border border-zinc-800"
+                className="aspect-[4/3] rounded-xl overflow-hidden border border-border-color"
               >
                 <img
                   src={`${process.env.NEXT_PUBLIC_API_URL}${img}`}
