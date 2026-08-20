@@ -71,20 +71,20 @@ export default function ServiceDetailPage() {
 
   if (error || !service) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center text-center px-4">
-        <div className="bg-zinc-900/80 backdrop-blur-xl border border-zinc-800/80 p-8 rounded-3xl max-w-sm w-full shadow-2xl shadow-red-950/20">
+      <div className="min-h-screen bg-background flex items-center justify-center text-center px-4">
+        <div className="bg-surface backdrop-blur-xl border border-b-red-50 p-8 rounded-3xl max-w-sm w-full shadow-2xl shadow-red-950/20">
           <div className="w-12 h-12 rounded-2xl bg-red-950/50 border border-red-800/50 text-red-500 flex items-center justify-center mx-auto mb-4 shadow-inner">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
           </div>
-          <p className="text-white font-bold text-base">Service Unavailable</p>
-          <p className="text-zinc-400 text-xs mt-1.5 leading-relaxed">
+          <p className="text-foreground font-bold text-base">Service Unavailable</p>
+          <p className="text-foreground text-xs mt-1.5 leading-relaxed">
             {error || "The requested service could not be found."}
           </p>
           <button
             onClick={() => router.push("/services")}
-            className="mt-6 w-full py-3 rounded-xl bg-red-600 text-white font-semibold text-xs tracking-wide uppercase transition hover:bg-red-700 active:scale-95 shadow-lg shadow-red-600/30"
+            className="mt-6 w-full py-3 rounded-xl bg-red-600 text-foreground font-semibold text-xs tracking-wide uppercase transition hover:bg-red-700 active:scale-95 shadow-lg shadow-red-600/30"
           >
             Back to Services
           </button>
@@ -94,9 +94,9 @@ export default function ServiceDetailPage() {
   }
 
   return (
-    <div className="bg-[#0a0a0a] text-white min-h-screen selection:bg-red-600 selection:text-white relative overflow-x-hidden">
+    <div className="bg-background text-foreground min-h-screen selection:bg-red-600 selection:text-foreground relative overflow-x-hidden">
      {/* Hero Section with Cover Video, Overlay, and Title */}
-      <div className="group relative w-full h-[400px] md:h-[500px] overflow-hidden flex items-center justify-center bg-zinc-950">
+      <div className="group relative w-full h-[400px] md:h-[500px] overflow-hidden flex items-center justify-center bg-foreground">
         {service.videos?.[0] ? (
           <video
             src={`${process.env.NEXT_PUBLIC_API_URL}${service.videos[0]}`}
@@ -121,7 +121,7 @@ export default function ServiceDetailPage() {
         {/* Title with lines */}
         <div className="relative z-10 flex items-center justify-center gap-6 px-4 max-w-5xl w-full">
           <div className="flex-1 h-px bg-red-600 hidden sm:block"></div>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight text-center leading-tight drop-shadow-lg">
+          <h1 className="text-4xl md:text-5xl font-extrabold text-foreground tracking-tight text-center leading-tight drop-shadow-lg">
             {service.category}
           </h1>
           <div className="flex-1 h-px bg-red-600 hidden sm:block"></div>
@@ -130,14 +130,14 @@ export default function ServiceDetailPage() {
 
       {/* Title (left) + Short Description (middle) row */}
       <section className="pt-12 pb-6 px-4">
-        <div className="max-w-4xl mx-auto flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-8 border-b border-zinc-800/60 pb-8">
-          <h2 className="text-xl italic sm:text-2xl font-extrabold text-white shrink-0 sm:w-56 whitespace-nowrap">
+        <div className="max-w-4xl mx-auto flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-8 border-b border-border-color pb-8">
+          <h2 className="text-xl italic sm:text-2xl font-extrabold text-foreground shrink-0 sm:w-56 whitespace-nowrap">
             Title: {service.title}
           </h2>
         </div>
       </section>
       <div className="text-center items-center">
-        <p className="text-lg text-zinc-400 leading-relaxed">
+        <p className="text-lg text-foreground leading-relaxed">
           {service.shortDescription}
         </p>
       </div>
@@ -148,11 +148,11 @@ export default function ServiceDetailPage() {
           <div className="max-w-4xl mx-auto">
             <div className="flex items-center gap-3 mb-5">
               
-              <span className="text-[15px] font-bold uppercase tracking-[0.2em] text-white">Overview</span>
-              <span className="flex-1 h-px bg-zinc-800" />
+              <span className="text-[15px] font-bold uppercase tracking-[0.2em] text-foreground">Overview</span>
+              <span className="flex-1 h-px bg-surface" />
             </div>
             <div
-              className="service-fulldesc text-zinc-300 text-sm sm:text-base leading-relaxed"
+              className="service-fulldesc text-foreground text-sm sm:text-base leading-relaxed"
               dangerouslySetInnerHTML={{ __html: service.description }}
             />
           </div>
@@ -207,94 +207,94 @@ export default function ServiceDetailPage() {
      
 
       {/* Request Section (always visible) */}
-      <section className="py-16 px-4 bg-black">
-        <div className="max-w-2xl mx-auto rounded-xl p-6 sm:p-10 bg-zinc-900/80 backdrop-blur-xl border border-zinc-800/80 shadow-2xl relative overflow-hidden">
+      <section className="py-16 px-4 bg-foreground">
+        <div className="max-w-2xl mx-auto rounded-xl p-6 sm:p-10 bg-surface backdrop-blur-xl border border-border-color shadow-2xl relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-red-600/5 rounded-lg blur-3xl pointer-events-none" />
 
 
           <div className="max-w-md mx-auto text-center space-y-2 mb-8">
-            <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-white">Interested in working together?</h2>
-            <p className="text-zinc-400 text-sm leading-relaxed">
+            <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-foreground">Interested in working together?</h2>
+            <p className="text-foreground text-sm leading-relaxed">
               Submit your project brief today. Our team will get back to you shortly.
             </p>
           </div>
 
           {/* Conditional display: Success message OR Form */}
           {submitted ? (
-            <div className="max-w-md mx-auto bg-zinc-950/80 border border-red-800/40 rounded-2xl p-6 text-center space-y-3 shadow-xl">
-              <div className="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center mx-auto shadow-lg shadow-red-600/40">
+            <div className="max-w-md mx-auto bg-scroll border border-red-800/40 rounded-2xl p-6 text-center space-y-3 shadow-xl">
+              <div className="w-12 h-12 rounded-full bg-red-600 text-foreground flex items-center justify-center mx-auto shadow-lg shadow-red-600/40">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <p className="text-base font-bold text-white">Request Submitted!</p>
-              <p className="text-xs text-zinc-400 leading-relaxed">
+              <p className="text-base font-bold text-foreground">Request Submitted!</p>
+              <p className="text-xs text-foreground leading-relaxed">
                 We received your brief and will be in touch with a matched creator shortly.
               </p>
             </div>
           ) : (
             <form onSubmit={handleRequest} className="max-w-md mx-auto space-y-4 relative">
               <div className="space-y-1.5 text-left">
-                <label className="text-xs font-semibold text-zinc-400">Project Title</label>
+                <label className="text-xs font-semibold text-foreground">Project Title</label>
                 <input
                   type="text"
                   placeholder="e.g. Brand identity redesign"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   required
-                  className="w-full px-4 py-3 rounded-xl border border-zinc-700/80 bg-zinc-950 text-white text-sm placeholder:text-zinc-600 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition-all"
+                  className="w-full px-4 py-3 rounded-xl border border-border-color bg-surface text-foreground text-sm placeholder:text-foreground focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition-all"
                 />
               </div>
 
               <div className="space-y-1.5 text-left">
-                <label className="text-xs font-semibold text-zinc-400">Requirements &amp; Deliverables</label>
+                <label className="text-xs font-semibold text-foreground">Requirements &amp; Deliverables</label>
                 <textarea
                   placeholder="Detail your goals and requirements..."
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   rows={3}
                   required
-                  className="w-full px-4 py-3 rounded-xl border border-zinc-700/80 bg-zinc-950 text-white text-sm placeholder:text-zinc-600 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition-all resize-none"
+                  className="w-full px-4 py-3 rounded-xl border border-border-color bg-surface text-foreground text-sm placeholder:text-zinc-600 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition-all resize-none"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3 text-left">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-zinc-400">Min Budget (PKR)</label>
+                  <label className="text-xs font-semibold text-foreground">Min Budget (PKR)</label>
                   <input
                     type="number"
                     placeholder="Min"
                     value={budgetMin}
                     onChange={(e) => setBudgetMin(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-zinc-700/80 bg-zinc-950 text-white text-sm placeholder:text-zinc-600 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition-all"
+                    className="w-full px-4 py-3 rounded-xl border border-border-color bg-surface text-foreground text-sm placeholder:text-foreground focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition-all"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-zinc-400">Max Budget (PKR)</label>
+                  <label className="text-xs font-semibold text-foreground">Max Budget (PKR)</label>
                   <input
                     type="number"
                     placeholder="Max"
                     value={budgetMax}
                     onChange={(e) => setBudgetMax(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-zinc-700/80 bg-zinc-950 text-white text-sm placeholder:text-zinc-600 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition-all"
+                    className="w-full px-4 py-3 rounded-xl border border-border-color bg-surface text-foreground text-sm placeholder:text-foreground focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition-all"
                   />
                 </div>
               </div>
 
               <div className="space-y-1.5 text-left">
-                <label className="text-xs font-semibold text-zinc-400">Target Deadline</label>
+                <label className="text-xs font-semibold text-foreground">Target Deadline</label>
                 <input
                   type="date"
                   value={deadline}
                   onChange={(e) => setDeadline(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl border border-zinc-700/80 bg-zinc-950 text-white text-sm focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition-all"
+                  className="w-full px-4 py-3 rounded-xl border border-border-color bg-surface text-foreground text-sm focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition-all"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full py-3 rounded-xl bg-red-600 text-white font-bold text-xs uppercase tracking-wider hover:bg-red-700 transition-all active:scale-95 disabled:opacity-50 shadow-lg shadow-red-600/30"
+                className="w-full py-3 rounded-xl bg-red-400 text-white font-bold text-xs uppercase tracking-wider hover:bg-red-700 transition-all active:scale-95 disabled:opacity-50 shadow-lg shadow-red-600/30"
               >
                 {submitting ? "Submitting..." : "Submit Project Brief"}
               </button>
