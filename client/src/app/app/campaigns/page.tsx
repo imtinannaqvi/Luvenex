@@ -126,7 +126,7 @@ const removeDeliverable = (index: number) => {
           <div className="space-y-2 mb-2">
             {deliverableItems.map((d, i) => (
               <div key={i} className="flex items-center justify-between bg-surface border border-line rounded-lg px-3 py-2">
-                <span className="text-xs text-ink">{d.quantity}× {d.item}</span>
+                <span className="text-xs text-foreground">{d.quantity}× {d.item}</span>
                 <button type="button" onClick={() => removeDeliverable(i)} className="text-xs text-primary">Remove</button>
               </div>
             ))}
