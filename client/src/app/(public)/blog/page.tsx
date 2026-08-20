@@ -94,7 +94,7 @@ export default function BlogListingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+    <div className="min-h-screen bg-background text-white px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
       <div className="max-w-6xl mx-auto">
 
 
@@ -102,7 +102,7 @@ export default function BlogListingPage() {
 
        
 
-          <h1 className="text-xl sm:text-3xl lg:text-3xl font-black tracking-tight">
+          <h1 className="text-xl text-foreground sm:text-3xl lg:text-3xl font-black tracking-tight">
             Luvenex{" "}
             <span className="text-red-600">
               Blog
@@ -179,14 +179,14 @@ export default function BlogListingPage() {
               <div
                 key={i}
                 className="
-                  bg-white
+                  bg-background
                   rounded-2xl
                   overflow-hidden
                   shadow-xl
                   animate-pulse
                 "
               >
-                <div className="h-56 bg-zinc-800" />
+                <div className="h-56 bg-background" />
 
                 <div className="p-5">
 
@@ -208,9 +208,9 @@ export default function BlogListingPage() {
             {/* ================= NO POSTS ================= */}
 
             {posts.length === 0 ? (
-              <div className="max-w-md mx-auto bg-zinc-950 border border-zinc-800 rounded-2xl p-12 text-center">
+              <div className="max-w-md mx-auto bg-background border border-zinc-800 rounded-2xl p-12 text-center">
 
-                <div className="w-14 h-14 mx-auto mb-5 rounded-full bg-red-950/30 border border-red-900/50 flex items-center justify-center">
+                <div className="w-14 h-14 mx-auto mb-5 rounded-full bg-background border border-red-900/50 flex items-center justify-center">
                   <span className="text-red-600 text-xl font-black">
                     L
                   </span>
@@ -233,14 +233,14 @@ export default function BlogListingPage() {
                 <div className="flex items-center justify-between mb-6">
 
                   <div>
-                    <h2 className="text-xl sm:text-2xl font-black text-white">
+                    <h2 className="text-xl sm:text-2xl font-black text-foreground">
                       {q ? "Search Results" : "Latest Articles"}
                     </h2>
 
                     <div className="mt-2 w-10 h-1 bg-red-600 rounded-full" />
                   </div>
 
-                  <span className="text-xs text-zinc-600">
+                  <span className="text-sm text-zinc-600">
                     {posts.length} {posts.length === 1 ? "article" : "articles"}
                   </span>
 
@@ -258,7 +258,7 @@ export default function BlogListingPage() {
                         group
                         flex
                         flex-col
-                        bg-ink
+                        bg-background
                         rounded-md
                         overflow-hidden
                         border
@@ -317,8 +317,8 @@ export default function BlogListingPage() {
                                   w-6
                                   h-6
                                   rounded-full
-                                  bg-black
-                                  text-white
+                                  bg-background
+                                  text-foreground
                                   flex
                                   items-center
                                   justify-center
@@ -364,7 +364,7 @@ export default function BlogListingPage() {
                             sm:text-lg
                             font-black
                             leading-tight
-                            text-white
+                            text-foreground
                             transition-colors
                             italic
                             duration-200

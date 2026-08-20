@@ -22,20 +22,19 @@ export default function GigsPage() {
   >([]);
   const [newDeliverableItem, setNewDeliverableItem] = useState("");
   const [newDeliverableQty, setNewDeliverableQty] = useState("1");
-
-  const load = async () => {
-    setLoading(true);
-    try {
-      const data = await apiFetch("/api/gigs?mine=true", {
-        token: getToken()!,
-      });
-      setGigs(data.gigs || []);
-    } catch (err: any) {
-      toast(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+const load = async () => {
+  setLoading(true);
+  try {
+    const data = await apiFetch("/api/gigs/my", {   // ← changed from "/api/gigs?mine=true"
+      token: getToken()!,
+    });
+    setGigs(data.gigs || []);
+  } catch (err: any) {
+    toast(err.message);
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     load();

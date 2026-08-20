@@ -22,11 +22,33 @@ export const createCampign = async (req, res) => {
     }
 };
 
+// Public marketplace listing (used for influencers browsing open campaigns).
+// NOT scoped to a single brand unless brandId is explicitly passed as a query param.
 export const getCampaigns = async (req, res) => {
   try {
     const filter = { status: 'open' };
     if (req.query.category) filter.category = req.query.category;
     if (req.query.brandId) filter.brandId = req.query.brandId;
+
+    const campaigns = await Campaign.find(filter)
+      .populate('brandId', 'name')
+      .sort({ createdAt: -1 });
+
+    res.json({ campaigns });
+  } catch (err) {
+    res.status(500).json({ error: { message: err.message } });
+  }
+};
+
+// Brand dashboard listing — ALWAYS scoped to the logged-in brand, all statuses included.
+export const getMyCampaigns = async (req, res) => {
+  try {
+    if (req.user.role !== 'brand') {
+      return res.status(403).json({ error: { message: 'Only brands can view their campaigns' } });
+    }
+
+    const filter = { brandId: req.user._id };
+    if (req.query.status) filter.status = req.query.status;
 
     const campaigns = await Campaign.find(filter)
       .populate('brandId', 'name')

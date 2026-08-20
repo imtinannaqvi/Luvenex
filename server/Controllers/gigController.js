@@ -29,7 +29,9 @@ export const createGig = async (req, res) => {
   }
 };
 
-// GET /api/gigs — public list
+// GET /api/gigs — public list (active gigs only, from ALL influencers).
+// Used for brand-facing browsing. NOT scoped to a single influencer
+// unless ?influencerId= is explicitly passed.
 export const getGigs = async (req, res) => {
   try {
     const filter = { status: "active" };
@@ -39,6 +41,25 @@ export const getGigs = async (req, res) => {
     const gigs = await Gig.find(filter)
       .populate('influencerId', 'name')
       .sort({ createdAt: -1 });
+
+    res.json({ gigs });
+  } catch (error) {
+    res.status(500).json({ error: { message: error.message } });
+  }
+};
+
+// GET /api/gigs/my — influencer dashboard listing.
+// ALWAYS scoped to the logged-in influencer, all statuses included (active, paused, draft, archived).
+export const getMyGigs = async (req, res) => {
+  try {
+    if (req.user.role !== 'influencer') {
+      return res.status(403).json({ error: { message: 'Only influencers can view their gigs' } });
+    }
+
+    const filter = { influencerId: req.user._id };
+    if (req.query.status) filter.status = req.query.status;
+
+    const gigs = await Gig.find(filter).sort({ createdAt: -1 });
 
     res.json({ gigs });
   } catch (error) {

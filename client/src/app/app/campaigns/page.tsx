@@ -25,7 +25,9 @@ const [newDeliverableQty, setNewDeliverableQty] = useState("1");
     setLoading(true);
 
     try {
-        const data = await apiFetch("/api/campaigns", { token: getToken()! });
+        // Scoped to the logged-in brand — do NOT use "/api/campaigns" here,
+        // that endpoint is the public marketplace listing (all brands' open campaigns).
+        const data = await apiFetch("/api/campaigns/my", { token: getToken()! });
         setCampaigns(data.campaigns || []);
     } finally {
         setLoading(false);

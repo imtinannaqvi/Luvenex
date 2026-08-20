@@ -76,7 +76,7 @@ function ResetPasswordForm() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-line text-sm bg-paper
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-line text-sm bg-background
                                focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
                   />
                 </div>
@@ -90,7 +90,7 @@ function ResetPasswordForm() {
                     required
                     maxLength={6}
                     inputMode="numeric"
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-line text-sm bg-paper
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-line text-sm bg-background
                                focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary tracking-widest"
                   />
                 </div>
@@ -103,7 +103,7 @@ function ResetPasswordForm() {
                     onChange={(e) => setNewPassword(e.target.value)}
                     required
                     minLength={6}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-line text-sm bg-paper
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-line text-sm bg-background
                                focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
                   />
                 </div>
@@ -116,7 +116,7 @@ function ResetPasswordForm() {
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
                     minLength={6}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-line text-sm bg-paper
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-line text-sm bg-background
                                focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
                   />
                 </div>

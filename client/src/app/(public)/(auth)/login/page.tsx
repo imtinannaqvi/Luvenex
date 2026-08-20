@@ -36,7 +36,7 @@ saveSession(data.accessToken, data.user, data.refreshToken);
 
                 <div className="absolute -bottom-16 -right-16 w-44 h-44 bg-primary/50 rounded-full blur-3xl pointer-events-none" />
 
-                <div className="relative z-10 w-full bg-background rounded-2xl shadow-3xl p-8 backdrop-blur-xl">
+                <div className="relative z-10 w-full bg-ink/40 rounded-2xl shadow-3xl p-8 backdrop-blur-xl">
                     <div className="flex justify-center mb-4">
                         <img src="/luvenex-logo-black.png" alt="Luvenex" className="h-12 w-auto" />
                     </div>
