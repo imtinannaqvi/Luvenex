@@ -1,4 +1,11 @@
 import dotenv from 'dotenv';
+process.on('uncaughtException', (err) => {
+  console.error('[UNCAUGHT EXCEPTION]:', err.message);
+});
+
+process.on('unhandledRejection', (err) => {
+  console.error('[UNHANDLED REJECTION]:', err.message);
+});
 dotenv.config();
 console.log('>>> EXPRESS SERVER STARTED', new Date().toISOString());
 import express from 'express';
