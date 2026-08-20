@@ -200,8 +200,6 @@ const handleSubmit = async (e: React.FormEvent) => {
 
 {error && <p className="text-sm text-primary">{error}</p>}
 
-            {error && <p className="text-sm text-primary">{error}</p>}
-
             <div className="flex justify-center">
               <button
                 type="submit"
