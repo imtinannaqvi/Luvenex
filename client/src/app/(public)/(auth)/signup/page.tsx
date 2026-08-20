@@ -61,7 +61,7 @@ const handleSubmit = async (e: React.FormEvent) => {
       <div className="absolute -bottom-16 -right-16 w-44 h-44 bg-primary/50 rounded-full blur-3xl pointer-events-none" />
 
       
-        <div className="relative z-10 w-full bg-ink/50 rounded-2xl shadow-2xl p-8 backdrop-blur-xl">
+        <div className="relative z-10 w-full bg-background rounded-2xl shadow-2xl p-8 backdrop-blur-xl">
           <div className="flex justify-center mb-4">
             <img src="/luvenex-logo-black.png" alt="Luvenex" className="h-12 w-auto" />
           </div>
@@ -141,7 +141,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
-                className="w-full px-3.5 py-2.5 rounded-xl border border-line text-sm bg-paper
+                className="w-full px-3.5 py-2.5 rounded-xl border border-line text-sm bg-background
                            focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
               />
             </div>
@@ -153,7 +153,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-3.5 py-2.5 rounded-xl border border-line text-sm bg-paper
+                className="w-full px-3.5 py-2.5 rounded-xl border border-line text-sm bg-background
                            focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
               />
             </div>
@@ -166,7 +166,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={6}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-line text-sm bg-paper
+                className="w-full px-3.5 py-2.5 rounded-xl border border-line text-sm bg-background
                            focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
               />
             </div>
@@ -178,7 +178,7 @@ const handleSubmit = async (e: React.FormEvent) => {
     onChange={(e) => setPassword(e.target.value)}
     required
     minLength={6}
-    className="w-full px-3.5 py-2.5 rounded-xl border border-line text-sm bg-paper
+    className="w-full px-3.5 py-2.5 rounded-xl border border-line text-sm bg-background
                focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
   />
 </div>

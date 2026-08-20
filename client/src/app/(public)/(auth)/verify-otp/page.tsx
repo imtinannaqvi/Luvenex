@@ -97,7 +97,7 @@ function VerifyOtpForm() {
         <div className="absolute -top-16 -left-16 w-44 h-44 bg-primary/50 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -bottom-16 -right-16 w-44 h-44 bg-primary/50 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="relative z-10 w-full bg-ink/50 rounded-2xl shadow-2xl p-8 backdrop-blur-xl">
+        <div className="relative z-10 w-full bg-background rounded-2xl shadow-2xl p-8 backdrop-blur-xl">
           <div className="flex justify-center mb-4">
             <img src="/luvenex-logo-black.png" alt="Luvenex" className="h-12 w-auto" />
           </div>
@@ -121,7 +121,7 @@ function VerifyOtpForm() {
                 onPaste={handlePaste}
                 disabled={loading}
                 className="w-11 h-13 text-center text-xl font-semibold rounded-xl border border-line
-                           bg-paper focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary
+                           bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary
                            disabled:opacity-60"
               />
             ))}
@@ -156,7 +156,7 @@ function VerifyOtpForm() {
 
 export default function VerifyOtpPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-ink" />}>
+    <Suspense fallback={<div className="min-h-screen bg-background" />}>
       <VerifyOtpForm />
     </Suspense>
   );
