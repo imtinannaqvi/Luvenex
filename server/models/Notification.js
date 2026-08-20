@@ -32,7 +32,8 @@ const notificationSchema = new mongoose.Schema({
             "payout_rejected",
             "service_matched",
             "flagged_message",
-            "new_message"          // 👈 added — required so message notifications save
+            "new_message",         // message notifications
+            "new_campaign"         // 👈 added — required so campaign broadcasts save
         ]
     },
     relatedId: {

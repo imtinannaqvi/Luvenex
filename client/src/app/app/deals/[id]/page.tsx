@@ -477,11 +477,11 @@ const respondToCancellation = async (agree: boolean) => {
 
 {(deal.deliveryNote || deal.deliveryFiles?.length > 0) && (
   <div className="mb-6">
-    <h3 className="text-[11px] font-bold text-muted uppercase tracking-wider mb-2 flex items-center gap-1.5">
+    <h3 className="text-[11px] font-bold text-foreground uppercase tracking-wider mb-2 flex items-center gap-1.5">
       <FiPackage size={13} className="text-foreground" /> Submitted Delivery Note
     </h3>
     {deal.deliveryNote && (
-      <div className="p-4 rounded-xl bg-purple-50/50 border border-purple-200/60 text-xs sm:text-sm text-foreground leading-relaxed">
+      <div className="p-4 rounded-xl bg-background border border-border-color text-xs sm:text-sm text-foreground leading-relaxed">
         {deal.deliveryNote}
       </div>
     )}
@@ -546,7 +546,7 @@ const respondToCancellation = async (agree: boolean) => {
   <button
     disabled={actionLoading}
     onClick={() => doAction("approve")}
-    className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-emerald-600 text-white text-xs font-semibold hover:bg-emerald-700 transition shadow-2xs disabled:opacity-50 cursor-pointer"
+    className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-surface text-foreground text-xs font-semibold hover:bg-primary transition shadow-2xs disabled:opacity-50 cursor-pointer"
   >
     <FiCheckCircle size={14} /> Approve & Release Funds
   </button>
@@ -556,7 +556,7 @@ const respondToCancellation = async (agree: boolean) => {
             <button
               disabled={actionLoading}
               onClick={() => doAction("complete")}
-              className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-background text-paper text-xs font-semibold hover:bg-black transition shadow-2xs disabled:opacity-50 cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-sm bg-surface text-foreground text-xs font-semibold hover:bg-primary transition shadow-2xs disabled:opacity-50 cursor-pointer"
             >
               <FiCheckCircle size={14} /> Mark Completed
             </button>
@@ -570,7 +570,7 @@ const respondToCancellation = async (agree: boolean) => {
               <button
                 disabled={actionLoading}
                 onClick={() => setShowRevisionForm(true)}
-                className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-sm border border-line bg-surface text-ink text-xs font-semibold hover:border-primary/40 hover:text-primary transition shadow-2xs disabled:opacity-50 cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-sm border border-line bg-surface text-foreground text-xs font-semibold hover:border-primary/40 hover:text-primary transition shadow-2xs disabled:opacity-50 cursor-pointer"
               >
                 <FiRefreshCw size={14} /> Request Revision
               </button>
@@ -681,7 +681,7 @@ const respondToCancellation = async (agree: boolean) => {
         {deal.status === "completed" && (
           <div className="mt-5 pt-5 border-t border-line/60">
             {hasReviewed ? (
-              <div className="flex items-center gap-2 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-4 py-3 rounded-xl">
+              <div className="flex items-center gap-2 text-xs font-semibold text-foreground bg-background border border-emerald-200/80 px-4 py-3 rounded-xl">
                 <FiCheckCircle size={15} />
                 <span>You've reviewed this deal — thank you for your feedback.</span>
               </div>

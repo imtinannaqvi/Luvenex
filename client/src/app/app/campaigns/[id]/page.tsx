@@ -206,14 +206,14 @@ export default function CampaignApplicantsPage() {
                   <button
                     onClick={() => handleReject(a._id)}
                     disabled={actionLoadingId === a._id}
-                    className="text-xs font-semibold px-3.5 py-1.5 rounded-xl border border-line text-ink hover:bg-surface transition disabled:opacity-50"
+                    className="text-xs font-semibold px-4.5 py-2.5 rounded-sm border border-line text-foreground hover:bg-primary transition disabled:opacity-50"
                   >
                     Reject
                   </button>
                   <button
                     onClick={() => handleAccept(a._id)}
                     disabled={actionLoadingId === a._id}
-                    className="text-xs font-semibold px-3.5 py-1.5 rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 transition shadow-2xs disabled:opacity-50"
+                    className="text-xs font-semibold px-4.5 py-2.5 rounded-sm bg-emerald-600 text-foreground hover:bg-emerald-700 transition shadow-2xs disabled:opacity-50"
                   >
                     Accept
                   </button>

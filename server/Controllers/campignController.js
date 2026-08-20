@@ -1,4 +1,6 @@
 import Campaign from "../models/Campaign.js";
+import User from "../models/User.js";                 // 👈 to find influencers
+import Notification from "../models/Notification.js";  // 👈 to broadcast in one write
 
 export const createCampign = async (req, res) => {
     try {
@@ -16,29 +18,72 @@ export const createCampign = async (req, res) => {
             title, description, category, goals, budgetMinMinor, budgetMaxMinor,
             deadline, criteriaJson, deliverablesJson,
         });
+
+        // ── Broadcast a notification to all active influencers (best-effort) ──
+        // NOTE: this notifies every influencer. Fine at your current size, but
+        // once you have many influencers, refine this to target by niche/category
+        // to avoid noise and large write bursts.
+        try {
+            const influencers = await User.find({
+                role: 'influencer',
+                status: 'active',
+            }).select('_id');
+
+            if (influencers.length) {
+                await Notification.insertMany(
+                    influencers.map((inf) => ({
+                        userId: inf._id,
+                        type: 'new_campaign',
+                        title: 'New campaign posted!',
+                        message: `A new campaign "${campaign.title}" was just posted. Check it out.`,
+                        relatedId: campaign._id,
+                    }))
+                );
+
+                // Optional: push live so online influencers see it instantly.
+                // Their NotificationsProvider listens for "notification" and will
+                // toast + refresh the bell. Remove this block if you'd rather the
+                // notification just appear on the next poll (within ~30s).
+                const io = req.app.get('io');
+                if (io) {
+                    influencers.forEach((inf) => {
+                        io.to(inf._id.toString()).emit('notification', {
+                            type: 'new_campaign',
+                            title: 'New campaign posted!',
+                            message: `A new campaign "${campaign.title}" was just posted. Check it out.`,
+                            relatedId: campaign._id.toString(),
+                        });
+                    });
+                }
+            }
+        } catch (notifyErr) {
+            console.warn('campaign broadcast notify failed:', notifyErr.message);
+        }
+
         res.status(201).json({ campaign });
     } catch (error) {
         return res.status(500).json({ error: { message: error.message } });
     }
 };
 
-// Public marketplace listing (used for influencers browsing open campaigns).
-// NOT scoped to a single brand unless brandId is explicitly passed as a query param.
 export const getCampaigns = async (req, res) => {
   try {
-    const filter = { status: 'open' };
+    const filter = {};
+
+    // if a specific brandId is requested, this is the brand viewing THEIR OWN campaigns —
+    // show all statuses. Otherwise, this is public browsing — only show open ones.
+    if (req.query.brandId) {
+      filter.brandId = req.query.brandId;
+    } else {
+      filter.status = 'open';
+    }
+
     if (req.query.category) filter.category = req.query.category;
-    if (req.query.brandId) filter.brandId = req.query.brandId;
 
     const campaigns = await Campaign.find(filter)
       .populate('brandId', 'name status')
       .sort({ createdAt: -1 });
 
-    // Filter out orphaned campaigns (brand account deleted directly in the DB,
-    // so populate() returns null for brandId) AND campaigns from banned/suspended
-    // brands. We only exclude explicit banned/suspended values rather than
-    // requiring status === 'active', since normal accounts may not have an
-    // explicit status set by default.
     const validCampaigns = campaigns.filter(
       (c) => c.brandId != null && !['banned', 'suspended'].includes(c.brandId.status)
     );

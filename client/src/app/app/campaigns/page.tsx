@@ -96,6 +96,10 @@ const removeDeliverable = (index: number) => {
         </div>
     )
   }
+  const draftCampaigns = campaigns.filter((c) => c.status === "draft");
+const openCampaigns = campaigns.filter((c) => c.status === "open");
+const closedCampaigns = campaigns.filter((c) => c.status === "closed");
+const cancelledCampaigns = campaigns.filter((c) => c.status === "cancelled");
 
   return (
   <div>
@@ -162,48 +166,110 @@ const removeDeliverable = (index: number) => {
       </form>
     )}
 
-    {/* Campaign list — only shown when the form is closed */}
-    {!showForm && (
-      campaigns.length === 0 ? (
-        <div className="bg-background border border-line rounded-2xl p-8 text-center">
-          <p className="text-foreground text-sm">No campaigns posted yet.</p>
+{/* Campaign list — only shown when the form is closed */}
+{!showForm && (
+  campaigns.length === 0 ? (
+    <div className="bg-background border border-line rounded-2xl p-8 text-center">
+      <p className="text-foreground text-sm">No campaigns posted yet.</p>
+    </div>
+  ) : (
+    <div className="space-y-8">
+      {/* Draft section */}
+      {draftCampaigns.length > 0 && (
+        <div>
+          <h2 className="text-xs font-bold uppercase tracking-wide text-muted mb-3 flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-yellow-500" />
+            Drafts ({draftCampaigns.length})
+          </h2>
+          <div className="space-y-3">
+            {draftCampaigns.map((c) => (
+              <CampaignCard key={c._id} c={c} money={money} updateStatus={updateStatus} />
+            ))}
+          </div>
         </div>
-      ) : (
-        <div className="space-y-3">
-          {campaigns.map((c) => (
-            <div key={c._id} className="bg-surface border border-line rounded-xl p-4  transition">
-              <div className="flex justify-between items-start">
-                <Link href={`/app/campaigns/${c._id}`} className="flex-1">
-                  <p className="text-sm font-medium text-foreground transition">{c.title}</p>
-                  <p className="text-xs text-foreground mt-1">
-                    {money(c.budgetMinMinor)} – {money(c.budgetMaxMinor)} · {c.category || "—"}
-                  </p>
-                  {/* ✅ Deliverables display — added here */}
-                  {c.deliverablesJson?.length > 0 && (
-                    <div className="mt-2 space-y-0.5">
-                      {c.deliverablesJson.map((d: any, i: number) => (
-                        <p key={i} className="text-xs text-muted">{d.quantity}× {d.item}</p>
-                      ))}
-                    </div>
-                  )}
-                </Link>
-                <select
-                  value={c.status}
-                  onChange={(e) => updateStatus(c._id, e.target.value)}
-                  onClick={(e) => e.stopPropagation()}
-                  className="text-xs font-medium px-2 py-0.5 rounded-full bg-surface text-foreground capitalize cursor-pointer border-0 focus:outline-none focus:ring-2 focus:ring-primary/30 shrink-0"
-                >
-                  <option value="open">Open</option>
-                  <option value="closed">Closed</option>
-                  <option value="draft">Draft</option>
-                  <option value="cancelled">Cancelled</option>
-                </select>
-              </div>
-            </div>
-          ))}
+      )}
+
+      {/* Open section */}
+      {openCampaigns.length > 0 && (
+        <div>
+          <h2 className="text-xs font-bold uppercase tracking-wide text-muted mb-3 flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+            Open ({openCampaigns.length})
+          </h2>
+          <div className="space-y-3">
+            {openCampaigns.map((c) => (
+              <CampaignCard key={c._id} c={c} money={money} updateStatus={updateStatus} />
+            ))}
+          </div>
         </div>
-      )
-    )}
-  </div>
+      )}
+
+      {/* Closed section */}
+      {closedCampaigns.length > 0 && (
+        <div>
+          <h2 className="text-xs font-bold uppercase tracking-wide text-muted mb-3 flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+            Closed ({closedCampaigns.length})
+          </h2>
+          <div className="space-y-3">
+            {closedCampaigns.map((c) => (
+              <CampaignCard key={c._id} c={c} money={money} updateStatus={updateStatus} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Cancelled section */}
+      {cancelledCampaigns.length > 0 && (
+        <div>
+          <h2 className="text-xs font-bold uppercase tracking-wide text-muted mb-3 flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+            Cancelled ({cancelledCampaigns.length})
+          </h2>
+          <div className="space-y-3">
+            {cancelledCampaigns.map((c) => (
+              <CampaignCard key={c._id} c={c} money={money} updateStatus={updateStatus} />
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+)}
+</div>
 );
+}
+
+// Extracted card component — avoids repeating the same JSX four times
+function CampaignCard({ c, money, updateStatus }: { c: any; money: (m?: number) => string; updateStatus: (id: string, status: string) => void }) {
+  return (
+    <div className="bg-surface border border-line rounded-xl p-4 transition">
+      <div className="flex justify-between items-start">
+        <Link href={`/app/campaigns/${c._id}`} className="flex-1">
+          <p className="text-sm font-medium text-foreground transition">{c.title}</p>
+          <p className="text-xs text-foreground mt-1">
+            {money(c.budgetMinMinor)} – {money(c.budgetMaxMinor)} · {c.category || "—"}
+          </p>
+          {c.deliverablesJson?.length > 0 && (
+            <div className="mt-2 space-y-0.5">
+              {c.deliverablesJson.map((d: any, i: number) => (
+                <p key={i} className="text-xs text-muted">{d.quantity}× {d.item}</p>
+              ))}
+            </div>
+          )}
+        </Link>
+        <select
+          value={c.status}
+          onChange={(e) => updateStatus(c._id, e.target.value)}
+          onClick={(e) => e.stopPropagation()}
+          className="text-xs font-medium px-2 py-0.5 rounded-full bg-surface text-foreground capitalize cursor-pointer border-0 focus:outline-none focus:ring-2 focus:ring-primary/30 shrink-0"
+        >
+          <option value="open">Open</option>
+          <option value="closed">Closed</option>
+          <option value="draft">Draft</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+    </div>
+  );
 }

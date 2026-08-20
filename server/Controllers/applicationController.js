@@ -3,6 +3,19 @@ import Campaign from '../models/Campaign.js';
 import Deal from '../models/Deal.js';
 import { computeFees } from '../lib/money.js';
 import InfluencerProfile from '../models/InfluencerProfile.js';
+import { notify } from '../services/notification.service.js'; // ⚠️ adjust path if different
+
+// Small helper: push a live "notification" socket event to a user's personal
+// room (so online users get the instant toast + bell refresh). Safe no-op if
+// io isn't available.
+const pushLive = (req, userId, payload) => {
+  try {
+    const io = req.app.get('io');
+    if (io) io.to(userId.toString()).emit('notification', payload);
+  } catch (e) {
+    console.warn('live notification push failed:', e.message);
+  }
+};
 
 export const applyToCampaign = async (req, res) => {
   try {
@@ -16,18 +29,36 @@ export const applyToCampaign = async (req, res) => {
       return res.status(400).json({ error: { message: 'This campaign is not open for applications' } });
     }
 
-    const { proposalText, proposedPriceMinor, proposedDeliveryDays,attachedPortfolioItemId  } = req.body;
+    const { proposalText, proposedPriceMinor, proposedDeliveryDays, attachedPortfolioItemId } = req.body;
     if (!proposalText) {
       return res.status(400).json({ error: { message: 'Proposal text is required' } });
     }
-const application = await Application.create({
-  campaignId: campaign._id,
-  influencerId: req.user._id,
-  proposalText,
-  proposedPriceMinor,
-  proposedDeliveryDays,
-  attachedPortfolioItemId,
-});
+
+    const application = await Application.create({
+      campaignId: campaign._id,
+      influencerId: req.user._id,
+      proposalText,
+      proposedPriceMinor,
+      proposedDeliveryDays,
+      attachedPortfolioItemId,
+    });
+
+    // ── Notify the BRAND who owns this campaign ──
+    // Routes to the brand's "Campaigns" sidebar link (/app/campaigns).
+    try {
+      const applicantName = req.user.name || 'An influencer';
+      const title = 'New application received';
+      const message = `${applicantName} applied to "${campaign.title}".`;
+      await notify(campaign.brandId, 'application_received', title, message, campaign._id);
+      pushLive(req, campaign.brandId, {
+        type: 'application_received',
+        title,
+        message,
+        relatedId: campaign._id.toString(),
+      });
+    } catch (notifyErr) {
+      console.warn('apply notify failed:', notifyErr.message);
+    }
 
     res.status(201).json({ application });
   } catch (err) {
@@ -103,7 +134,7 @@ export const acceptApplication = async (req, res) => {
 
     // automatically create the deal from this accepted application
     const priceMinor = application.proposedPriceMinor || application.campaignId.budgetMinMinor || 0;
-    const { brandFeeMinor, influencerFeeMinor, commissionMinor } = await computeFees(priceMinor);  // ← added await
+    const { brandFeeMinor, influencerFeeMinor, commissionMinor } = await computeFees(priceMinor);
 
     const deal = await Deal.create({
       brandId: application.campaignId.brandId,
@@ -119,6 +150,21 @@ export const acceptApplication = async (req, res) => {
       sourceId: application.campaignId._id,
       status: 'agreed',
     });
+
+    // ── Notify the INFLUENCER that their application was accepted ──
+    try {
+      const title = 'Application accepted 🎉';
+      const message = `Your application for "${application.campaignId.title}" was accepted.`;
+      await notify(application.influencerId, 'application_accepted', title, message, application.campaignId._id);
+      pushLive(req, application.influencerId, {
+        type: 'application_accepted',
+        title,
+        message,
+        relatedId: application.campaignId._id.toString(),
+      });
+    } catch (notifyErr) {
+      console.warn('accept notify failed:', notifyErr.message);
+    }
 
     res.json({ application, deal });
   } catch (err) {
@@ -137,6 +183,21 @@ export const rejectApplication = async (req, res) => {
 
     application.status = 'rejected';
     await application.save();
+
+    // ── Notify the INFLUENCER that their application was rejected ──
+    try {
+      const title = 'Application update';
+      const message = `Your application for "${application.campaignId.title}" was not selected.`;
+      await notify(application.influencerId, 'application_rejected', title, message, application.campaignId._id);
+      pushLive(req, application.influencerId, {
+        type: 'application_rejected',
+        title,
+        message,
+        relatedId: application.campaignId._id.toString(),
+      });
+    } catch (notifyErr) {
+      console.warn('reject notify failed:', notifyErr.message);
+    }
 
     res.json({ application });
   } catch (err) {
