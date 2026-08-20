@@ -17,14 +17,18 @@ export default function GigsPage() {
   const [revisions, setRevisions] = useState("");
   const [category, setCategory] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [deliverableItems, setDeliverableItems] = useState<{ item: string; quantity: number }[]>([]);
+  const [deliverableItems, setDeliverableItems] = useState<
+    { item: string; quantity: number }[]
+  >([]);
   const [newDeliverableItem, setNewDeliverableItem] = useState("");
   const [newDeliverableQty, setNewDeliverableQty] = useState("1");
 
   const load = async () => {
     setLoading(true);
     try {
-      const data = await apiFetch("/api/gigs?mine=true", { token: getToken()! });
+      const data = await apiFetch("/api/gigs?mine=true", {
+        token: getToken()!,
+      });
       setGigs(data.gigs || []);
     } catch (err: any) {
       toast(err.message);
@@ -37,7 +41,8 @@ export default function GigsPage() {
     load();
   }, []);
 
-  const money = (minor?: number) => (minor ? `PKR ${(minor / 100).toLocaleString("en-PK")}` : "—");
+  const money = (minor?: number) =>
+    minor ? `PKR ${(minor / 100).toLocaleString("en-PK")}` : "—";
 
   const resetForm = () => {
     setShowForm(false);
@@ -131,21 +136,24 @@ export default function GigsPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "active":
-        return "bg-black text-white border-black focus:ring-black/20";
+        return "bg-primary text-white border-primary focus:ring-primary/30";
       case "paused":
-        return "bg-neutral-100 text-black border-neutral-300 focus:ring-black/10";
+        return "bg-surface text-foreground border-border-color focus:ring-primary/10";
       case "draft":
-        return "bg-neutral-100 text-neutral-600 border-neutral-200 focus:ring-neutral-400/20";
+        return "bg-surface text-zinc-400 border-border-color focus:ring-border-color/20";
       case "archived":
-        return "bg-red-50 text-red-600 border-red-200 focus:ring-red-500/20";
+        return "bg-red-500/10 text-red-400 border-red-500/20 focus:ring-red-500/20";
       default:
-        return "bg-white text-black border-neutral-200";
+        return "bg-surface text-foreground border-border-color";
     }
   };
 
   const addDeliverable = () => {
     if (!newDeliverableItem.trim()) return;
-    setDeliverableItems((prev) => [...prev, { item: newDeliverableItem.trim(), quantity: Number(newDeliverableQty) || 1 }]);
+    setDeliverableItems((prev) => [
+      ...prev,
+      { item: newDeliverableItem.trim(), quantity: Number(newDeliverableQty) || 1 },
+    ]);
     setNewDeliverableItem("");
     setNewDeliverableQty("1");
   };
@@ -157,15 +165,17 @@ export default function GigsPage() {
   if (loading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
-        <div className="w-8 h-8 border-t-2 border-primary border-neutral-200 rounded-full animate-spin"></div>
+        <div className="w-8 h-8 border-2 border-border-color border-t-primary rounded-full animate-spin"></div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl  px-4 sm:px-6 lg:px-8 py-6 lg:py-10 space-y-6 lg:space-y-8 text-zinc-900">
+    <div className="max-w-7xl px-4 sm:px-6 lg:px-8 py-6 lg:py-10 space-y-6 lg:space-y-8 text-foreground">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 lg:mb-8">
-        <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-foreground italic">My Gigs</h1>
+        <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-foreground italic">
+          My Gigs
+        </h1>
         <button
           onClick={() => {
             if (showForm) {
@@ -174,15 +184,18 @@ export default function GigsPage() {
               setShowForm(true);
             }
           }}
-          className="self-start sm:self-auto px-4 lg:px-5 py-2 lg:py-2.5 rounded-sm bg-black text-white text-sm lg:text-base font-medium hover:bg-gray-400 transition shadow-sm"
+          className="self-start sm:self-auto px-4 lg:px-5 py-2 lg:py-2.5 rounded-sm bg-primary text-white text-sm lg:text-base font-medium hover:bg-primary/90 transition shadow-sm"
         >
           {showForm ? "Cancel" : "+ New gig"}
         </button>
       </div>
 
       {showForm && (
-        <form onSubmit={handleSubmit} className="bg-white border border-neutral-200 rounded-sm p-4 sm:p-6 lg:p-10 mb-6 space-y-4 lg:space-y-5 shadow-sm lg:max-w-3xl">
-          <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-black mb-2">
+        <form
+          onSubmit={handleSubmit}
+          className="bg-card border border-border-color rounded-sm p-4 sm:p-6 lg:p-10 mb-6 space-y-4 lg:space-y-5 shadow-sm lg:max-w-3xl"
+        >
+          <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-foreground mb-2">
             {editingId ? "Edit Gig" : "Create Gig"}
           </h2>
           <input
@@ -191,27 +204,34 @@ export default function GigsPage() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            className="w-full px-3.5 lg:px-4 py-2.5 lg:py-3 rounded-sm border border-neutral-200 text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-black/20"
+            className="w-full px-3.5 lg:px-4 py-2.5 lg:py-3 rounded-sm border bg-surface text-foreground placeholder:text-zinc-500 border-border-color text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-primary/30"
           />
           <textarea
             placeholder="Describe what's included..."
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={3}
-            className="w-full px-3.5 lg:px-4 py-2.5 lg:py-3 rounded-sm border border-neutral-200 text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-black/20"
+            className="w-full px-3.5 lg:px-4 py-2.5 lg:py-3 rounded-sm border bg-surface text-foreground placeholder:text-zinc-500 border-border-color text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-primary/30"
           />
 
           {/* Deliverables */}
           <div>
-            <label className="block text-xs lg:text-sm font-semibold text-black mb-1.5">Deliverables</label>
+            <label className="block text-xs lg:text-sm font-semibold text-foreground mb-1.5">
+              Deliverables
+            </label>
             <div className="space-y-2 mb-2">
               {deliverableItems.map((d, i) => (
-                <div key={i} className="flex items-center justify-between bg-neutral-50 border border-neutral-200 rounded-sm px-3 lg:px-4 py-2 lg:py-2.5">
-                  <span className="text-xs lg:text-sm text-black">{d.quantity}× {d.item}</span>
+                <div
+                  key={i}
+                  className="flex items-center justify-between bg-surface border border-border-color rounded-sm px-3 lg:px-4 py-2 lg:py-2.5"
+                >
+                  <span className="text-xs lg:text-sm text-foreground">
+                    {d.quantity}× {d.item}
+                  </span>
                   <button
                     type="button"
                     onClick={() => removeDeliverable(i)}
-                    className="text-xs lg:text-sm font-semibold text-red-600 hover:underline"
+                    className="text-xs lg:text-sm font-semibold text-red-400 hover:underline"
                   >
                     Remove
                   </button>
@@ -224,19 +244,19 @@ export default function GigsPage() {
                 placeholder="e.g. Instagram Reel"
                 value={newDeliverableItem}
                 onChange={(e) => setNewDeliverableItem(e.target.value)}
-                className="flex-1 px-3 lg:px-4 py-2 lg:py-2.5 rounded-sm border border-neutral-200 text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-black/20"
+                className="flex-1 px-3 lg:px-4 py-2 lg:py-2.5 rounded-sm border bg-surface text-foreground placeholder:text-zinc-500 border-border-color text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-primary/30"
               />
               <input
                 type="number"
                 min="1"
                 value={newDeliverableQty}
                 onChange={(e) => setNewDeliverableQty(e.target.value)}
-                className="w-full sm:w-20 lg:w-24 px-2 lg:px-3 py-2 lg:py-2.5 rounded-sm border border-neutral-200 text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-black/20"
+                className="w-full sm:w-20 lg:w-24 px-2 lg:px-3 py-2 lg:py-2.5 bg-surface text-foreground rounded-sm border border-border-color text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-primary/30"
               />
               <button
                 type="button"
                 onClick={addDeliverable}
-                className="px-4 lg:px-5 py-2 lg:py-2.5 rounded-sm border border-neutral-200 text-sm lg:text-base font-medium text-black hover:bg-neutral-50 transition"
+                className="px-4 lg:px-5 py-2 lg:py-2.5 rounded-sm border border-border-color text-foreground text-sm lg:text-base font-medium hover:bg-surface transition"
               >
                 + Add
               </button>
@@ -250,7 +270,7 @@ export default function GigsPage() {
               value={priceMinor}
               onChange={(e) => setPriceMinor(e.target.value)}
               required
-              className="w-full px-3.5 lg:px-4 py-2.5 lg:py-3 rounded-sm border border-neutral-200 text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-black/20"
+              className="w-full px-3.5 lg:px-4 py-2.5 lg:py-3 rounded-sm bg-surface text-foreground placeholder:text-zinc-500 border border-border-color text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-primary/30"
             />
             <input
               type="number"
@@ -258,14 +278,14 @@ export default function GigsPage() {
               value={deliveryDays}
               onChange={(e) => setDeliveryDays(e.target.value)}
               required
-              className="w-full px-3.5 lg:px-4 py-2.5 lg:py-3 rounded-sm border border-neutral-200 text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-black/20"
+              className="w-full px-3.5 lg:px-4 py-2.5 lg:py-3 rounded-sm bg-surface text-foreground placeholder:text-zinc-500 border border-border-color text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-primary/30"
             />
             <input
               type="number"
               placeholder="Revisions included"
               value={revisions}
               onChange={(e) => setRevisions(e.target.value)}
-              className="w-full px-3.5 lg:px-4 py-2.5 lg:py-3 rounded-sm border border-neutral-200 text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-black/20"
+              className="w-full px-3.5 lg:px-4 py-2.5 lg:py-3 rounded-sm border bg-surface text-foreground placeholder:text-zinc-500 border-border-color text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-primary/30"
             />
           </div>
           <input
@@ -273,46 +293,61 @@ export default function GigsPage() {
             placeholder="Category (e.g. fashion, fitness)"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="w-full px-3.5 lg:px-4 py-2.5 lg:py-3 rounded-sm border border-neutral-200 text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-black/20"
+            className="w-full px-3.5 lg:px-4 py-2.5 lg:py-3 rounded-sm border bg-surface text-foreground placeholder:text-zinc-500 border-border-color text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-primary/30"
           />
           <button
             type="submit"
             disabled={submitting}
-            className="w-full sm:w-auto px-6 lg:px-8 py-2.5 lg:py-3 rounded-sm bg-black text-white text-sm lg:text-base font-medium hover:bg-slate-700 transition disabled:opacity-50"
+            className="w-full sm:w-auto px-6 lg:px-8 py-2.5 lg:py-3 rounded-sm bg-primary text-white text-sm lg:text-base font-medium hover:bg-primary/90 transition disabled:opacity-50"
           >
             {submitting ? "Saving..." : editingId ? "Update gig" : "Post gig"}
           </button>
         </form>
       )}
 
-      {!showForm && (
-        gigs.length === 0 ? (
-          <div className="bg-white border border-neutral-200 rounded-sm p-8 lg:p-14 text-center shadow-sm">
-            <p className="text-neutral-500 text-sm lg:text-base">You haven't posted any gigs yet.</p>
+      {!showForm &&
+        (gigs.length === 0 ? (
+          <div className="bg-card border border-border-color rounded-sm p-8 lg:p-14 text-center shadow-sm">
+            <p className="text-zinc-400 text-sm lg:text-base">
+              You haven't posted any gigs yet.
+            </p>
           </div>
         ) : (
-          <div className="bg-white border border-neutral-200 rounded-sm overflow-hidden shadow-sm">
+          <div className="bg-card border border-border-color rounded-sm overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse text-sm lg:text-base min-w-[640px]">
                 <thead>
-                  <tr className="border-b border-neutral-200 text-sm sm:text-base font-semibold italic bg-neutral-50">
-                    <th className="py-3.5 lg:py-4 px-4 sm:px-6 lg:px-8 text-black whitespace-nowrap">Title</th>
-                    <th className="py-3.5 lg:py-4 px-4 sm:px-6 lg:px-8 text-black whitespace-nowrap">Category</th>
-                    <th className="py-3.5 lg:py-4 px-4 sm:px-6 lg:px-8 text-black whitespace-nowrap">Price</th>
-                    <th className="py-3.5 lg:py-4 px-4 sm:px-6 lg:px-8 text-black whitespace-nowrap">Status</th>
-                    <th className="py-3.5 lg:py-4 px-4 sm:px-6 lg:px-8 text-right text-black whitespace-nowrap">Actions</th>
+                  <tr className="border-b border-border-color text-sm sm:text-base font-semibold italic bg-surface">
+                    <th className="py-3.5 lg:py-4 px-4 sm:px-6 lg:px-8 text-foreground whitespace-nowrap">
+                      Title
+                    </th>
+                    <th className="py-3.5 lg:py-4 px-4 sm:px-6 lg:px-8 text-foreground whitespace-nowrap">
+                      Category
+                    </th>
+                    <th className="py-3.5 lg:py-4 px-4 sm:px-6 lg:px-8 text-foreground whitespace-nowrap">
+                      Price
+                    </th>
+                    <th className="py-3.5 lg:py-4 px-4 sm:px-6 lg:px-8 text-foreground whitespace-nowrap">
+                      Status
+                    </th>
+                    <th className="py-3.5 lg:py-4 px-4 sm:px-6 lg:px-8 text-right text-foreground whitespace-nowrap">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-neutral-200">
+                <tbody className="divide-y divide-border-color">
                   {gigs.map((g) => (
-                    <tr key={g._id} className="hover:bg-neutral-50/50 transition">
-                      <td className="py-4 lg:py-5 px-4 sm:px-6 lg:px-8 text-black font-medium max-w-[160px] sm:max-w-[220px] lg:max-w-[280px] truncate" title={g.title}>
+                    <tr key={g._id} className="hover:bg-surface/50 transition">
+                      <td
+                        className="py-4 lg:py-5 px-4 sm:px-6 lg:px-8 text-foreground font-medium max-w-[160px] sm:max-w-[220px] lg:max-w-[280px] truncate"
+                        title={g.title}
+                      >
                         {g.title}
                       </td>
-                      <td className="py-4 lg:py-5 px-4 sm:px-6 lg:px-8 text-neutral-700 whitespace-nowrap">
+                      <td className="py-4 lg:py-5 px-4 sm:px-6 lg:px-8 text-zinc-400 whitespace-nowrap">
                         {g.category || "—"}
                       </td>
-                      <td className="py-4 lg:py-5 px-4 sm:px-6 lg:px-8 font-semibold text-black whitespace-nowrap">
+                      <td className="py-4 lg:py-5 px-4 sm:px-6 lg:px-8 font-semibold text-foreground whitespace-nowrap">
                         {money(g.priceMinor)}
                       </td>
                       <td className="py-4 lg:py-5 px-4 sm:px-6 lg:px-8 whitespace-nowrap">
@@ -323,23 +358,31 @@ export default function GigsPage() {
                             g.status
                           )}`}
                         >
-                          <option value="active" className="text-white">Active</option>
-                          <option value="paused" className="text-white">Paused</option>
-                          <option value="draft" className="text-white">Draft</option>
-                          <option value="archived" className="text-white">Archived</option>
+                          <option value="active" className="bg-surface text-foreground">
+                            Active
+                          </option>
+                          <option value="paused" className="bg-surface text-foreground">
+                            Paused
+                          </option>
+                          <option value="draft" className="bg-surface text-foreground">
+                            Draft
+                          </option>
+                          <option value="archived" className="bg-surface text-foreground">
+                            Archived
+                          </option>
                         </select>
                       </td>
                       <td className="py-4 lg:py-5 px-4 sm:px-6 lg:px-8 text-right whitespace-nowrap">
                         <div className="flex items-center justify-end gap-2 lg:gap-3">
                           <button
                             onClick={() => handleStartEdit(g)}
-                            className="px-3 lg:px-4 py-1 lg:py-1.5 rounded-sm text-xs lg:text-sm font-semibold text-black bg-neutral-100 hover:bg-neutral-200 border border-neutral-200 transition"
+                            className="px-3 lg:px-4 py-1 lg:py-1.5 rounded-sm text-xs lg:text-sm font-semibold text-foreground bg-surface hover:bg-card border border-border-color transition"
                           >
                             Edit
                           </button>
                           <button
                             onClick={() => handleDelete(g._id)}
-                            className="px-3 lg:px-4 py-1 lg:py-1.5 rounded-sm text-xs lg:text-sm font-semibold text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 transition"
+                            className="px-3 lg:px-4 py-1 lg:py-1.5 rounded-sm text-xs lg:text-sm font-semibold text-red-400 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 transition"
                           >
                             Delete
                           </button>
@@ -351,8 +394,7 @@ export default function GigsPage() {
               </table>
             </div>
           </div>
-        )
-      )}
+        ))}
     </div>
   );
 }
