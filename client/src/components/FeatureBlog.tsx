@@ -43,7 +43,7 @@ export default function FeatureBlog() {
   return (
     <section ref={sectionRef} className="relative bg-background py-16 sm:py-20 lg:py-28 overflow-hidden">
       <div
-        className={`max-w-6xl mx-auto px-4 sm:px-6 mb-14 lg:mb-20 text-center transition-all duration-700 ease-out ${
+        className={`max-w-6xl mx-auto px-4 sm:px-6 mb-12 lg:mb-16 text-center transition-all duration-700 ease-out ${
           isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"
         }`}
       >
@@ -54,95 +54,104 @@ export default function FeatureBlog() {
       </div>
 
       {loading ? (
-        <div className="relative max-w-4xl lg:max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center sm:items-end justify-center gap-4 sm:gap-6 lg:gap-10">
-          <div className="w-56 sm:w-72 md:w-80 lg:w-96 aspect-square rounded-2xl bg-surface animate-pulse shrink-0 sm:-translate-y-6 md:-translate-y-8 lg:-translate-y-10" />
-          <div className="flex gap-4 sm:contents w-full sm:w-auto justify-center">
-            <div className="flex-1 max-w-[160px] sm:max-w-none sm:w-40 md:w-48 lg:w-56 aspect-[3/4] rounded-2xl bg-surface animate-pulse shrink-0" />
-            <div className="flex-1 max-w-[160px] sm:max-w-none sm:w-40 md:w-48 lg:w-56 aspect-[3/4] rounded-2xl bg-surface animate-pulse shrink-0" />
-          </div>
+        <div className="relative max-w-4xl mx-auto h-[460px] sm:h-[500px] flex items-center justify-center">
+          <div className="w-72 sm:w-80 aspect-square rounded-sm bg-surface border border-border-color animate-pulse" />
         </div>
       ) : (
-        <div className="relative max-w-4xl lg:max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center sm:items-end justify-center gap-4 sm:gap-6 lg:gap-10">
-          {/* Center card — full width on mobile, sits on top; raised above the row on desktop */}
-          {center && (
+        <div className="relative max-w-4xl mx-auto h-[480px] sm:h-[520px] flex items-center justify-center px-4 select-none">
+          {/* Left Card (Fans out on scroll) */}
+          {left && (
             <Link
-              href={`/blog/${center.slug}`}
-              className={`group relative order-1 sm:order-2 w-56 sm:w-72 md:w-80 lg:w-96 rounded-sm overflow-hidden z-10 sm:-translate-y-6 md:-translate-y-8 lg:-translate-y-10 transition-all duration-700 ease-out ${
-                isVisible ? "opacity-100 scale-100" : "opacity-0 translate-y-16 scale-90"
+              href={`/blog/${left.slug}`}
+              className={`absolute z-10 w-60 sm:w-72 rounded-sm border border-border-color bg-surface overflow-hidden shadow-2xl transition-all duration-700 ease-out group ${
+                isVisible
+                  ? "-translate-x-[150px] sm:-translate-x-[230px] lg:-translate-x-[280px] opacity-100 scale-100 rotate-[-4deg]"
+                  : "translate-x-0 opacity-0 scale-75 pointer-events-none rotate-0"
               }`}
             >
-              {center.image && (
-                <div className="aspect-square overflow-hidden">
+              {left.image && (
+                <div className="aspect-[16/10] overflow-hidden bg-background">
                   <img
-                    src={`${process.env.NEXT_PUBLIC_API_URL}${center.image}`}
-                    alt={center.title}
-                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                    src={`${process.env.NEXT_PUBLIC_API_URL}${left.image}`}
+                    alt={left.title}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                 </div>
               )}
-              <div className="p-4 lg:p-5">
+              <div className="p-4">
+                {left.category && (
+                  <span className="text-[11px] font-semibold text-[#B90808] uppercase tracking-wider block mb-1">
+                    {left.category}
+                  </span>
+                )}
+                <p className="text-xs sm:text-sm font-bold text-foreground line-clamp-2">{left.title}</p>
+              </div>
+            </Link>
+          )}
+
+          {/* Center Card (Main focal point) */}
+          {center && (
+            <Link
+              href={`/blog/${center.slug}`}
+              className={`relative z-20 w-72 sm:w-80 md:w-88 rounded-sm border border-border-color bg-surface overflow-hidden shadow-2xl transition-all duration-700 ease-out group hover:border-zinc-500 hover:shadow-black/40 ${
+                isVisible ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-90 translate-y-10"
+              }`}
+            >
+              {center.image && (
+                <div className="aspect-[16/10] overflow-hidden bg-background">
+                  <img
+                    src={`${process.env.NEXT_PUBLIC_API_URL}${center.image}`}
+                    alt={center.title}
+                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                  />
+                </div>
+              )}
+              <div className="p-5 lg:p-6">
                 {center.category && (
-                  <span className="text-[15px] lg:text-base font-semibold text-[#B90808]">
+                  <span className="text-xs font-semibold text-[#B90808] uppercase tracking-wider block mb-2">
                     {center.category}
                   </span>
                 )}
-                <p className="text-sm sm:text-base lg:text-lg font-bold text-foreground mt-1 line-clamp-2">{center.title}</p>
+                <h3 className="text-base sm:text-lg font-bold text-foreground group-hover:text-[#B90808] transition-colors line-clamp-2">
+                  {center.title}
+                </h3>
                 {center.shortDescription && (
-                  <p className="text-xs lg:text-sm text-zinc-400 mt-2 line-clamp-2">{center.shortDescription}</p>
+                  <p className="text-xs lg:text-sm text-zinc-400 mt-2 line-clamp-2">
+                    {center.shortDescription}
+                  </p>
                 )}
               </div>
             </Link>
           )}
 
-          {/* Left + Right — row under center on mobile; becomes two normal flex items (via sm:contents) flanking center on desktop */}
-          {(left || right) && (
-            <div className="order-2 sm:contents flex gap-4 w-full sm:w-auto justify-center mt-2 sm:mt-0">
-              {left && (
-                <Link
-                  href={`/blog/${left.slug}`}
-                  className={`group sm:order-1 relative flex-1 max-w-[160px] sm:max-w-none sm:w-40 md:w-48 lg:w-56 rounded-sm overflow-hidden border border-border-color bg-background shrink-0 transition-all duration-500 ease-out sm:hover:-translate-y-6 md:hover:-translate-y-8 lg:hover:-translate-y-10 hover:opacity-100 hover:border-zinc-600 hover:shadow-xl hover:shadow-black/50 hover:z-10 ${
-                    isVisible ? "opacity-70 translate-x-0 scale-95" : "opacity-0 -translate-x-20 scale-90"
-                  }`}
-                  style={{ transitionDelay: isVisible ? "150ms" : "0ms" }}
-                >
-                  {left.image && (
-                    <div className="aspect-[3/4] overflow-hidden">
-                      <img
-                        src={`${process.env.NEXT_PUBLIC_API_URL}${left.image}`}
-                        alt={left.title}
-                        className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
-                      />
-                    </div>
-                  )}
-                  <div className="p-2 sm:p-3">
-                    <p className="text-[11px] sm:text-xs lg:text-sm font-bold text-foreground line-clamp-2">{left.title}</p>
-                  </div>
-                </Link>
+          {/* Right Card (Fans out on scroll) */}
+          {right && (
+            <Link
+              href={`/blog/${right.slug}`}
+              className={`absolute z-10 w-60 sm:w-72 rounded-sm border border-border-color bg-surface overflow-hidden shadow-2xl transition-all duration-700 ease-out group ${
+                isVisible
+                  ? "translate-x-[150px] sm:translate-x-[230px] lg:translate-x-[280px] opacity-100 scale-100 rotate-[4deg]"
+                  : "translate-x-0 opacity-0 scale-75 pointer-events-none rotate-0"
+              }`}
+            >
+              {right.image && (
+                <div className="aspect-[16/10] overflow-hidden bg-background">
+                  <img
+                    src={`${process.env.NEXT_PUBLIC_API_URL}${right.image}`}
+                    alt={right.title}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                </div>
               )}
-
-              {right && (
-                <Link
-                  href={`/blog/${right.slug}`}
-                  className={`group sm:order-3 relative flex-1 max-w-[160px] sm:max-w-none sm:w-40 md:w-48 lg:w-56 rounded-sm overflow-hidden border border-border-color bg-surface shrink-0 transition-all duration-500 ease-out sm:hover:-translate-y-6 md:hover:-translate-y-8 lg:hover:-translate-y-10 hover:opacity-100 hover:border-zinc-600 hover:shadow-xl hover:shadow-black/50 hover:z-10 ${
-                    isVisible ? "opacity-70 translate-x-0 scale-95" : "opacity-0 translate-x-20 scale-90"
-                  }`}
-                  style={{ transitionDelay: isVisible ? "150ms" : "0ms" }}
-                >
-                  {right.image && (
-                    <div className="aspect-[3/4] overflow-hidden">
-                      <img
-                        src={`${process.env.NEXT_PUBLIC_API_URL}${right.image}`}
-                        alt={right.title}
-                        className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
-                      />
-                    </div>
-                  )}
-                  <div className="p-2 sm:p-3">
-                    <p className="text-[11px] sm:text-xs lg:text-sm font-bold text-foreground line-clamp-2">{right.title}</p>
-                  </div>
-                </Link>
-              )}
-            </div>
+              <div className="p-4">
+                {right.category && (
+                  <span className="text-[11px] font-semibold text-[#B90808] uppercase tracking-wider block mb-1">
+                    {right.category}
+                  </span>
+                )}
+                <p className="text-xs sm:text-sm font-bold text-foreground line-clamp-2">{right.title}</p>
+              </div>
+            </Link>
           )}
         </div>
       )}
@@ -153,11 +162,11 @@ export default function FeatureBlog() {
           className={`flex justify-center mt-12 lg:mt-16 transition-all duration-500 ease-out ${
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
           }`}
-          style={{ transitionDelay: isVisible ? "350ms" : "0ms" }}
+          style={{ transitionDelay: "350ms" }}
         >
           <Link
             href="/blog"
-            className="group inline-flex items-center gap-2 px-6 py-3 lg:px-8 lg:py-3.5 rounded-xl border border-border-color hover:border-border-color text-foreground text-xs lg:text-sm font-bold uppercase tracking-widest transition-all duration-300 hover:bg-background hover:scale-105"
+            className="group inline-flex items-center gap-2 px-6 py-3 lg:px-8 lg:py-3.5 rounded-sm border border-border-color hover:border-border-color text-foreground text-xs lg:text-sm font-bold uppercase tracking-widest transition-all duration-300 hover:bg-background hover:scale-105"
           >
             Explore More
             <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
