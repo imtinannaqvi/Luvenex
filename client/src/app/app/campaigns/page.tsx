@@ -174,7 +174,7 @@ const cancelledCampaigns = campaigns.filter((c) => c.status === "cancelled");
     </div>
   ) : (
     <div className="space-y-8">
-      {/* Draft section */}
+      {/* Draft section — distinct treatment: dashed cards + "finish & publish" CTA */}
       {draftCampaigns.length > 0 && (
         <div>
           <h2 className="text-xs font-bold uppercase tracking-wide text-muted mb-3 flex items-center gap-1.5">
@@ -183,7 +183,7 @@ const cancelledCampaigns = campaigns.filter((c) => c.status === "cancelled");
           </h2>
           <div className="space-y-3">
             {draftCampaigns.map((c) => (
-              <CampaignCard key={c._id} c={c} money={money} updateStatus={updateStatus} />
+              <DraftCampaignCard key={c._id} c={c} money={money} updateStatus={updateStatus} />
             ))}
           </div>
         </div>
@@ -238,6 +238,50 @@ const cancelledCampaigns = campaigns.filter((c) => c.status === "cancelled");
 )}
 </div>
 );
+}
+
+// Draft-specific card — dashed border, muted, calls out that it's unpublished,
+// with a one-click "Publish" action instead of a generic status dropdown.
+function DraftCampaignCard({ c, money, updateStatus }: { c: any; money: (m?: number) => string; updateStatus: (id: string, status: string) => void }) {
+  return (
+    <div className="relative bg-surface/50 border border-dashed border-yellow-500/40 rounded-xl p-4 transition hover:border-yellow-500/70">
+      <div className="flex justify-between items-start gap-3">
+        <Link href={`/app/campaigns/${c._id}`} className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full bg-yellow-500/10 text-yellow-600 border border-yellow-500/30">
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z" />
+              </svg>
+              Draft
+            </span>
+          </div>
+          <p className="text-sm font-medium text-foreground/80">
+            {c.title || <span className="italic text-muted">Untitled campaign</span>}
+          </p>
+          <p className="text-xs text-muted mt-1">
+            {c.budgetMinMinor || c.budgetMaxMinor
+              ? `${money(c.budgetMinMinor)} – ${money(c.budgetMaxMinor)}`
+              : "No budget set yet"}
+            {c.category ? ` · ${c.category}` : ""}
+          </p>
+          <p className="text-[11px] text-muted italic mt-2">
+            Not visible to influencers until published.
+          </p>
+        </Link>
+
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            updateStatus(c._id, "open");
+          }}
+          className="shrink-0 text-xs font-semibold px-3 py-1.5 rounded-full bg-yellow-500/10 text-yellow-700 border border-yellow-500/40 hover:bg-yellow-500 hover:text-white hover:border-yellow-500 transition"
+        >
+          Publish
+        </button>
+      </div>
+    </div>
+  );
 }
 
 // Extracted card component — avoids repeating the same JSX four times

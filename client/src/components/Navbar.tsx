@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useContactPanel } from "./ContactPanel";
 import { getToken } from "@/lib/auth";
-import ThemeToggle from "./ThemeToggle";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -74,7 +73,6 @@ const Navbar = () => {
               {link.label}
             </Link>
           ))}
-          <ThemeToggle />
         </div>
 
         {/* Right cluster: auth + menu */}

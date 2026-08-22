@@ -127,7 +127,7 @@ const Card = ({ s }: { s: Service }) => (
           </div>
         ) : (
           /* ── Marquee: cards flow right → left after a short pause ── */
-          <div className="marquee relative w-full overflow-hidden rounded-3xl">
+          <div className="marquee relative w-full overflow-x-hidden overflow-y-visible rounded-3xl">
 
             {/* Background parallax strip — one continuous layer behind everything,
                 clipped to the marquee bounds so it never peeks through card gaps */}
@@ -150,7 +150,7 @@ const Card = ({ s }: { s: Service }) => (
             <div className="pointer-events-none absolute inset-y-0 left-0 w-16 sm:w-24 bg-gradient-to-r from-background to-transparent z-10" />
             <div className="pointer-events-none absolute inset-y-0 right-0 w-16 sm:w-24 bg-gradient-to-l from-background to-transparent z-10" />
 
-            <div className="marquee-track relative z-10 flex gap-5 w-max">
+            <div className="marquee-track relative z-10 flex gap-5 w-max pt-3 pb-1">
               {/* first copy */}
               {services.map((s) => (
                 <Card key={`a-${s._id}`} s={s} />

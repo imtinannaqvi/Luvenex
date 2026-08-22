@@ -149,8 +149,8 @@ export default function AdminUsersPage() {
                         placeholder="Search index by name, identity, or metadata..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2.5 rounded-md border border-slate-200 text-sm bg-background text-slate-900 shadow-2xs
-                                   focus:outline-none focus:ring-4 focus:ring-slate-950/5 focus:border-slate-400 placeholder-slate-400 transition font-medium"
+                        className="w-full pl-10 pr-4 py-2.5 rounded-md border border-slate-200 text-sm bg-background text-foreground shadow-2xs
+                                   focus:outline-none focus:ring-4 focus:ring-slate-950/5 focus:border-slate-400 placeholder-foreground transition font-medium"
                     />
                 </div>
                 <div className="flex flex-col sm:flex-row gap-2.5 lg:w-auto w-full">
@@ -175,7 +175,7 @@ export default function AdminUsersPage() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="sm:w-36 w-full px-5 py-2.5 rounded-md bg-slate-950 text-white text-sm font-semibold hover:bg-slate-900 
+                        className="sm:w-36 w-full px-5 py-2.5 rounded-md bg-surface text-foreground text-sm font-semibold hover:bg-primary 
                                    transition active:scale-[0.99] disabled:opacity-50 shadow-sm shrink-0 flex items-center justify-center gap-2"
                     >
                         {loading ? (

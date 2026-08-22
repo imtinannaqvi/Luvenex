@@ -57,7 +57,7 @@ export default function AdminKycQueuePage() {
                     <h1 className="text-2xl font-bold text-foreground tracking-tight">KYC Verification Queue</h1>
                     <p className="text-sm text-muted mt-1">Review and verify pending user identity submissions.</p>
                 </div>
-                <span className="px-3 py-1 rounded-full bg-surface border border-line text-sm font-semibold text-foreground">
+                <span className="px-3 py-1 rounded-sm bg-surface border border-line text-sm font-semibold text-foreground">
                     {users.length} Pending
                 </span>
             </div>
@@ -67,7 +67,7 @@ export default function AdminKycQueuePage() {
                     <div className="w-7 h-7 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
                 </div>
             ) : users.length === 0 ? (
-                <div className="bg-background border border-line rounded-2xl p-12 text-center shadow-sm">
+                <div className="bg-background border border-line rounded-sm p-12 text-center shadow-sm">
                     <div className="w-12 h-12 mx-auto mb-3 rounded-2xl bg-surface border border-line flex items-center justify-center text-muted">
                         <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -79,12 +79,12 @@ export default function AdminKycQueuePage() {
             ) : (
                 <div className="space-y-4">
                     {users.map((u) => (
-                        <div key={u._id} className="bg-background border border-line rounded-2xl p-6 shadow-sm transition-all hover:shadow-md">
+                        <div key={u._id} className="bg-background border border-line rounded-sm p-6 shadow-sm transition-all hover:shadow-md">
                             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                                 
                                 {/* User Details Section */}
                                 <div className="flex items-start gap-4">
-                                    <div className="w-12 h-12 rounded-2xl bg-surface border border-line flex items-center justify-center text-foreground font-bold text-base shrink-0 shadow-inner">
+                                    <div className="w-12 h-12 rounded-sm bg-surface border border-line flex items-center justify-center text-foreground font-bold text-base shrink-0 shadow-inner">
                                         {u.name?.[0]?.toUpperCase() || "?"}
                                     </div>
                                     <div className="space-y-1">
@@ -117,7 +117,7 @@ export default function AdminKycQueuePage() {
                                     <button
                                         disabled={actionLoadingId === u._id}
                                         onClick={() => reviewKyc(u._id, "verified")}
-                                        className="text-xs font-semibold px-4 py-2 rounded-xl bg-background text-paper hover:bg-surface transition shadow-sm disabled:opacity-50 flex items-center gap-1.5 cursor-pointer"
+                                        className="text-xs font-semibold px-4 py-2 rounded-sm bg-background text-paper hover:bg-surface transition shadow-sm disabled:opacity-50 flex items-center gap-1.5 cursor-pointer"
                                     >
                                         {actionLoadingId === u._id ? (
                                             <div className="w-3.5 h-3.5 border-2 border-paper/30 border-t-paper rounded-full animate-spin" />
@@ -127,7 +127,7 @@ export default function AdminKycQueuePage() {
                                     <button
                                         disabled={actionLoadingId === u._id}
                                         onClick={() => setRejectingId(rejectingId === u._id ? null : u._id)}
-                                        className={`text-xs font-semibold px-4 py-2 rounded-xl transition shadow-sm disabled:opacity-50 cursor-pointer ${
+                                        className={`text-xs font-semibold px-4 py-2 rounded-sm transition shadow-sm disabled:opacity-50 cursor-pointer ${
                                             rejectingId === u._id 
                                                 ? "bg-surface border border-line text-foreground hover:bg-line/50" 
                                                 : "bg-red-600 text-white hover:bg-red-700"
@@ -146,7 +146,7 @@ export default function AdminKycQueuePage() {
                                         placeholder="Provide a clear reason for rejection..."
                                         value={rejectionReason}
                                         onChange={(e) => setRejectionReason(e.target.value)}
-                                        className="flex-1 px-4 py-2.5 rounded-xl border border-line text-xs bg-surface text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition"
+                                        className="flex-1 px-4 py-2.5 rounded-sm border border-line text-xs bg-surface text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition"
                                     />
                                     <button
                                         disabled={actionLoadingId === u._id || !rejectionReason.trim()}

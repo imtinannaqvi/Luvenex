@@ -172,7 +172,7 @@ export default function AdminBlogPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10 lg:px-12 py-8 space-y-6 relative z-10">
+    <div className="max-w-7xl  px-4 sm:px-6 md:px-10 lg:px-12 py-8 space-y-6 relative z-10">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <h1 className="text-2xl md:text-3xl font-bold text-foreground italic">Blog</h1>
         <button
@@ -394,7 +394,7 @@ export default function AdminBlogPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse min-w-[640px] md:min-w-full">
                 <thead>
-                  <tr className="border-b border-line text-sm font-bold text-foreground bg-line/10">
+                  <tr className="border-b border-line text-sm font-bold text-foreground bg-background">
                     <th className="py-4 px-4 sm:px-6">Image</th>
                     <th className="py-4 px-4 sm:px-6">Title</th>
                     <th className="py-4 px-4 sm:px-6">Category</th>

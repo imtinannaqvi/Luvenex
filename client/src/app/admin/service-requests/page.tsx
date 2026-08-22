@@ -51,7 +51,14 @@ export default function AdminServiceRequestsPage() {
 
   useEffect(() => {
   apiFetch("/api/influencers?limit=100", {})
-    .then((data) => setInfluencers(data.profiles || []))
+    .then((data) => {
+      // Filter out orphaned influencer profiles whose linked user account
+      // no longer exists (e.g. deleted directly in the DB) — these have a
+      // null/missing userId and would otherwise render an <option> with no
+      // usable key or value.
+      const valid = (data.profiles || []).filter((p: any) => p.userId?._id);
+      setInfluencers(valid);
+    })
     .catch(() => setInfluencers([]));
 }, []);
 
@@ -91,7 +98,7 @@ export default function AdminServiceRequestsPage() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3.5 py-2.5 pr-9 rounded-2xl border border-line text-sm bg-background text-foreground appearance-none cursor-pointer
+            className="px-3.5 py-2 pr-9 rounded-sm border border-line text-sm bg-background text-foreground appearance-none cursor-pointer
                        focus:outline-none focus:ring-2 focus:ring-ink/10 focus:border-ink/40 transition"
           >
             <option value="pending">Pending</option>
@@ -109,7 +116,7 @@ export default function AdminServiceRequestsPage() {
       </div>
 
       {error && (
-        <div className="bg-primary/[0.06] border border-primary/20 text-primary text-sm font-medium rounded-2xl px-4 py-3 mb-4">
+        <div className="bg-primary/[0.06] border border-primary/20 text-primary text-sm font-medium rounded-sm px-4 py-3 mb-4">
           {error}
         </div>
       )}
@@ -134,17 +141,17 @@ export default function AdminServiceRequestsPage() {
 
                 {/* meta pills */}
                 <div className="flex flex-wrap items-center gap-2 mt-3">
-                  <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-background border border-line text-foreground">
+                  <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-sm bg-background border border-line text-foreground">
                     {money(r.budgetMinMinor)} – {money(r.budgetMaxMinor)}
                   </span>
                   {r.category && (
-                    <span className="inline-flex items-center text-[11px] font-semibold px-2.5 py-1 rounded-full bg-primary/[0.06] border border-primary/20 text-primary capitalize">
+                    <span className="inline-flex items-center text-[11px] font-semibold px-2.5 py-1 rounded-sm bg-primary/[0.06] border border-primary/20 text-primary capitalize">
                       {r.category}
                     </span>
                   )}
                   {r.matchedInfluencerId && (
-                    <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                    <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-sm bg-emerald-50 border border-emerald-200 text-emerald-700">
+                      <span className="w-1.5 h-1.5 rounded-sm bg-emerald-500" />
                       Matched: {r.matchedInfluencerId.name}
                     </span>
                   )}
@@ -167,7 +174,7 @@ export default function AdminServiceRequestsPage() {
               {r.status === "pending" && (
                 <button
                   onClick={() => setMatchingId(matchingId === r._id ? null : r._id)}
-                  className="mt-4 text-sm font-semibold px-4 py-2 rounded-xl bg-surface border border-line text-foreground hover:bg-primary hover:text-white hover:border-primary transition self-start"
+                  className="mt-4 text-sm font-semibold px-4 py-2 rounded-sm bg-surface border border-line text-foreground hover:bg-primary hover:text-white hover:border-primary transition self-start"
                 >
                   {matchingId === r._id ? "Close" : "Match"}
                 </button>
@@ -178,12 +185,12 @@ export default function AdminServiceRequestsPage() {
     <select
       value={influencerId}
       onChange={(e) => setInfluencerId(e.target.value)}
-      className="w-full px-3.5 py-2.5 rounded-2xl border border-line text-sm bg-background text-foreground
+      className="w-full px-3.5 py-2.5 rounded-sm border border-line text-sm bg-background text-foreground
                  focus:outline-none focus:ring-2 focus:ring-ink/10 focus:border-ink/40 transition"
     >
       <option value="">Select an influencer…</option>
       {influencers.map((inf) => (
-        <option key={inf.userId?._id} value={inf.userId?._id}>
+        <option key={inf.userId?._id || inf._id} value={inf.userId?._id}>
           {inf.userId?.name || inf.handle}
         </option>
       ))}
@@ -193,13 +200,13 @@ export default function AdminServiceRequestsPage() {
       placeholder="Admin notes (optional)"
       value={adminNotes}
       onChange={(e) => setAdminNotes(e.target.value)}
-      className="w-full px-3.5 py-2.5 rounded-2xl border border-line text-sm bg-background text-foreground
+      className="w-full px-3.5 py-2.5 rounded-sm border border-line text-sm bg-background text-foreground
                  focus:outline-none focus:ring-2 focus:ring-ink/10 focus:border-ink/40 transition"
     />
     <button
       disabled={actionLoadingId === r._id || !influencerId}
       onClick={() => match(r._id)}
-      className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-primary text-white text-sm font-semibold hover:bg-primary-dark transition disabled:opacity-50"
+      className="inline-flex items-center gap-2 px-4 py-2.5 rounded-sm bg-primary text-white text-sm font-semibold hover:bg-primary-dark transition disabled:opacity-50"
     >
       {actionLoadingId === r._id && (
         <Spinner className="w-4 h-4 border-white border-t-transparent" />

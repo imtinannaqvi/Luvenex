@@ -17,7 +17,6 @@ export default function FeatureBlog() {
       .finally(() => setLoading(false));
   }, []);
 
-  
   useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
@@ -35,7 +34,6 @@ export default function FeatureBlog() {
     return () => observer.disconnect();
   }, []);
 
- 
   if (!loading && blogs.length === 0) return null;
 
   const center = blogs[0];
@@ -56,47 +54,25 @@ export default function FeatureBlog() {
       </div>
 
       {loading ? (
-
-        <div className="relative max-w-4xl lg:max-w-5xl mx-auto px-4 flex items-end justify-center gap-4 sm:gap-6 lg:gap-10">
-          <div className="hidden sm:block w-40 md:w-48 lg:w-56 aspect-[3/4] rounded-2xl bg-surface animate-pulse shrink-0" />
+        <div className="relative max-w-4xl lg:max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center sm:items-end justify-center gap-4 sm:gap-6 lg:gap-10">
           <div className="w-56 sm:w-72 md:w-80 lg:w-96 aspect-square rounded-2xl bg-surface animate-pulse shrink-0 sm:-translate-y-6 md:-translate-y-8 lg:-translate-y-10" />
-          <div className="hidden sm:block w-40 md:w-48 lg:w-56 aspect-[3/4] rounded-2xl bg-surface animate-pulse shrink-0" />
+          <div className="flex gap-4 sm:contents w-full sm:w-auto justify-center">
+            <div className="flex-1 max-w-[160px] sm:max-w-none sm:w-40 md:w-48 lg:w-56 aspect-[3/4] rounded-2xl bg-surface animate-pulse shrink-0" />
+            <div className="flex-1 max-w-[160px] sm:max-w-none sm:w-40 md:w-48 lg:w-56 aspect-[3/4] rounded-2xl bg-surface animate-pulse shrink-0" />
+          </div>
         </div>
       ) : (
-        <div className="relative max-w-4xl lg:max-w-5xl mx-auto px-4 flex items-end justify-center gap-4 sm:gap-6 lg:gap-10">
-          {/* Left card — sits lower at rest, rises up to meet center on hover */}
-          {left && (
-            <Link
-              href={`/blog/${left.slug}`}
-              className={`group hidden sm:block relative w-40 md:w-48 lg:w-56 rounded-2xl overflow-hidden border border-border-color bg-background shrink-0 transition-all duration-500 ease-out hover:-translate-y-6 md:hover:-translate-y-8 lg:hover:-translate-y-10 hover:opacity-100 hover:border-zinc-600 hover:shadow-xl hover:shadow-black/50 hover:z-10 ${
-                isVisible ? "opacity-70 translate-x-0 scale-95" : "opacity-0 -translate-x-20 scale-90"
-              }`}
-              style={{ transitionDelay: isVisible ? "150ms" : "0ms" }}
-            >
-              {left.image && (
-                <div className="aspect-[3/4] overflow-hidden">
-                  <img
-                    src={`${process.env.NEXT_PUBLIC_API_URL}${left.image}`}
-                    alt={left.title}
-                    className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
-                  />
-                </div>
-              )}
-              <div className="p-3">
-                <p className="text-xs lg:text-sm font-bold text-foreground line-clamp-2">{left.title}</p>
-              </div>
-            </Link>
-          )}
-{/* Center card — permanently raised above the row, most prominent */}
+        <div className="relative max-w-4xl lg:max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center sm:items-end justify-center gap-4 sm:gap-6 lg:gap-10">
+          {/* Center card — full width on mobile, sits on top; raised above the row on desktop */}
           {center && (
             <Link
               href={`/blog/${center.slug}`}
-              className={`group relative w-56 sm:w-72 md:w-80 lg:w-96 rounded-2xl overflow-hidden z-10 sm:-translate-y-6 md:-translate-y-8 lg:-translate-y-10 transition-all duration-700 ease-out ${
+              className={`group relative order-1 sm:order-2 w-56 sm:w-72 md:w-80 lg:w-96 rounded-sm overflow-hidden z-10 sm:-translate-y-6 md:-translate-y-8 lg:-translate-y-10 transition-all duration-700 ease-out ${
                 isVisible ? "opacity-100 scale-100" : "opacity-0 translate-y-16 scale-90"
               }`}
             >
               {center.image && (
-                <div className="aspect-[2/2] overflow-hidden">
+                <div className="aspect-square overflow-hidden">
                   <img
                     src={`${process.env.NEXT_PUBLIC_API_URL}${center.image}`}
                     alt={center.title}
@@ -118,28 +94,55 @@ export default function FeatureBlog() {
             </Link>
           )}
 
-          {/* Right card — sits lower at rest, rises up to meet center on hover */}
-          {right && (
-            <Link
-              href={`/blog/${right.slug}`}
-              className={`group hidden sm:block relative w-40 md:w-48 lg:w-56 rounded-2xl overflow-hidden border border-border-color bg-surface shrink-0 transition-all duration-500 ease-out hover:-translate-y-6 md:hover:-translate-y-8 lg:hover:-translate-y-10 hover:opacity-100 hover:border-zinc-600 hover:shadow-xl hover:shadow-black/50 hover:z-10 ${
-                isVisible ? "opacity-70 translate-x-0 scale-95" : "opacity-0 translate-x-20 scale-90"
-              }`}
-              style={{ transitionDelay: isVisible ? "150ms" : "0ms" }}
-            >
-              {right.image && (
-                <div className="aspect-[3/4] overflow-hidden">
-                  <img
-                    src={`${process.env.NEXT_PUBLIC_API_URL}${right.image}`}
-                    alt={right.title}
-                    className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
-                  />
-                </div>
+          {/* Left + Right — row under center on mobile; becomes two normal flex items (via sm:contents) flanking center on desktop */}
+          {(left || right) && (
+            <div className="order-2 sm:contents flex gap-4 w-full sm:w-auto justify-center mt-2 sm:mt-0">
+              {left && (
+                <Link
+                  href={`/blog/${left.slug}`}
+                  className={`group sm:order-1 relative flex-1 max-w-[160px] sm:max-w-none sm:w-40 md:w-48 lg:w-56 rounded-sm overflow-hidden border border-border-color bg-background shrink-0 transition-all duration-500 ease-out sm:hover:-translate-y-6 md:hover:-translate-y-8 lg:hover:-translate-y-10 hover:opacity-100 hover:border-zinc-600 hover:shadow-xl hover:shadow-black/50 hover:z-10 ${
+                    isVisible ? "opacity-70 translate-x-0 scale-95" : "opacity-0 -translate-x-20 scale-90"
+                  }`}
+                  style={{ transitionDelay: isVisible ? "150ms" : "0ms" }}
+                >
+                  {left.image && (
+                    <div className="aspect-[3/4] overflow-hidden">
+                      <img
+                        src={`${process.env.NEXT_PUBLIC_API_URL}${left.image}`}
+                        alt={left.title}
+                        className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+                      />
+                    </div>
+                  )}
+                  <div className="p-2 sm:p-3">
+                    <p className="text-[11px] sm:text-xs lg:text-sm font-bold text-foreground line-clamp-2">{left.title}</p>
+                  </div>
+                </Link>
               )}
-              <div className="p-3">
-                <p className="text-xs lg:text-sm font-bold text-foreground line-clamp-2">{right.title}</p>
-              </div>
-            </Link>
+
+              {right && (
+                <Link
+                  href={`/blog/${right.slug}`}
+                  className={`group sm:order-3 relative flex-1 max-w-[160px] sm:max-w-none sm:w-40 md:w-48 lg:w-56 rounded-sm overflow-hidden border border-border-color bg-surface shrink-0 transition-all duration-500 ease-out sm:hover:-translate-y-6 md:hover:-translate-y-8 lg:hover:-translate-y-10 hover:opacity-100 hover:border-zinc-600 hover:shadow-xl hover:shadow-black/50 hover:z-10 ${
+                    isVisible ? "opacity-70 translate-x-0 scale-95" : "opacity-0 translate-x-20 scale-90"
+                  }`}
+                  style={{ transitionDelay: isVisible ? "150ms" : "0ms" }}
+                >
+                  {right.image && (
+                    <div className="aspect-[3/4] overflow-hidden">
+                      <img
+                        src={`${process.env.NEXT_PUBLIC_API_URL}${right.image}`}
+                        alt={right.title}
+                        className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+                      />
+                    </div>
+                  )}
+                  <div className="p-2 sm:p-3">
+                    <p className="text-[11px] sm:text-xs lg:text-sm font-bold text-foreground line-clamp-2">{right.title}</p>
+                  </div>
+                </Link>
+              )}
+            </div>
           )}
         </div>
       )}

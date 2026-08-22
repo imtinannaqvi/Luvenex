@@ -58,6 +58,22 @@ export default function ServiceDetailPage() {
     }
   };
 
+  // Word/Docs paste artifact cleanup — the admin editor content sometimes carries
+  // hard-wrapped hyphenation from a pasted source (e.g. "agency-<br>style" instead
+  // of "agency-style"), and literal &nbsp; instead of normal spaces. Both survive
+  // regardless of container width, which is why it looked identical on mobile and
+  // full screen. We rejoin hyphen + forced-break pairs (keeping the hyphen, since
+  // these are legitimate compound words like "agency-style", "in-house", "wrap-up")
+  // and normalize non-breaking spaces back to regular spaces.
+  const cleanDescription = (html?: string) => {
+    if (!html) return "";
+    return html
+      .replace(/-(\s*)(<br\s*\/?>\s*)+/gi, "-") // "word-<br>next" -> "word-next"
+      .replace(/-(\s*)\n+/g, "-") // same, but for literal newline characters
+      .replace(/&nbsp;/gi, " ")
+      .replace(/\u00A0/g, " ");
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center space-y-4">
@@ -151,13 +167,14 @@ export default function ServiceDetailPage() {
             </div>
             <div
               className="service-fulldesc text-foreground text-sm sm:text-base leading-relaxed"
-              dangerouslySetInnerHTML={{ __html: service.description }}
+              dangerouslySetInnerHTML={{ __html: cleanDescription(service.description) }}
             />
           </div>
           <style jsx global>{`
             .service-fulldesc {
               word-break: normal;
               overflow-wrap: break-word;
+              white-space: normal;
             }
             .service-fulldesc h1,
             .service-fulldesc h2,

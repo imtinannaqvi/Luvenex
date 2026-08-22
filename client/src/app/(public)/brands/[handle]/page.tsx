@@ -48,9 +48,9 @@ export default function BrandProfilePage() {
             apiFetch(`/api/campaigns?brandId=${brandUserId}`),
             apiFetch(`/api/videos?postedBy=${brandUserId}&limit=9`),
             apiFetch(`/api/users/${brandUserId}/reviews`),
-           apiFetch(`/api/deals/work-history/${handle}`).catch(() => ({
-  workHistory: [],
-})),
+            apiFetch(`/api/deals/work-history/${handle}`).catch(() => ({
+              workHistory: [],
+            })),
           ]);
 
         setCampaigns(
@@ -210,7 +210,7 @@ export default function BrandProfilePage() {
         <Link
           key={v._id}
           href="/videos"
-          className="group relative aspect-[9/16] overflow-hidden rounded-md border border-zinc-900 bg-surface block"
+          className="group relative aspect-[9/16] overflow-hidden rounded-md border border-border-color bg-surface block"
         >
           <video
             src={getMediaUrl(v.videoUrl)}
@@ -236,7 +236,7 @@ export default function BrandProfilePage() {
   );
 
   const SectionTitle = ({ children }: { children: React.ReactNode }) => (
-    <h2 className="mb-3 text-[11px] font-black  text-zinc-500">
+    <h2 className="mb-3 text-[11px] font-black text-zinc-500">
       {children}
     </h2>
   );
@@ -250,16 +250,11 @@ export default function BrandProfilePage() {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-background font-sans text-foreground selection:bg-red-600 selection:text-foreground">
-      {/* Ambient glows */}
-     
-
-    
-
       <div className="relative z-10 mx-auto max-w-6xl px-4 py-8">
         <div className="grid gap-8 lg:grid-cols-[340px_1fr]">
           {/* ══════════ LEFT SIDEBAR ══════════ */}
           <aside className="lg:sticky lg:top-24 lg:self-start">
-            <div className="rounded-3xl border border-zinc-900 bg-card/80/60 p-6">
+            <div className="rounded-3xl border border-border-color bg-card/80 p-6">
               {/* Avatar */}
               <div className="flex flex-col items-center text-center">
                 <div className="relative">
@@ -317,9 +312,9 @@ export default function BrandProfilePage() {
                 </div>
               </div>
 
-              {/* Two big stats (Upwork-style) */}
+              {/* Two big stats */}
               <div className="mt-6 grid grid-cols-2 gap-3">
-                <BigStat value={String(campaigns.length)}  label="Campaigns" />
+                <BigStat value={String(campaigns.length)} label="Campaigns" />
                 <BigStat value={followerCount.toLocaleString()} label="Followers" />
               </div>
 
@@ -366,7 +361,7 @@ export default function BrandProfilePage() {
           {/* ══════════ RIGHT CONTENT ══════════ */}
           <main>
             {/* Tabs */}
-            <div className="no-scrollbar mb-6 flex items-center gap-1 overflow-x-auto rounded-md border border-zinc-900 bg-card/80/60 p-1">
+            <div className="no-scrollbar mb-6 flex items-center gap-1 overflow-x-auto rounded-md border border-border-color bg-card/80 p-1">
               {tabs
                 .filter((t) => t.show)
                 .map((t) => (
@@ -387,7 +382,6 @@ export default function BrandProfilePage() {
             {/* ── ABOUT ── */}
             {activeTab === "about" && (
               <div className="space-y-8">
-                {/* Header row: title + info boxes (Upwork Rate/Agency spot) */}
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                   <h2 className="text-xl font-black text-foreground">
                     About {profile.companyName || `@${profile.handle}`}
@@ -407,8 +401,6 @@ export default function BrandProfilePage() {
                     />
                   </div>
                 </div>
-
-              
 
                 {/* Highlights */}
                 <ul className="space-y-2.5">
@@ -487,7 +479,7 @@ export default function BrandProfilePage() {
                   campaigns.map((c) => (
                     <div
                       key={c._id}
-                      className="rounded-md border border-border-color bg-surface/60 p-4 transition-all hover:border-zinc-700"
+                      className="rounded-md border border-border-color bg-surface/60 p-4 transition-all hover:border-border-color"
                     >
                       <p className="text-sm font-bold text-foreground">{c.title}</p>
                       <p className="mt-1 text-xs font-medium text-zinc-400">
@@ -511,7 +503,7 @@ export default function BrandProfilePage() {
                   workHistory.map((w, i) => (
                     <div
                       key={i}
-                      className="rounded-md border border-border-color bg-surface/60 p-4 transition-all hover:border-zinc-700"
+                      className="rounded-md border border-border-color bg-surface/60 p-4 transition-all hover:border-border-color"
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div>

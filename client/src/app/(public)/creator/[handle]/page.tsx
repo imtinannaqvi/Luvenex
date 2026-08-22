@@ -130,8 +130,8 @@ export default function CreatorProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black flex flex-col items-center justify-center">
-        <div className="w-10 h-10 border-2 border-zinc-800 border-t-[#B90808] rounded-full animate-spin" />
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center">
+        <div className="w-10 h-10 border-2 border-border-color border-t-[#B90808] rounded-full animate-spin" />
       </div>
     );
   }
@@ -139,17 +139,17 @@ export default function CreatorProfilePage() {
   if (error || !profile) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center text-center px-6">
-        <div className="bg-background border border-zinc-800/80 rounded-3xl p-8 max-w-md w-full space-y-4 shadow-2xl">
+        <div className="bg-background border border-border-color/80 rounded-3xl p-8 max-w-md w-full space-y-4 shadow-2xl">
           <div className="w-12 h-12 bg-background border border-[#B90808]/30 rounded-2xl flex items-center justify-center text-[#B90808] mx-auto">
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
           </div>
           <div>
-            <h2 className="text-lg font-bold text-white">Creator Not Found</h2>
+            <h2 className="text-lg font-bold text-foreground">Creator Not Found</h2>
             <p className="text-zinc-500 text-xs mt-1">{error || "The profile you are looking for does not exist or has been moved."}</p>
           </div>
-          <Link href="/" className="inline-block px-5 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-xs font-semibold text-white transition">
+          <Link href="/" className="inline-block px-5 py-2.5 rounded-xl bg-surface border border-border-color hover:border-zinc-700 text-xs font-semibold text-foreground transition">
             Back to Home
           </Link>
         </div>
@@ -182,7 +182,7 @@ export default function CreatorProfilePage() {
       <div className="relative z-10 max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-6 lg:gap-8 items-start">
 
         {/* ───────── LEFT: profile sidebar ───────── */}
-        <aside className="bg-background border border-border-color rounded-md p-6 lg:sticky lg:top-8 space-y-6">
+        <aside className="bg-card border border-border-color rounded-md p-6 lg:sticky lg:top-8 space-y-6">
           {/* avatar + name */}
           <div className="flex flex-col items-center text-center space-y-3">
             <div className="relative">
@@ -193,7 +193,7 @@ export default function CreatorProfilePage() {
                   className="w-28 h-28 rounded-full object-cover"
                 />
               ) : (
-                <div className="w-28 h-28 rounded-full bg-background border border-border-color flex items-center justify-center text-white font-black text-3xl">
+                <div className="w-28 h-28 rounded-full bg-background border border-border-color flex items-center justify-center text-foreground font-black text-3xl">
                   {profile.handle?.[0]?.toUpperCase() || "?"}
                 </div>
               )}
@@ -224,7 +224,7 @@ export default function CreatorProfilePage() {
             <span className="text-foreground">·</span>
             <span className="text-[#B90808] font-bold">@{profile.handle}</span>
           </div>
-             {/* socials */}
+           {/* socials */}
           {profile.socialAccounts && profile.socialAccounts.length > 0 && (
             <div className="flex flex-wrap gap-2 justify-center pt-2 border-t border-border-color">
               {profile.socialAccounts.map((acc: any, i: number) => {
@@ -269,8 +269,8 @@ export default function CreatorProfilePage() {
               disabled={followLoading}
               className={`w-full py-3 rounded-md text-sm font-bold transition active:scale-95 disabled:opacity-50 ${
                 isFollowing
-                  ? "bg-surface text-white border border-border-color hover:bg-border-color"
-                  : "bg-[#B90808] text-white hover:bg-[#a10707]"
+                  ? "bg-surface text-foreground border border-border-color hover:bg-border-color"
+                  : "bg-[#B90808] text-foreground hover:bg-[#a10707]"
               }`}
             >
               {isFollowing ? "Following" : "Follow"}
@@ -283,7 +283,7 @@ export default function CreatorProfilePage() {
             </button>
           </div>
 
-       
+         
         </aside>
 
         {/* ───────── RIGHT: tabs + content ───────── */}
@@ -340,10 +340,10 @@ export default function CreatorProfilePage() {
                     <h3 className="text-md font-bold text-foreground">Recent Videos</h3>
                     <div className="grid grid-cols-3 gap-2">
                       {videos.slice(0, 3).map((v) => (
-                        <Link key={v._id} href="/videos" className="group relative rounded-lg overflow-hidden bg-zinc-950 aspect-[9/16]">
+                        <Link key={v._id} href="/videos" className="group relative rounded-lg overflow-hidden bg-card aspect-[9/16]">
                           <video src={mediaSrc(v.videoUrl)} className="w-full h-full object-cover" muted />
-                          <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition">
-                            <div className="w-7 h-7 rounded-full bg-[#B90808]/90 text-white flex items-center justify-center">
+                          <div className="absolute inset-0 flex items-center justify-center bg-background/20 group-hover:bg-background/40 transition">
+                            <div className="w-7 h-7 rounded-full bg-[#B90808]/90 text-foreground flex items-center justify-center">
                               <svg className="w-3 h-3 fill-current ml-0.5" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
                             </div>
                           </div>
@@ -489,7 +489,7 @@ export default function CreatorProfilePage() {
     )}
 
     {(!profile?.portfolio || profile.portfolio.filter((item: any) => item.mediaUrl).length === 0) && gigs.length === 0 && (
-      <div className="text-center py-12 bg-zinc-900/40 border border-dashed border-zinc-800 rounded-md">
+      <div className="text-center py-12 bg-surface/40 border border-dashed border-border-color rounded-md">
         <p className="text-sm text-zinc-500 mb-3">No portfolio items yet.</p>
       </div>
     )}

@@ -71,7 +71,7 @@ export default function AdminPayoutQueuePage() {
           <div className="w-6 h-6 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
         </div>
       ) : payouts.length === 0 ? (
-        <div className="bg-background border border-line rounded-2xl p-8 text-center">
+        <div className="bg-background border border-line rounded-sm p-8 text-center">
           <p className="text-muted text-sm">No pending payouts. All caught up.</p>
         </div>
       ) : (
