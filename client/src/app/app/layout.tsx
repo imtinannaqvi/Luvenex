@@ -310,6 +310,26 @@ function AppShell({
       </nav>
 
       <div className={sidebarExpanded ? "px-4" : "px-3"}>
+        <Link
+          href="/"
+          onClick={() => setMobileOpen(false)}
+          title="Visit Luvenex"
+          className={`mt-4 shrink-0 w-full flex items-center gap-2 border border-white/15 text-white/70 text-sm py-2.5 rounded-xl hover:bg-white/5 hover:text-paper transition ${
+            sidebarExpanded ? "px-3 justify-start" : "justify-center"
+          }`}
+        >
+          <FiCompass size={16} className="shrink-0 text-primary" />
+          <span
+            className={`whitespace-nowrap overflow-hidden transition-all duration-200 ${
+              sidebarExpanded
+                ? "opacity-100 max-w-[120px]"
+                : "opacity-0 max-w-0"
+            }`}
+          >
+            Visit Luvenex
+          </span>
+        </Link>
+
         <button
           onClick={() => {
             setMobileOpen(false);
@@ -317,7 +337,7 @@ function AppShell({
             router.push("/login");
           }}
           title="Log out"
-          className={`mt-4 shrink-0 w-full flex items-center gap-2 border border-white/15 text-white/70 text-sm py-2.5 rounded-xl hover:bg-white/5 hover:text-paper transition ${
+          className={`mt-2 shrink-0 w-full flex items-center gap-2 border border-white/15 text-white/70 text-sm py-2.5 rounded-xl hover:bg-white/5 hover:text-paper transition ${
             sidebarExpanded ? "px-3 justify-start" : "justify-center"
           }`}
         >
