@@ -70,8 +70,35 @@ const Navbar = () => {
           ))}
         </nav>
 
-        {/* Right Actions: Login/Logout + Hamburger Menu */}
+        {/* Right Actions: Dashboard + Login/Logout + Hamburger Menu */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          {/* Dashboard icon — only shown once logged in, sized larger than the auth icon, with label */}
+          {mounted && loggedIn && (
+            <Link
+              href="/app"
+              aria-label="Go to Dashboard"
+              title="Go to Dashboard"
+              className="flex items-center gap-1.5 sm:gap-2 h-9 px-2 sm:px-3 rounded-full text-foreground/80 hover:text-foreground hover:bg-foreground/10 transition"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+                className="w-6 h-6 sm:w-7 sm:h-7"
+              >
+                <rect x="3" y="3" width="7" height="9" rx="1.5" />
+                <rect x="14" y="3" width="7" height="5" rx="1.5" />
+                <rect x="14" y="12" width="7" height="9" rx="1.5" />
+                <rect x="3" y="16" width="7" height="5" rx="1.5" />
+              </svg>
+              <span className="hidden sm:inline text-xs sm:text-sm font-semibold">Dashboard</span>
+            </Link>
+          )}
+
           {mounted &&
             (loggedIn ? (
               <button
@@ -92,9 +119,8 @@ const Navbar = () => {
                   aria-hidden="true"
                   className="w-4 h-4 sm:w-5 sm:h-5"
                 >
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                  <polyline points="16 17 21 12 16 7" />
-                  <line x1="21" y1="12" x2="9" y2="12" />
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
                 </svg>
                 <span className="hidden sm:inline text-xs sm:text-sm font-semibold">Logout</span>
               </button>

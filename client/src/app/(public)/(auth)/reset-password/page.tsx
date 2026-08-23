@@ -3,6 +3,7 @@
 import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { apiFetch } from "@/lib/api";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 
 function ResetPasswordForm() {
   const router = useRouter();
@@ -13,6 +14,8 @@ function ResetPasswordForm() {
   const [code, setCode] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -97,28 +100,48 @@ function ResetPasswordForm() {
 
                 <div>
                   <label className="block text-sm font-medium text-white mb-1.5">New password</label>
-                  <input
-                    type="password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    required
-                    minLength={6}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-line text-sm bg-background
-                               focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
-                  />
+                  <div className="relative">
+                    <input
+                      type={showNew ? "text" : "password"}
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      required
+                      minLength={6}
+                      className="w-full px-3.5 py-2.5 pr-11 rounded-xl border border-line text-sm bg-background
+                                 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowNew((v) => !v)}
+                      aria-label={showNew ? "Hide password" : "Show password"}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-white/60 hover:text-white transition"
+                    >
+                      {showNew ? <FiEyeOff size={17} /> : <FiEye size={17} />}
+                    </button>
+                  </div>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-white mb-1.5">Confirm password</label>
-                  <input
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    required
-                    minLength={6}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-line text-sm bg-background
-                               focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
-                  />
+                  <div className="relative">
+                    <input
+                      type={showConfirm ? "text" : "password"}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      required
+                      minLength={6}
+                      className="w-full px-3.5 py-2.5 pr-11 rounded-xl border border-line text-sm bg-background
+                                 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirm((v) => !v)}
+                      aria-label={showConfirm ? "Hide password" : "Show password"}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-white/60 hover:text-white transition"
+                    >
+                      {showConfirm ? <FiEyeOff size={17} /> : <FiEye size={17} />}
+                    </button>
+                  </div>
                 </div>
 
                 {error && (
