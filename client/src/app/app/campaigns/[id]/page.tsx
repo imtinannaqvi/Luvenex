@@ -221,23 +221,23 @@ export default function CampaignApplicantsPage() {
               would you like to do next?
             </p>
             <div className="flex gap-3">
-              <button
-                onClick={async () => {
-                  try {
-                    await apiFetch("/api/conversations", {
-                      method: "POST",
-                      token: getToken()!,
-                      body: { otherUserId: matchedDeal.influencerId },
-                    });
-                    router.push("/app/messages");
-                  } catch (err: any) {
-                    toast.error(err.message || "Failed to start chat");
-                  }
-                }}
-                className="flex-1 px-4 py-2.5 rounded-xl border border-line text-sm font-semibold hover:bg-surface transition"
-              >
-                💬 Start Chat
-              </button>
+             <button
+  onClick={async () => {
+    try {
+      const convData = await apiFetch("/api/conversations", {
+        method: "POST",
+        token: getToken()!,
+        body: { otherUserId: matchedDeal.influencerId },
+      });
+      router.push(`/app/messages?conversationId=${convData.conversation._id}`);
+    } catch (err: any) {
+      toast.error(err.message || "Failed to start chat");
+    }
+  }}
+  className="flex-1 px-4 py-2.5 rounded-xl border border-line text-sm font-semibold hover:bg-surface transition"
+>
+  💬 Start Chat
+</button>
               <button
                 onClick={() => router.push(`/app/deals/${matchedDeal._id}`)}
                 className="flex-1 px-4 py-2.5 rounded-xl bg-primary text-paper text-sm font-semibold hover:bg-primary-dark transition"

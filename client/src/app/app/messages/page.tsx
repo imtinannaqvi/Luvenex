@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import { getSocket, connectSocket, disconnectSocket } from "@/lib/socket";
 import { useNotifications } from "@/context/Notificationscontext";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import {
   FiSearch,
   FiHome,
@@ -45,22 +46,28 @@ export default function MessagesPage() {
 
   // Lets us refresh the sidebar unread badge the moment a chat is opened.
   const { reload } = useNotifications();
+  const searchParams = useSearchParams();
 
-  const loadConversations = async () => {
-    setLoading(true);
-    try {
-      const data = await apiFetch("/api/conversations", {
-        token: getToken()!,
-      });
-      const convs = data.conversations || [];
-      setConversations(convs);
-      // No auto-open: the list shows first, chat opens on click.
-    } catch (err: any) {
-      toast.error(err.message || "Failed to load conversations");
-    } finally {
-      setLoading(false);
+ const loadConversations = async () => {
+  setLoading(true);
+  try {
+    const data = await apiFetch("/api/conversations", {
+      token: getToken()!,
+    });
+    const convs = data.conversations || [];
+    setConversations(convs);
+
+    // ✅ if we arrived here with a specific conversation to open, select it
+    const conversationIdFromUrl = searchParams.get("conversationId");
+    if (conversationIdFromUrl) {
+      setActiveId(conversationIdFromUrl);
     }
-  };
+  } catch (err: any) {
+    toast.error(err.message || "Failed to load conversations");
+  } finally {
+    setLoading(false);
+  }
+};
 
   const loadMessages = async (conversationId: string) => {
     try {
@@ -140,9 +147,7 @@ export default function MessagesPage() {
   const activeConv = conversations.find((c) => c._id === activeId);
   const activeOtherUser = activeConv ? otherParticipant(activeConv) : null;
 
-  // Client-side split — relies on `isRequest` / `status: "pending"` coming
-  // from the backend. If your API doesn't send this yet, everything falls
-  // through to "messages" so nothing breaks.
+ 
   const isPendingRequest = (conv: any) =>
     conv.isRequest === true || conv.status === "pending";
 
