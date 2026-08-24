@@ -9,6 +9,7 @@ import Footer from "@/components/Footer"
 import VideoCom from "@/components/VideoCom"
 import FeatureBlog from "@/components/FeatureBlog";
 import FloatingControls from "@/components/FloatingControls";
+import GigsCom from "@/components/GigsCom";
 
 export default function Home() {
   return (
@@ -19,6 +20,7 @@ export default function Home() {
       <VideoCom/>
       <Service />
       <ServicesMarquee />
+      <GigsCom/>
       <FeatureBlog/>
       <Sliders />
       <ContactUs />

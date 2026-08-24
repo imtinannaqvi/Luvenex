@@ -1,4 +1,5 @@
 import Gig from "../models/Gig.js";
+import InfluencerProfile from "../models/InfluencerProfile.js";
 
 export const createGig = async (req, res) => {
   try {
@@ -29,27 +30,37 @@ export const createGig = async (req, res) => {
   }
 };
 
-// GET /api/gigs — public list (active gigs only, from ALL influencers).
-// Used for brand-facing browsing. NOT scoped to a single influencer
-// unless ?influencerId= is explicitly passed.
+
 export const getGigs = async (req, res) => {
   try {
-    const filter = { status: "active" };
-    if (req.query.influencerId) filter.influencerId = req.query.influencerId;
-    if (req.query.category) filter.category = req.query.category;
+    const filter = { status: 'active' };
+ if (req.query.category) {
+      filter.category = new RegExp(req.query.category, 'i');   
+    }   
+     if (req.query.influencerId) filter.influencerId = req.query.influencerId;
 
     const gigs = await Gig.find(filter)
       .populate('influencerId', 'name')
       .sort({ createdAt: -1 });
 
-    res.json({ gigs });
-  } catch (error) {
-    res.status(500).json({ error: { message: error.message } });
+    const gigsWithHandles = await Promise.all(
+      gigs.map(async (g) => {
+        const gigObj = g.toObject();
+        if (gigObj.influencerId?._id) {
+          const profile = await InfluencerProfile.findOne({ userId: gigObj.influencerId._id }).select('handle');
+          gigObj.influencerId.handle = profile?.handle || null;
+        }
+        return gigObj;
+      })
+    );
+
+    res.json({ gigs: gigsWithHandles });
+  } catch (err) {
+    res.status(500).json({ error: { message: err.message } });
   }
 };
 
-// GET /api/gigs/my — influencer dashboard listing.
-// ALWAYS scoped to the logged-in influencer, all statuses included (active, paused, draft, archived).
+
 export const getMyGigs = async (req, res) => {
   try {
     if (req.user.role !== 'influencer') {
