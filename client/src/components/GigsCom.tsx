@@ -44,43 +44,65 @@ export default function GigsCom() {
 
       <div className="max-w-6xl mx-auto px-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {gigs.map((g, i) => (
-            <Link
-              key={g._id || g.id || i}
-              href={`/creator/${g.influencerId?.handle || g.handle || ""}`}
-              className="group bg-card/85 border border-border-color hover:border-[#B90808]/50 rounded-2xl p-6 sm:p-7 flex flex-col justify-between transition-all duration-300 shadow-sm"
-            >
-              <div>
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-9 h-9 rounded-full bg-surface flex items-center justify-center text-[#B90808] font-bold text-sm">
-                    {g.influencerId?.name?.[0]?.toUpperCase() || g.name?.[0]?.toUpperCase() || "?"}
+          {gigs.map((g, i) => {
+            const handle = g.influencerId?.handle || g.handle || "";
+
+            const cardContent = (
+              <>
+                <div>
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-9 h-9 rounded-full bg-surface flex items-center justify-center text-[#B90808] font-bold text-sm">
+                      {g.influencerId?.name?.[0]?.toUpperCase() || g.name?.[0]?.toUpperCase() || "?"}
+                    </div>
+                    <span className="text-lg font-medium text-foreground">
+                      {g.influencerId?.name || g.name || "Creator"}
+                    </span>
                   </div>
-                  <span className="text-lg font-medium text-foreground">
-                    {g.influencerId?.name || g.name || "Creator"}
-                  </span>
+
+                  {g.category && (
+                    <span className="text-md font-semibold uppercase tracking-wider text-[#B90808] block mb-1">
+                      Category: {g.category}
+                    </span>
+                  )}
+                  <h3 className="text-base sm:text-lg font-bold text-foreground mt-1 group-hover:text-[#B90808] transition-colors">
+                    {g.title}
+                  </h3>
+                  {g.description && (
+                    <p className="text-xs sm:text-sm text-zinc-400 mt-2.5 leading-relaxed">
+                      {g.description}
+                    </p>
+                  )}
                 </div>
 
-                {g.category && (
-                  <span className="text-md font-semibold uppercase tracking-wider text-[#B90808] block mb-1">
-                    Category: {g.category}
-                  </span>
-                )}
-                <h3 className="text-base sm:text-lg font-bold text-foreground mt-1 group-hover:text-[#B90808] transition-colors">
-                  {g.title}
-                </h3>
-                {g.description && (
-                  <p className="text-xs sm:text-sm text-zinc-400 mt-2.5 leading-relaxed">
-                    {g.description}
-                  </p>
-                )}
-              </div>
+                <div className="flex items-center justify-between mt-6 pt-4 border-t border-border-color">
+                  <span className="text-base font-bold text-[#B90808]">{money(g.priceMinor)}</span>
+                  <span className="text-sm text-zinc-500">Delivery in: {g.deliveryDays || 3} days</span>
+                </div>
+              </>
+            );
 
-              <div className="flex items-center justify-between mt-6 pt-4 border-t border-border-color">
-                <span className="text-base font-bold text-[#B90808]">{money(g.priceMinor)}</span>
-                <span className="text-sm text-zinc-500">Delivery in: {g.deliveryDays || 3} days</span>
-              </div>
-            </Link>
-          ))}
+            const cardClass =
+              "group bg-card/85 border border-border-color hover:border-[#B90808]/50 rounded-2xl p-6 sm:p-7 flex flex-col justify-between transition-all duration-300 shadow-sm";
+
+            if (!handle) {
+              // No creator handle available — render as a non-clickable card instead of a broken link
+              return (
+                <div key={g._id || g.id || i} className={cardClass}>
+                  {cardContent}
+                </div>
+              );
+            }
+
+            return (
+              <Link
+                key={g._id || g.id || i}
+                href={`/creator/${handle}`}
+                className={cardClass}
+              >
+                {cardContent}
+              </Link>
+            );
+          })}
         </div>
       </div>
 

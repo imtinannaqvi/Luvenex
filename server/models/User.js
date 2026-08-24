@@ -64,8 +64,13 @@ statusChangedAt: { type: Date },
   emailVerifiedAt: {
     type: Date          
   },
-  referralCode: {        
+   referralCode: {        
     type: String
+  },
+  handle: {
+    type: String,
+    unique: true,
+    sparse: true,
   },
   referredBy: {
     type: mongoose.Schema.Types.ObjectId,
