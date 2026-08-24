@@ -15,6 +15,9 @@ function SignupForm() {
   const initialRole = searchParams.get("role") as Role;
   const [role, setRole] = useState<Role>(initialRole);
 
+  // Capture the referral code from the URL (?ref=SARA6ED113), if present
+  const referralCode = searchParams.get("ref");
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -48,7 +51,14 @@ function SignupForm() {
     try {
       const data = await apiFetch("/api/auth/signup", {
         method: "POST",
-        body: { name, email, password, role, agreedToTerms },
+        body: {
+          name,
+          email,
+          password,
+          role,
+          agreedToTerms,
+          ...(referralCode ? { referralCode } : {}),
+        },
       });
 
       saveSession(data.accessToken, data.user, data.refreshToken);
