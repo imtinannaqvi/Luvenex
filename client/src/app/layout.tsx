@@ -6,6 +6,7 @@ import "./globals.css";
 import { ContactPanelProvider } from "@/components/ContactPanel";
 import Navbar from "@/components/Navbar";
 import { ThemeProvider } from "next-themes";
+import { NotificationsProvider } from "@/context/Notificationscontext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,11 +36,13 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
-          <ContactPanelProvider>
-            <Navbar />
-            {children}
-          </ContactPanelProvider>
-<ToastContainer position="top-center" theme="dark" autoClose={4000} limit={3} newestOnTop />
+          <NotificationsProvider>
+            <ContactPanelProvider>
+              <Navbar />
+              {children}
+            </ContactPanelProvider>
+            <ToastContainer position="top-center" theme="dark" autoClose={4000} limit={3} newestOnTop />
+          </NotificationsProvider>
         </ThemeProvider>
       </body>
     </html>

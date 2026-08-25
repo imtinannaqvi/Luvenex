@@ -112,7 +112,7 @@ export default function VideoCom() {
       <div className="flex justify-center mt-10">
         <Link
           href="/videos"
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-border-color hover:border-border-color text-foreground text-xs font-bold uppercase tracking-widest transition-all duration-300 hover:bg-primary/10"
+          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-border-color hover:border-border-color text-foreground text-xs font-bold uppercase tracking-widest transition-all duration-300 hover:bg-primary"
         >
           Explore More
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

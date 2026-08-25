@@ -99,31 +99,38 @@ const [revisionNote, setRevisionNote] = useState("");
       : "";
 
   const doAction = async (action: string, body?: any) => {
-    setActionLoading(true);
-    setError("");
-    try {
-      await apiFetch(`/api/deals/${dealId}/${action}`, {
-        method: "POST",
-        token: getToken()!,
-        body,
-      });
+  setActionLoading(true);
+  setError("");
+  try {
+    await apiFetch(`/api/deals/${dealId}/${action}`, {
+      method: "POST",
+      token: getToken()!,
+      body,
+    });
 
-      // After the deal is started, take the user to the conversation with the
-      // other party. The deal id is passed so the messages page can offer a way back.
-      if (action === "start") {
-        router.push(`/app/messages?with=${otherParty?._id}&deal=${dealId}`);
-        return;
-      }
-
-      await load();
-      setShowDeliverForm(false);
-      setDeliveryNote("");
-    } catch (err: any) {
-      toast(err.message);
-    } finally {
-      setActionLoading(false);
+    if (action === "start") {
+      router.push(`/app/messages?with=${otherParty?._id}&deal=${dealId}`);
+      return;
     }
-  };
+
+    await load();
+    setShowDeliverForm(false);
+    setDeliveryNote("");
+  } catch (err: any) {
+    if (
+      action === "fund" &&
+      (err.message?.toLowerCase().includes("insufficient") || err.message?.toLowerCase().includes("balance"))
+    ) {
+      toast("You don't have enough wallet balance. Redirecting you to add funds...");
+      setTimeout(() => router.push("/app/wallet"), 1500);
+      return;
+    }
+
+    toast(err.message);
+  } finally {
+    setActionLoading(false);
+  }
+};
 
   const submitDelivery = async () => {
   setActionLoading(true);

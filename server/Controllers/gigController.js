@@ -34,10 +34,10 @@ export const createGig = async (req, res) => {
 export const getGigs = async (req, res) => {
   try {
     const filter = { status: 'active' };
- if (req.query.category) {
-      filter.category = new RegExp(req.query.category, 'i');   
-    }   
-     if (req.query.influencerId) filter.influencerId = req.query.influencerId;
+    if (req.query.category) {
+      filter.category = new RegExp(req.query.category, 'i');
+    }
+    if (req.query.influencerId) filter.influencerId = req.query.influencerId;
 
     const gigs = await Gig.find(filter)
       .populate('influencerId', 'name')
@@ -46,9 +46,11 @@ export const getGigs = async (req, res) => {
     const gigsWithHandles = await Promise.all(
       gigs.map(async (g) => {
         const gigObj = g.toObject();
-        if (gigObj.influencerId?._id) {
-          const profile = await InfluencerProfile.findOne({ userId: gigObj.influencerId._id }).select('handle');
+               if (gigObj.influencerId?._id) {
+          const profile = await InfluencerProfile.findOne({ userId: gigObj.influencerId._id }).select('handle avatarUrl portfolio')
           gigObj.influencerId.handle = profile?.handle || null;
+          gigObj.influencerId.avatarUrl = profile?.avatarUrl || null;
+          gigObj.influencerId.portfolio = profile?.portfolio || [];
         }
         return gigObj;
       })
@@ -83,7 +85,18 @@ export const getGigById = async (req, res) => {
   try {
     const gig = await Gig.findById(req.params.id).populate('influencerId', 'name');
     if (!gig) return res.status(404).json({ error: { message: "Gig not found" } });
-    res.json({ gig });
+
+    const gigObj = gig.toObject();
+    if (gigObj.influencerId?._id) {
+      const profile = await InfluencerProfile.findOne({
+        userId: gigObj.influencerId._id,
+      }).select('handle avatarUrl portfolio');
+      gigObj.influencerId.handle = profile?.handle || null;
+      gigObj.influencerId.avatarUrl = profile?.avatarUrl || null;
+      gigObj.influencerId.portfolio = profile?.portfolio || [];
+    }
+
+    res.json({ gig: gigObj });
   } catch (error) {
     res.status(500).json({ error: { message: error.message } });
   }
