@@ -36,8 +36,9 @@ export default function CreatorProfilePage() {
   const [followLoading, setFollowLoading] = useState(false);
   const [videos, setVideos] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState<"about" | "feedback" | "history" | "portfolio" | "skills">("about");
-  const [workHistory, setWorkHistory] = useState<any[]>([]);
-const isOwnProfile = !!user && !!profile?.userId?._id && user.id === profile.userId._id;
+   const [workHistory, setWorkHistory] = useState<any[]>([]);
+  const user = getUser();
+  const isOwnProfile = !!user && !!profile?.userId?._id && user.id === profile.userId._id;
   useEffect(() => {
     const load = async () => {
       setLoading(true);
