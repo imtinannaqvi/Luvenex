@@ -11,7 +11,6 @@ import {
 import { toast } from "react-toastify";
 import { apiFetch } from "@/lib/api";
 import { getToken, getUser } from "@/lib/auth";
-import { connectSocket } from "@/lib/socket"; // 👈 for instant notifications
 
 /**
  * Map a notification `type` (whatever your notification.service.js sets)
@@ -65,8 +64,6 @@ export function NotificationsProvider({
   const [messageUnread, setMessageUnread] = useState(0);
   const seen = useRef<Set<string>>(new Set());
   const primed = useRef(false);
- 
-  const mountedAt = useRef<number>(Date.now());
 
   const role = getUser()?.role as "brand" | "influencer" | undefined;
 
@@ -85,8 +82,8 @@ export function NotificationsProvider({
     return undefined;
   };
 
-  
   const load = async () => {
+    // Notifications (toasts + bell + non-message badges)
     try {
       const data = await apiFetch("/api/notifications", { token: getToken()! });
       const list: Noti[] = data.notifications || [];
@@ -101,13 +98,6 @@ export function NotificationsProvider({
           .forEach((n) => {
             seen.current.add(n._id);
             if (n.isRead) return;
-            // Skip anything created before this session opened.
-            if (
-              n.createdAt &&
-              new Date(n.createdAt).getTime() < mountedAt.current
-            ) {
-              return;
-            }
             const msg = n.title
               ? n.message
                 ? `${n.title} — ${n.message}`
@@ -120,24 +110,7 @@ export function NotificationsProvider({
       // ignore transient errors
     }
 
-    try {
-      const mc = await apiFetch("/api/messages/unread-count", {
-        token: getToken()!,
-      });
-      setMessageUnread(mc.count || 0);
-    } catch {
-      // ignore
-    }
-  };
-  const refreshSilently = async () => {
-    try {
-      const data = await apiFetch("/api/notifications", { token: getToken()! });
-      const list: Noti[] = data.notifications || [];
-      list.forEach((n) => seen.current.add(n._id)); // mark all seen → no re-toasts
-      setNotifications(list);
-    } catch {
-      // ignore
-    }
+    // Live unread message count (drives the Messages badge)
     try {
       const mc = await apiFetch("/api/messages/unread-count", {
         token: getToken()!,
@@ -152,26 +125,6 @@ export function NotificationsProvider({
     load();
     const id = setInterval(load, pollMs);
     return () => clearInterval(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  
-  useEffect(() => {
-    const socket = connectSocket();
-    const onNotification = (n: Noti) => {
-      const msg = n?.title
-        ? n.message
-          ? `${n.title} — ${n.message}`
-          : n.title
-        : n?.message || "New notification";
-      toast.info(msg, { position: "top-center" });
-      refreshSilently();
-    };
-    socket.on("notification", onNotification);
-    return () => {
-      socket.off("notification", onNotification);
-      // Do NOT disconnect — the socket is shared app-wide.
-    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -197,10 +150,7 @@ export function NotificationsProvider({
     } catch {}
   };
 
-  
-  const unreadCount = notifications.filter(
-    (n) => !n.isRead && n.type !== "new_message"
-  ).length;
+  const unreadCount = notifications.filter((n) => !n.isRead).length;
 
   // Per-href badge counts from notifications…
   const badgeCounts: Record<string, number> = {};

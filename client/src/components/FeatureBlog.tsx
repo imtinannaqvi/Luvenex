@@ -166,7 +166,7 @@ export default function FeatureBlog() {
         >
           <Link
             href="/blog"
-            className="group inline-flex items-center gap-2 px-6 py-3 lg:px-8 lg:py-3.5 rounded-sm border border-border-color hover:border-border-color text-foreground text-xs lg:text-sm font-bold uppercase tracking-widest transition-all duration-300 hover:bg-background hover:scale-105"
+            className="group inline-flex items-center gap-2 px-6 py-3 lg:px-8 lg:py-3.5 rounded-sm border border-border-color hover:border-border-color text-foreground text-xs lg:text-sm font-bold uppercase transition-all duration-300 hover:bg-primary hover:scale-105"
           >
             Explore More
             <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">

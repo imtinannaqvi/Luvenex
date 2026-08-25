@@ -86,7 +86,7 @@ export default function GigsCom() {
               <>
                 <div className="flex flex-col items-center text-center">
                   {/* Avatar image (portfolio/avatar) — falls back to initial */}
-                  <div className="w-16 h-16 rounded-full bg-surface border border-border-color overflow-hidden flex items-center justify-center text-[#B90808] font-bold text-xl mb-3">
+                  <div className="w-20 h-20 rounded-full bg-surface border border-border-color overflow-hidden flex items-center justify-center text-[#B90808] font-bold text-xl mb-3">
                     {img ? (
                       <img
                         src={img}
