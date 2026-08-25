@@ -11,8 +11,8 @@ console.log('>>> EXPRESS SERVER STARTED', new Date().toISOString());
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import http from 'http';                    
-import { Server } from 'socket.io';         
+import http from 'http';
+import { Server } from 'socket.io';
 import { connectDB } from './config/db.js';
 import authRouter from './routes/authRoutes.js';
 import profileRouter from './routes/profileRoutes.js';
@@ -25,8 +25,8 @@ import walletRouter from './routes/walletRoutes.js';
 import reviewRouter from './routes/reviewRoutes.js';
 import notificationRouter from './routes/notificationRoutes.js';
 import messageRouter from './routes/messageRoutes.js';
-import { setupSocket } from './socket.js';  
-import payoutRouter from './routes/payoutRoutes.js' 
+import { setupSocket } from './socket.js';
+import payoutRouter from './routes/payoutRoutes.js'
 import serviceRequestRouter from './routes/servcieRequestRoute.js'
 import serviceRouter from './routes/serviceRoutes.js'
 import blogRouter from './routes/blogRoutes.js'
@@ -46,8 +46,28 @@ connectDB();
 
 const app = express();
 
+// ── CORS ──────────────────────────────────────────────────────────
+// Allow the deployed frontend, plus local dev. Set CLIENT_URL in .env
+// to your Amplify URL (no trailing slash). Extra origins are listed so
+// production and local both work at once.
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  "https://main.d11kkkdatmlmv7.amplifyapp.com",
+  "http://localhost:3000",
+].filter(Boolean);
+
+const corsOptions = {
+  origin: allowedOrigins,
+  credentials: true,
+  methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
 app.use(helmet());
-app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
+app.use(cors(corsOptions));
+app.options(/.*/, cors(corsOptions)); // answer preflight (OPTIONS) for all routes
+// ──────────────────────────────────────────────────────────────────
+
 app.use(express.json());
 app.use('/uploads', express.static('uploads', {
   setHeaders: (res) => {
@@ -90,10 +110,9 @@ app.use('/api/follow', FollowRouter)
 app.use('/api/contact', ContactRouter)
 app.use('/api/verification', VerificationRouter);
 app.use('/api/settings', settingRouter)
-app.use('/api/about',aboutRouter)
 app.use('/api/about', aboutRouter);
 
-// ↓ new handler
+// ↓ error handler
 app.use((err, req, res, next) => {
   console.error('ERROR:', err);
   if (err instanceof multer.MulterError) {
@@ -102,16 +121,16 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500).json({ error: { message: err.message } });
 });
 
-const httpServer = http.createServer(app);   
+const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
-  cors: { origin: process.env.CLIENT_URL, credentials: true },
+  cors: { origin: allowedOrigins, credentials: true },
 });
-setupSocket(io);       
+setupSocket(io);
 
 setInterval(async () => {
   const count = await runAutoReleaseSweep();
   if (count > 0) console.log(`[AUTO-RELEASE] Processed ${count} overdue deals`);
-}, 60 * 60 * 1000); 
+}, 60 * 60 * 1000);
 
 const PORT = process.env.PORT || 5000;
 httpServer.listen(PORT, () => console.log(`Server is running on port ${PORT}`));

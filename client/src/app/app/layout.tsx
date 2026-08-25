@@ -326,7 +326,7 @@ function AppShell({
                 : "opacity-0 max-w-0"
             }`}
           >
-            Visit Luvenex
+            Visit Here
           </span>
         </Link>
 
