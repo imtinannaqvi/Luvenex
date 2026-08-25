@@ -24,6 +24,7 @@ import {
   FiX,
 } from "react-icons/fi";
 import { getToken, getUser, clearSession } from "@/lib/auth";
+import { apiFetch } from "@/lib/api";
 
 const NAV_ITEMS = [
   { href: "/admin", label: "Dashboard", icon: FiGrid },
@@ -47,6 +48,13 @@ const NAV_ITEMS = [
   { href: "/admin/settings", label: "Settings", icon: FiSettings },
 ];
 
+const countKeyMap: Record<string, string> = {
+  "/admin/complaints": "complaints",
+  "/admin/messages": "flaggedMessages",
+  "/admin/service-requests": "serviceRequests",
+  "/admin/verification": "verificationRequests",
+};
+
 export default function AdminLayout({
   children,
 }: {
@@ -55,8 +63,9 @@ export default function AdminLayout({
   const router = useRouter();
   const pathname = usePathname();
   const [checked, setChecked] = useState(false);
-  const [isOpen, setIsOpen] = useState(true); // desktop collapse
-  const [mobileOpen, setMobileOpen] = useState(false); // mobile drawer
+  const [isOpen, setIsOpen] = useState(true);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [pendingCounts, setPendingCounts] = useState<Record<string, number>>({});
 
   useEffect(() => {
     const token = getToken();
@@ -66,10 +75,22 @@ export default function AdminLayout({
     setChecked(true);
   }, [router]);
 
-  // Close the drawer whenever the route changes.
   useEffect(() => {
     setMobileOpen(false);
   }, [pathname]);
+
+  useEffect(() => {
+    if (!checked) return;
+
+    const loadCounts = () => {
+      apiFetch("/api/admin/pending-counts", { token: getToken()! })
+        .then(setPendingCounts)
+        .catch(() => {});
+    };
+    loadCounts();
+    const interval = setInterval(loadCounts, 30000);
+    return () => clearInterval(interval);
+  }, [checked]);
 
   if (!checked) {
     return (
@@ -79,7 +100,6 @@ export default function AdminLayout({
     );
   }
 
-  // Mobile drawer always shows labels; icon-collapse is desktop-only.
   const sidebarExpanded = mobileOpen || isOpen;
 
   const SidebarInner = (
@@ -97,7 +117,6 @@ export default function AdminLayout({
           <span className="text-primary">Luvenex</span> Admin
         </h2>
 
-        {/* Desktop collapse toggle (md+) */}
         <button
           type="button"
           onClick={() => setIsOpen((prev) => !prev)}
@@ -107,7 +126,6 @@ export default function AdminLayout({
           <FiMoreVertical size={18} />
         </button>
 
-        {/* Mobile close (< md) */}
         <button
           type="button"
           onClick={() => setMobileOpen(false)}
@@ -122,6 +140,9 @@ export default function AdminLayout({
         {NAV_ITEMS.map((item) => {
           const Icon = item.icon;
           const active = pathname === item.href;
+          const countKey = countKeyMap[item.href];
+          const count = countKey ? pendingCounts[countKey] || 0 : 0;
+
           return (
             <Link
               key={item.href}
@@ -137,9 +158,14 @@ export default function AdminLayout({
               }`}
             >
               <Icon size={18} className="shrink-0" aria-hidden="true" />
-              <span className={sidebarExpanded ? "" : "sr-only"}>
+              <span className={sidebarExpanded ? "flex-1" : "sr-only"}>
                 {item.label}
               </span>
+              {sidebarExpanded && count > 0 && (
+                <span className="w-5 h-5 rounded-full bg-white/20 text-[10px] font-bold text-white flex items-center justify-center shrink-0">
+                  {count > 9 ? "9+" : count}
+                </span>
+              )}
             </Link>
           );
         })}
@@ -164,7 +190,6 @@ export default function AdminLayout({
 
   return (
     <div className="flex min-h-screen">
-      {/* ── Desktop sidebar (md+) ── */}
       <aside
         className={`hidden md:flex bg-ink text-paper flex-col h-screen sticky top-0 py-6 shrink-0 transition-all duration-300 ease-in-out ${
           isOpen ? "w-56 px-5" : "w-20 px-3"
@@ -173,7 +198,6 @@ export default function AdminLayout({
         {SidebarInner}
       </aside>
 
-      {/* ── Mobile backdrop + drawer (< md) ── */}
       <div
         onClick={() => setMobileOpen(false)}
         className={`md:hidden fixed inset-0 z-40 bg-black/60 transition-opacity duration-300 ${
@@ -188,9 +212,8 @@ export default function AdminLayout({
         {SidebarInner}
       </aside>
 
-      {/* ── Main content ── */}
       <main className="flex-1 min-w-0 bg-surface overflow-y-auto overflow-x-hidden flex flex-col">
-        {/* Slim topbar — holds the mobile hamburger */}
+        {/* Mobile topbar — hamburger only */}
         <div className="md:hidden h-14 shrink-0 border-b border-border-color bg-background flex items-center px-4">
           <button
             type="button"

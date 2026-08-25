@@ -49,9 +49,9 @@ const Navbar = () => {
     <header className="w-full bg-background text-foreground z-30 relative border-b border-border-color transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-4">
         {/* Logo */}
-        <Link href="/" className="shrink-0">
+         <Link href="/" className="">
           <img
-            src="/luvenex-logo-black.png"
+            src="/file_0000000089d482118329077f6e1cff4c.png"
             alt="Luvenex"
             className="h-7 sm:h-9 w-auto select-none dark:invert-0 invert transition-all"
           />

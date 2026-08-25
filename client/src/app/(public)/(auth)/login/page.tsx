@@ -39,9 +39,9 @@ export default function LoginPage() {
 
                 <div className="absolute -bottom-16 -right-16 w-44 h-44 bg-primary/50 rounded-full blur-3xl pointer-events-none" />
 
-                <div className="relative z-10 w-full bg-ink/40 rounded-2xl shadow-3xl p-8 backdrop-blur-xl">
+                <div className="relative z-10 w-full bg-ink/10 rounded-sm border border-primary/20 shadow-3xl p-8 backdrop-blur-xl">
                     <div className="flex justify-center mb-4">
-                        <img src="/luvenex-logo-black.png" alt="Luvenex" className="h-12 w-auto" />
+                        <img src="/file_00000000b0e88211bb2c2f2e15c336ee.png" alt="Luvenex" className="h-12 w-auto " />
                     </div>
                     <p className="text-lg italic text-foreground mb-6 text-center">Welcome back</p>
 
@@ -51,10 +51,11 @@ export default function LoginPage() {
                             <input
                                 type="email"
                                 value={email}
+                                placeholder='Email'
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
-                                className="w-full px-3.5 py-2.5 rounded-xl border border-line text-sm bg-background
-                           focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                                className="w-full px-3.5 py-2.5 rounded-xl border border-line text-sm placeholder:text-foreground bg-background
+                           focus:outline-none focus:ring-2 focus:ring-primary/30  focus:border-primary"
                             />
                         </div>
 
@@ -64,9 +65,10 @@ export default function LoginPage() {
                                 <input
                                     type={showPassword ? "text" : "password"}
                                     value={password}
+                                    placeholder='password'
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
-                                    className="w-full px-3.5 py-2.5 pr-11 rounded-xl border border-line text-sm bg-background
+                                    className="w-full px-3.5 py-2.5 pr-11 rounded-xl border border-line placeholder:text-foreground text-sm bg-background
                            focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
                                 />
                                 <button
@@ -86,8 +88,8 @@ export default function LoginPage() {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="px-16 py-3.5 rounded-xl bg-primary/40 text-foreground font-semibold text-sm
-                           hover:bg-primary-dark transition disabled:opacity-60 disabled:cursor-not-allowed"
+                                className="px-16 py-3.5 rounded-xl bg-background text-foreground font-semibold text-sm
+                           hover:bg-primary-dark hover:text-white transition disabled:opacity-60 disabled:cursor-not-allowed"
                             >
                                 {loading ? 'Logging in...' : 'Log in'}
                             </button>

@@ -51,7 +51,7 @@ export default function GigsCom() {
               <>
                 <div>
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="w-9 h-9 rounded-full bg-surface flex items-center justify-center text-[#B90808] font-bold text-sm">
+                    <div className="w-9 h-9 rounded-sm bg-surface flex items-center justify-center text-[#B90808] font-bold text-sm">
                       {g.influencerId?.name?.[0]?.toUpperCase() || g.name?.[0]?.toUpperCase() || "?"}
                     </div>
                     <span className="text-lg font-medium text-foreground">
@@ -82,7 +82,7 @@ export default function GigsCom() {
             );
 
             const cardClass =
-              "group bg-card/85 border border-border-color hover:border-[#B90808]/50 rounded-2xl p-6 sm:p-7 flex flex-col justify-between transition-all duration-300 shadow-sm";
+              "group bg-card/85 border border-border-color hover:border-[#B90808]/50 rounded-sm p-6 sm:p-7 flex flex-col justify-between transition-all duration-300 shadow-sm";
 
             if (!handle) {
               // No creator handle available — render as a non-clickable card instead of a broken link
@@ -109,9 +109,9 @@ export default function GigsCom() {
       <div className="flex justify-center mt-12">
         <Link
           href="/gigs"
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-border-color hover:border-[#B90808] text-foreground text-xs font-bold uppercase tracking-widest transition-all duration-300 hover:bg-[#B90808] hover:text-white"
+          className="inline-flex items-center gap-2 px-6 py-3 rounded-sm border border-border-color hover:border-[#B90808] text-foreground text-xs font-bold uppercase tracking-widest transition-all duration-300 hover:bg-[#B90808] hover:text-white"
         >
-          Explore All Gigs
+          Explore Gigs
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
           </svg>
