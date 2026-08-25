@@ -46,12 +46,8 @@ export const getGigs = async (req, res) => {
     const gigsWithHandles = await Promise.all(
       gigs.map(async (g) => {
         const gigObj = g.toObject();
-        if (gigObj.influencerId?._id) {
-          // Pull handle + image fields from the influencer's profile.
-          const profile = await InfluencerProfile.findOne({
-            userId: gigObj.influencerId._id,
-          }).select('handle avatarUrl portfolio');
-
+               if (gigObj.influencerId?._id) {
+          const profile = await InfluencerProfile.findOne({ userId: gigObj.influencerId._id }).select('handle avatarUrl portfolio')
           gigObj.influencerId.handle = profile?.handle || null;
           gigObj.influencerId.avatarUrl = profile?.avatarUrl || null;
           gigObj.influencerId.portfolio = profile?.portfolio || [];
