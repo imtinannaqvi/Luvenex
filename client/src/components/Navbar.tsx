@@ -7,7 +7,7 @@ import { useContactPanel } from "./ContactPanel";
 import { getToken } from "@/lib/auth";
 
 const navLinks = [
-  { href: "/", label: "Home" },
+  { href: "/discover", label: "Discover " },
   { href: "/about", label: "About Us" },
   { href: "/services", label: "Services" },
   { href: "/contact", label: "Contact Us" },

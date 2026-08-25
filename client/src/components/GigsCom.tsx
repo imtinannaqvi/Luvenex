@@ -3,31 +3,40 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { apiFetch } from "@/lib/api";
+import { getUser } from "@/lib/auth";
 
 export default function GigsCom() {
   const [gigs, setGigs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isBrand, setIsBrand] = useState(false);
 
   useEffect(() => {
+    // Only brands see this section.
+    const user = getUser();
+    const brand = user?.role === "brand";
+    setIsBrand(brand);
+
+    if (!brand) {
+      setLoading(false);
+      return;
+    }
+
     apiFetch("/api/gigs?limit=6")
       .then((data) => {
-        console.log("RAW GIGS API RESPONSE:", data);
-        const items = Array.isArray(data) 
-          ? data 
+        const items = Array.isArray(data)
+          ? data
           : data?.gigs || data?.data?.gigs || data?.data || data?.items || [];
-          
         setGigs(Array.isArray(items) ? items.slice(0, 6) : []);
       })
-      .catch((err) => {
-        console.error("Gigs fetch error:", err);
-        setGigs([]);
-      })
+      .catch(() => setGigs([]))
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading || gigs.length === 0) return null;
+  // Hidden entirely for non-brands, while loading, or when there are no gigs.
+  if (!isBrand || loading || gigs.length === 0) return null;
 
-  const money = (minor?: number) => (minor ? `PKR ${(minor / 100).toLocaleString("en-PK")}` : "—");
+  const money = (minor?: number) =>
+    minor ? `PKR ${(minor / 100).toLocaleString("en-PK")}` : "—";
 
   return (
     <section className="relative bg-background py-16 sm:py-20 overflow-hidden">
@@ -46,37 +55,53 @@ export default function GigsCom() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {gigs.map((g, i) => {
             const handle = g.influencerId?.handle || g.handle || "";
+            const creatorName = g.influencerId?.name || g.name || "Creator";
+            const initial =
+              g.influencerId?.name?.[0]?.toUpperCase() ||
+              g.name?.[0]?.toUpperCase() ||
+              "?";
 
             const cardContent = (
               <>
-                <div>
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-9 h-9 rounded-sm bg-surface flex items-center justify-center text-[#B90808] font-bold text-sm">
-                      {g.influencerId?.name?.[0]?.toUpperCase() || g.name?.[0]?.toUpperCase() || "?"}
-                    </div>
-                    <span className="text-lg font-medium text-foreground">
-                      {g.influencerId?.name || g.name || "Creator"}
-                    </span>
+                <div className="flex flex-col items-center text-center">
+                  {/* Avatar / initial — centered on top */}
+                  <div className="w-16 h-16 rounded-full bg-surface border border-border-color flex items-center justify-center text-[#B90808] font-bold text-xl mb-3">
+                    {initial}
                   </div>
 
+                  {/* Creator name */}
+                  <span className="text-base font-semibold text-foreground">
+                    {creatorName}
+                  </span>
+
+                  {/* Category */}
                   {g.category && (
-                    <span className="text-md font-semibold uppercase tracking-wider text-[#B90808] block mb-1">
-                      Category: {g.category}
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-[#B90808] mt-2">
+                      {g.category}
                     </span>
                   )}
+
+                  {/* Title */}
                   <h3 className="text-base sm:text-lg font-bold text-foreground mt-1 group-hover:text-[#B90808] transition-colors">
                     {g.title}
                   </h3>
+
+                  {/* Description */}
                   {g.description && (
-                    <p className="text-xs sm:text-sm text-zinc-400 mt-2.5 leading-relaxed">
+                    <p className="text-xs sm:text-sm text-zinc-400 mt-2.5 leading-relaxed line-clamp-3">
                       {g.description}
                     </p>
                   )}
                 </div>
 
+                {/* Amount + days at the bottom */}
                 <div className="flex items-center justify-between mt-6 pt-4 border-t border-border-color">
-                  <span className="text-base font-bold text-[#B90808]">{money(g.priceMinor)}</span>
-                  <span className="text-sm text-zinc-500">Delivery in: {g.deliveryDays || 3} days</span>
+                  <span className="text-base font-bold text-[#B90808]">
+                    {money(g.priceMinor)}
+                  </span>
+                  <span className="text-sm text-zinc-500">
+                    Delivery in: {g.deliveryDays || 3} days
+                  </span>
                 </div>
               </>
             );
@@ -85,7 +110,6 @@ export default function GigsCom() {
               "group bg-card/85 border border-border-color hover:border-[#B90808]/50 rounded-sm p-6 sm:p-7 flex flex-col justify-between transition-all duration-300 shadow-sm";
 
             if (!handle) {
-              // No creator handle available — render as a non-clickable card instead of a broken link
               return (
                 <div key={g._id || g.id || i} className={cardClass}>
                   {cardContent}

@@ -83,16 +83,16 @@ export default function Page() {
         {/* Center Brand Title & Info */}
         <div className="flex flex-col items-center justify-center text-center space-y-4 my-8 md:my-0 max-w-lg">
           <Link href="/" className="">
-          <img
-            src="/file_0000000089d482118329077f6e1cff4c.png"
-            alt="Luvenex"
-            className="h-7 sm:h-9 w-auto select-none dark:invert-0 invert transition-all"
-          />
-        </Link>
-          <p className="text-xs sm:text-sm tracking-[0.18em] text-foreground/70 font-light leading-relaxed  max-w-md">
-            Where Brands & Influencers Connect, Collaborate, & Close Deals.
-            The all-in-one ecosystem for high-impact creator partnerships—featuring direct campaign discovery, smart negotiations, real-time performance analytics, and guaranteed secure escrow payouts.
-          </p>
+  <img
+    src="/file_0000000089d482118329077f6e1cff4c.png"
+    alt="Luvenex"
+    className="h-10 sm:h-14 w-auto select-none dark:invert-0 invert transition-all"
+  />
+</Link>
+         <p className="text-xs sm:text-lg text-foreground/70 font-light leading-relaxed max-w-md">
+  Where Brands & Influencers Connect, Collaborate, & Close Deals.
+  The all-in-one ecosystem for high-impact creator partnerships—featuring direct campaign discovery, smart negotiations, real-time performance analytics, and guaranteed secure escrow payouts.
+</p>
         </div>
 
         {/* Right Navigation */}
