@@ -102,7 +102,9 @@ return (
         }`}
       >
         <h1 className="text-3xl sm:text-3xl font-black italic text-foreground mb-4">
-          Get In Touch
+          Get In <span className="text-primary">
+            Touch
+          </span>
         </h1>
         <p className="text-foreground text-md sm:text-base">
           Contact us for any inquiries, partnerships, or support needs.
@@ -238,7 +240,7 @@ return (
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-surface border border-border-color hover:border-primary text-foreground font-bold text-xs uppercase tracking-widest transition-all duration-300 hover:scale-105 shadow-2xl disabled:opacity-50 cursor-pointer"
+                className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-surface border border-border-color  text-foreground font-bold text-xs uppercase tracking-widest transition-all duration-300 hover:scale-105 shadow-2xl disabled:opacity-50 cursor-pointer"
               >
                 {submitting ? "Sending..." : "Send Message"}
               </button>

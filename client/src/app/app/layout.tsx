@@ -24,7 +24,7 @@ import {
 import { getToken, getUser, clearSession } from "@/lib/auth";
 import NotificationBell from "@/components/NotificationBell";
 import {
-  NotificationsProvider,
+ 
   useNotifications,
 } from "@/context/Notificationscontext";
 
@@ -54,17 +54,11 @@ export default function UserAppLayout({
     );
   }
 
-  // Provider wraps the shell so both the sidebar badges and the
-  // NotificationBell read from a single polling source.
-  return (
-    <NotificationsProvider>
-      <AppShell role={role}>{children}</AppShell>
-    </NotificationsProvider>
-  );
+
+  return <AppShell role={role}>{children}</AppShell>;
 }
 
-/* Small badge shown on a nav item. Renders inline when the sidebar is
-    open, and as a corner dot when collapsed. */
+
 function NavBadge({ count, isOpen }: { count: number; isOpen: boolean }) {
   if (count <= 0) return null;
   const label = count > 9 ? "9+" : String(count);
@@ -88,24 +82,17 @@ function AppShell({
 }) {
   const router = useRouter();
   const pathname = usePathname();
-  // Desktop collapse (icons vs full). Only affects md+.
   const [isOpen, setIsOpen] = useState(true);
-  // Mobile drawer open/closed. Only affects < md.
   const [mobileOpen, setMobileOpen] = useState(false);
   const [walletMenuOpen, setWalletMenuOpen] = useState(false);
   const { badgeCounts } = useNotifications();
 
-  // Close the mobile drawer whenever the route changes.
   useEffect(() => {
     setMobileOpen(false);
   }, [pathname]);
 
-  // Messages page renders its own full-bleed panel — skip the shell's
-  // default page padding for that route only.
+ 
   const isFullBleedPage = pathname === "/app/messages";
-
-  // On mobile the drawer is always the expanded (labelled) sidebar;
-  // the icon-collapse only applies on md+.
   const sidebarExpanded = mobileOpen || isOpen;
 
   const navItems =
@@ -205,7 +192,7 @@ function AppShell({
           <span className="text-primary">Luvenex</span>
         </h2>
 
-        {/* Desktop collapse toggle (md+ only) */}
+        
         <button
           type="button"
           onClick={() => setIsOpen((prev) => !prev)}
@@ -215,7 +202,7 @@ function AppShell({
           <FiMoreVertical size={17} />
         </button>
 
-        {/* Mobile close button (< md only) */}
+      
         <button
           type="button"
           onClick={() => setMobileOpen(false)}

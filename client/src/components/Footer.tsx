@@ -89,7 +89,7 @@ export default function Page() {
     className="h-10 sm:h-14 w-auto select-none dark:invert-0 invert transition-all"
   />
 </Link>
-         <p className="text-xs sm:text-lg text-foreground/70 font-light leading-relaxed max-w-md">
+         <p className="text-xs sm:text-lg text-foreground font-light leading-relaxed max-w-md">
   Where Brands & Influencers Connect, Collaborate, & Close Deals.
   The all-in-one ecosystem for high-impact creator partnerships—featuring direct campaign discovery, smart negotiations, real-time performance analytics, and guaranteed secure escrow payouts.
 </p>
