@@ -5,6 +5,13 @@ import Link from "next/link";
 import { apiFetch } from "@/lib/api";
 import { getUser } from "@/lib/auth";
 
+// Build a full URL for uploaded media (local paths need the API host prefixed).
+const mediaSrc = (url?: string) => {
+  if (!url) return "";
+  if (url.startsWith("http://") || url.startsWith("https://")) return url;
+  return `${process.env.NEXT_PUBLIC_API_URL || ""}${url}`;
+};
+
 export default function GigsCom() {
   const [gigs, setGigs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -38,6 +45,19 @@ export default function GigsCom() {
   const money = (minor?: number) =>
     minor ? `PKR ${(minor / 100).toLocaleString("en-PK")}` : "—";
 
+  // Try, in order: creator avatar → first portfolio image → gig's own cover.
+  const creatorImage = (g: any): string => {
+    const inf = g.influencerId || {};
+    const portfolioFirst =
+      Array.isArray(inf.portfolio) && inf.portfolio.length > 0
+        ? inf.portfolio.find((p: any) => p.mediaType !== "video")?.mediaUrl ||
+          inf.portfolio[0]?.mediaUrl
+        : "";
+    return mediaSrc(
+      inf.avatarUrl || inf.avatar || portfolioFirst || g.coverImage || ""
+    );
+  };
+
   return (
     <section className="relative bg-background py-16 sm:py-20 overflow-hidden">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 mb-12 text-center">
@@ -60,13 +80,30 @@ export default function GigsCom() {
               g.influencerId?.name?.[0]?.toUpperCase() ||
               g.name?.[0]?.toUpperCase() ||
               "?";
+            const img = creatorImage(g);
 
             const cardContent = (
               <>
                 <div className="flex flex-col items-center text-center">
-                  {/* Avatar / initial — centered on top */}
-                  <div className="w-16 h-16 rounded-full bg-surface border border-border-color flex items-center justify-center text-[#B90808] font-bold text-xl mb-3">
-                    {initial}
+                  {/* Avatar image (portfolio/avatar) — falls back to initial */}
+                  <div className="w-16 h-16 rounded-full bg-surface border border-border-color overflow-hidden flex items-center justify-center text-[#B90808] font-bold text-xl mb-3">
+                    {img ? (
+                      <img
+                        src={img}
+                        alt={creatorName}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          // If the image fails, hide it so the initial shows.
+                          const el = e.currentTarget;
+                          el.style.display = "none";
+                          if (el.parentElement) {
+                            el.parentElement.textContent = initial;
+                          }
+                        }}
+                      />
+                    ) : (
+                      initial
+                    )}
                   </div>
 
                   {/* Creator name */}
