@@ -37,8 +37,7 @@ export default function CreatorProfilePage() {
   const [videos, setVideos] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState<"about" | "feedback" | "history" | "portfolio" | "skills">("about");
   const [workHistory, setWorkHistory] = useState<any[]>([]);
-  const user = getUser();
-
+const isOwnProfile = !!user && !!profile?.userId?._id && user.id === profile.userId._id;
   useEffect(() => {
     const load = async () => {
       setLoading(true);
@@ -471,17 +470,19 @@ export default function CreatorProfilePage() {
                 {g.description || "No description provided."}
               </p>
             </div>
-            <div className="flex items-center justify-between pt-2.5 border-t border-border-color gap-2">
+                       <div className="flex items-center justify-between pt-2.5 border-t border-border-color gap-2">
               <span className="text-sm font-extrabold text-[#B90808]">{money(g.priceMinor)}</span>
-              <button
-                onClick={startConversation}
-                className="flex items-center gap-1 text-[11px] font-bold text-foreground bg-[#B90808] hover:bg-[#a10707] px-3 py-1.5 rounded-md transition active:scale-95"
-              >
-                Order
-                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
+              {!isOwnProfile && (
+                <button
+                  onClick={startConversation}
+                  className="flex items-center gap-1 text-[11px] font-bold text-foreground bg-[#B90808] hover:bg-[#a10707] px-3 py-1.5 rounded-md transition active:scale-95"
+                >
+                  Order
+                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              )}
             </div>
           </div>
         ))}
