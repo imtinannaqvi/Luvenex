@@ -3,7 +3,7 @@ import crypto from 'crypto';
 import User from '../models/User.js';
 import Otp from '../models/Otp.js';
 import { signAccess, signRefresh, verifyToken } from '../lib/jwt.js';
-import { generateReferralCode } from '../lib/referral.js';
+import { generateReferralCode, generateHandle } from '../lib/referral.js';
 
 const createOtp = async (email, purpose) => {
   const code = String(Math.floor(100000 + Math.random() * 900000)); // 6 digits
@@ -42,17 +42,25 @@ export const signUp = async (req, res) => {
 
     const passwordHash = await bcrypt.hash(password, 10);
 
-    let myCode;
+           let myCode;
     let attempts = 0;
     do {
       myCode = generateReferralCode(name);
       attempts++;
     } while ((await User.findOne({ referralCode: myCode })) && attempts < 5);
 
-    const user = await User.create({
+    let myHandle;
+    let handleAttempts = 0;
+    do {
+      myHandle = generateHandle(name);
+      handleAttempts++;
+    } while ((await User.findOne({ handle: myHandle })) && handleAttempts < 5);
+
+        const user = await User.create({
       name, email, passwordHash, role,
       agreedToTermsAt: new Date(),
       referralCode: myCode,
+      handle: myHandle,
       referredBy,
     });
 
