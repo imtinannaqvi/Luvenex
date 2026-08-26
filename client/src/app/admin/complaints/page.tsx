@@ -29,6 +29,8 @@ const load = async () => {
 
 useEffect(() => {
     load();
+     const interval = setInterval(load, 15000);
+  return () => clearInterval(interval);
 }, []);
 
     const review = async(id:string, status:"reviewed" | "dismissed") => {

@@ -13,14 +13,20 @@ export default function AdminReferralsPage() {
   const [allReferrals, setAllReferrals] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+useEffect(() => {
+  const loadReferrals = () => {
     apiFetch("/api/admin/referrals", { token: getToken()! })
       .then((data) => {
         setTopReferrers(data.topReferrers || []);
         setAllReferrals(data.allReferrals || []);
       })
       .finally(() => setLoading(false));
-  }, []);
+  };
+
+  loadReferrals();
+  const interval = setInterval(loadReferrals, 15000);
+  return () => clearInterval(interval);
+}, []);
 
   const money = (minor: number) => `PKR ${(minor / 100).toLocaleString("en-PK")}`;
 

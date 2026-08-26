@@ -33,9 +33,11 @@ export default function DiscoverCampaignPage() {
     }
   };
 
-  useEffect(() => {
-    load();
-  }, [category]);
+useEffect(() => {
+  load();
+  const interval = setInterval(load, 15000);
+  return () => clearInterval(interval);
+}, [category]);
 
   useEffect(() => {
     if (applyingId) {

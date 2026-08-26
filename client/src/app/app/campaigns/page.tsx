@@ -25,8 +25,7 @@ const [newDeliverableQty, setNewDeliverableQty] = useState("1");
     setLoading(true);
 
     try {
-        // Scoped to the logged-in brand — do NOT use "/api/campaigns" here,
-        // that endpoint is the public marketplace listing (all brands' open campaigns).
+       
         const data = await apiFetch("/api/campaigns/my", { token: getToken()! });
         setCampaigns(data.campaigns || []);
     } finally {
@@ -34,9 +33,11 @@ const [newDeliverableQty, setNewDeliverableQty] = useState("1");
     }
   };
 
-  useEffect(()=> {
-    load()
-  },[])
+useEffect(() => {
+  load();
+  const interval = setInterval(load, 15000);
+  return () => clearInterval(interval);
+}, []);
 
   const money = (minor?: number) => (minor ? `PKR ${(minor / 100).toLocaleString("en-PK")}` : "—");
 

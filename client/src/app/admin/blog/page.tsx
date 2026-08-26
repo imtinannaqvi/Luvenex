@@ -9,7 +9,6 @@ import "react-quill-new/dist/quill.snow.css";
 
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 
-// toolbar config — bold, italic, lists, links, image, etc.
 const quillModules = {
   toolbar: [
     [{ header: [1, 2, 3, false] }],
@@ -57,9 +56,11 @@ export default function AdminBlogPage() {
     }
   };
 
-  useEffect(() => {
-    load();
-  }, []);
+useEffect(() => {
+  load();
+  const interval = setInterval(load, 15000);
+  return () => clearInterval(interval);
+}, []);
 
   const slugPreview = title
     .toLowerCase()

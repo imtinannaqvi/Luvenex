@@ -52,6 +52,8 @@ export default function AdminUsersPage() {
 
     useEffect(() => {
         loadUsers()
+         const interval = setInterval(load, 15000);
+  return () => clearInterval(interval);
     }, [])
 
     const handleSearch = (e: React.FormEvent) => {

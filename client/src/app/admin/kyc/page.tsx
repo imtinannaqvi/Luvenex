@@ -28,6 +28,8 @@ export default function AdminKycQueuePage() {
 
     useEffect(() => {
         loadQueue();
+         const interval = setInterval(load, 15000);
+  return () => clearInterval(interval);
     }, []);
 
  const reviewKyc = async (userId: string, decision: "verified" | "rejected", reason?: string) => {

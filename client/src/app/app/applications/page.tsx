@@ -39,8 +39,10 @@ export default function ApplicationsPage() {
   };
 
   useEffect(() => {
-    load();
-  }, []);
+  load();
+  const interval = setInterval(load, 15000);
+  return () => clearInterval(interval);
+}, []);
 
   const startEdit = (a: any) => {
     setEditingId(a._id);

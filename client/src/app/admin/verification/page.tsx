@@ -14,7 +14,10 @@ export default function AdminVerificationPage() {
       .finally(() => setLoading(false));
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load();
+    const interval = setInterval(load, 15000);
+  return () => clearInterval(interval);
+   }, []);
 
   const review = async (userId: string, decision: string) => {
     try {

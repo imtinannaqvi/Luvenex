@@ -30,6 +30,8 @@ export default function AdminContactMessagePage() {
 
   useEffect(() => {
     load();
+     const interval = setInterval(load, 15000);
+  return () => clearInterval(interval);
   }, [statusFilter]);
 
   const updateStatus = async (id: string, status: string) => {

@@ -36,9 +36,11 @@ const load = async () => {
   }
 };
 
-  useEffect(() => {
-    load();
-  }, []);
+useEffect(() => {
+  load();
+  const interval = setInterval(load, 15000);
+  return () => clearInterval(interval);
+}, []);
 
   const money = (minor?: number) =>
     minor ? `PKR ${(minor / 100).toLocaleString("en-PK")}` : "—";

@@ -26,6 +26,8 @@ export default function AdminPayoutQueuePage() {
 
   useEffect(() => {
     loadQueue();
+    const interval = setInterval(load, 15000);
+  return () => clearInterval(interval);
   }, []);
 
   const money = (minor: number) => `PKR ${(minor / 100).toLocaleString("en-PK")}`;

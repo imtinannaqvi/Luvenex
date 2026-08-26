@@ -47,6 +47,8 @@ export default function AdminServiceRequestsPage() {
 
   useEffect(() => {
     load();
+    const interval = setInterval(load, 15000);
+  return () => clearInterval(interval);
   }, [statusFilter]);
 
   useEffect(() => {

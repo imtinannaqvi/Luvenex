@@ -84,15 +84,16 @@ const [revisionNote, setRevisionNote] = useState("");
     }
   };
 
-  useEffect(() => {
-    setUser(getUser());
-    load();
-  }, [dealId]);
+ useEffect(() => {
+  setUser(getUser());
+  load();
+  const interval = setInterval(load, 15000);
+  return () => clearInterval(interval);
+}, [dealId]);
 
   const money = (minor: number) => `PKR ${(minor / 100).toLocaleString("en-PK")}`;
   const formatEventType = (type: string) => type.replace(/_/g, " ");
 
-  // percentage next to "Platform Fee", derived from the actual stored fee
   const feePercent = (feeMinor: number) =>
     deal && deal.priceMinor > 0 && feeMinor > 0
       ? ` (${Math.round((feeMinor / deal.priceMinor) * 100)}%)`

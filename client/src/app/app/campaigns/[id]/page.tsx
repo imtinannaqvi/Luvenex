@@ -34,10 +34,11 @@ export default function CampaignApplicantsPage() {
     }
   };
 
-  useEffect(() => {
-    load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+ useEffect(() => {
+  load();
+  const interval = setInterval(load, 15000);
+  return () => clearInterval(interval);
+}, [id]);
 
   const money = (minor?: number) =>
     minor ? `PKR ${(minor / 100).toLocaleString("en-PK")}` : "—";

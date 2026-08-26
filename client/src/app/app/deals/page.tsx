@@ -28,11 +28,12 @@ export default function DealsListPage() {
     "refunded",
   ];
 
-  useEffect(() => {
-    setUsers(getUser());
-    load();
-  }, []);
-
+ useEffect(() => {
+  setUsers(getUser());
+  load();
+  const interval = setInterval(load, 15000);
+  return () => clearInterval(interval);
+}, []);
   const load = async () => {
     setLoading(true);
     setError("");

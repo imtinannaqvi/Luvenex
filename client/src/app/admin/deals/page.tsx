@@ -41,7 +41,8 @@ export default function AdminDealsPage() {
 
   useEffect(() => {
     load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     const interval = setInterval(load, 15000);
+  return () => clearInterval(interval);
   }, [statusFilter]);
 
   const money = (minor: number) => `PKR ${(minor / 100).toLocaleString("en-PK")}`;

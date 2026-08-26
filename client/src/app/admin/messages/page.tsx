@@ -14,21 +14,24 @@ export default function AdminFlaggedMessagesPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadMessages = async () => {
-      setLoading(true);
-      try {
-        const data = await apiFetch("/api/messages/Flagged", {
-          token: getToken()!,
-        });
-        setMessages(data.messages || []);
-      } catch (error: any) {
-        toast.error(error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadMessages();
-  }, []);
+  const loadMessages = async () => {
+    setLoading(true);
+    try {
+      const data = await apiFetch("/api/messages/Flagged", {
+        token: getToken()!,
+      });
+      setMessages(data.messages || []);
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  loadMessages();
+  const interval = setInterval(loadMessages, 15000);
+  return () => clearInterval(interval);
+}, []);
 
   return (
     <div className="max-w-3xl px-4 sm:px-6 py-8 space-y-5">

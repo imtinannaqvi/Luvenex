@@ -62,6 +62,8 @@ export default function AdminServicesPage() {
 
   useEffect(() => {
     load();
+    const interval = setInterval(load, 15000);
+  return () => clearInterval(interval);
   }, []);
 
   const resetForm = () => {
