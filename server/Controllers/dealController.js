@@ -12,6 +12,7 @@ import { logActivity } from "../services/activityLog.service.js";
 import DealActivity from "../models/DealActivity.js";
 import InfluencerProfile from "../models/InfluencerProfile.js";
 import { notify } from "../services/notification.service.js";
+import { checkAndRewardReferral } from '../services/referral.service.js';
 
 export const createDeal = async (req, res) => {
   try {
@@ -310,6 +311,9 @@ export const completeDeal = async (req, res) => {
     await deal.save();
 
     await logActivity(deal._id, 'completed', req.user._id, 'Deal marked completed');
+
+    await checkAndRewardReferral(deal._id, deal.brandId);
+    await checkAndRewardReferral(deal._id, deal.influencerId);
 
     res.json({ deal });
   } catch (err) {

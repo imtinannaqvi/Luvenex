@@ -15,7 +15,7 @@ export const updatePlatformSettings = async (req, res) => {
     try {
         const settings = await PlatformSettings.getSettings();
         const allowed = [
-            'brandFeePercent', 'influencerFeePercent', 'referralRewardMinor',
+            'brandFeePercent', 'influencerFeePercent', 'referralRewardPercent',
             'minWithdrawalMinor', 'autoReleaseDays', 'minDealPriceMinor',
             'maxDealPriceMinor', 'kycRequired', 'maintenanceMode',
             'maintenanceMessage', 'complaintAutoFlagThreshold',
