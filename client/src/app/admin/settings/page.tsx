@@ -241,15 +241,15 @@ export default function AdminSettingsPage() {
               icon={<FiDollarSign size={16} />}
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-foreground mb-1.5">Referral reward (PKR)</label>
-                  <input
-                    type="number"
-                    value={settings.referralRewardMinor / 100}
-                    onChange={(e) => update("referralRewardMinor", Number(e.target.value) * 100)}
-                    className={inputCls}
-                  />
-                </div>
+               <div>
+  <label className="block text-xs font-semibold text-ink mb-1.5">Referral reward (%)</label>
+  <input
+    type="number"
+    value={settings.referralRewardPercent}
+    onChange={(e) => update("referralRewardPercent", Number(e.target.value))}
+    className="w-full px-3.5 py-2.5 rounded-xl border border-line text-sm"
+  />
+</div>
                 <div>
                   <label className="block text-xs font-semibold text-foreground mb-1.5">Min withdrawal (PKR)</label>
                   <input

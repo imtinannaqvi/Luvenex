@@ -6,11 +6,11 @@ type Slide = { src?: string; poster?: string; caption?: string };
 
 const SLIDES: Slide[] = [
   { src: "/videos/istockphoto-2149199638-640_adpp_is.mp4", caption: "human-vetted" },
-  { src: "/videos/istockphoto-2167055507-640_adpp_is.mp4" },
+  { src: "/videos/istockphoto-2167055507-640_adpp_is.mp4", caption: "viewsss" },
   { src: "/videos/istockphoto-1992011732-640_adpp_is.mp4" },
   { src: "/videos/istockphoto-1989763073-640_adpp_is.mp4" },
   { src: "/videos/istockphoto-1721110440-640_adpp_is.mp4" },
-  { src: "/videos/istockphoto-1572185399-640_adpp_is.mp4" },
+  { src: "/videos/istockphoto-1572185399-640_adpp_is.mp4", caption: "AI analysed" },
   { src: "/videos/istockphoto-1477915083-640_adpp_is.mp4" },
   { src: "/videos/istockphoto-1470765116-640_adpp_is.mp4" },
   { src: "/videos/istockphoto-2223963097-640_adpp_is.mp4" },
@@ -18,27 +18,12 @@ const SLIDES: Slide[] = [
   { src: "/videos/istockphoto-2170908941-640_adpp_is.mp4" },
 ];
 
-/* ── Matches the reference: FLAT MIDDLE STRIP + BIG SIDE WALLS ──
-   Purely horizontal — every card sits at the same height (NO lift / V / tilt).
-     • inner cards (within FLAT_COUNT) form a flat, front-facing strip,
-       gently recessed and evenly spaced.
-     • outer cards sweep FORWARD (grow big) and rotate hard inward, so they
-       become the large angled "walls" at the screen edges.
-   The section is full-width so the walls can reach the screen edges.       */
-const FLAT_COUNT = 1;      // centre + this many each side stay flat (3 flat middle)
-const CARD_STEP = 300;     // horizontal spacing of the flat middle cards (bigger gap)
-const EDGE_X = 330;        // extra horizontal offset per step for outer cards
-const EDGE_FORWARD = 340;  // forward sweep per step (more curve depth)
-const EDGE_ROT = 32;       // deg rotation per step (more curve)
-const MAX_ROT = 66;        // clamp so walls face you, never edge-on
-const LIFT = 70;           // vertical drop from the centre peak (∧ curve)
-const TILT_X = 7;          // deg tilt following the ∧ curve
-const MIDDLE_DEPTH = 1700; // how far the middle sits back (deeper)
-const PERSPECTIVE = 2100;  // 3D strength (> MIDDLE_DEPTH so cards stay large)
-const SPACING = 90;        // px of drag per card step (drag sensitivity)
-const VISIBLE = 3;         // centre + 3 each side = 7 cards on screen
-const CARD_W = 250;
-const CARD_H = 360;
+/* ── EXACT 7-CARD CIRCULAR ARC CONFIGURATION (3 Left + 1 Center Deep + 3 Right) ── */
+const VISIBLE = 3;        
+const PERSPECTIVE = 950;  
+const SPACING = 100;        
+const CARD_W = 230;
+const CARD_H = 350;
 
 const VideoSlider = () => {
   const [active, setActive] = useState(Math.floor(SLIDES.length / 2));
@@ -93,16 +78,15 @@ const VideoSlider = () => {
     dragging.current = false;
     setDrag((d) => {
       const steps = Math.round(-d / SPACING);
-      setActive((a) => a + steps);   // no clamp → wraps infinitely
+      setActive((a) => a + steps);
       return 0;
     });
   }, []);
 
-  // fractional centre index while dragging → smooth motion
   const current = active + -drag / SPACING;
 
   return (
-    <section ref={sectionRef} className="relative w-full pt-6 pb-10 overflow-hidden select-none">
+    <section ref={sectionRef} className="relative w-full pt-12 pb-6 overflow-hidden select-none">
       <div className="relative z-10 max-w-3xl mx-auto text-center px-4 mb-6">
         <h2 className="text-3xl sm:text-4xl lg:text-5xl italic font-black text-foreground tracking-tight leading-tight whitespace-nowrap">
           Run your creator  <br /> <span className="text-[#B90808]"> marketing here</span>
@@ -114,9 +98,9 @@ const VideoSlider = () => {
         </p>
       </div>
 
-      {/* ── flat middle strip + big rotated side walls (full width for edge walls) ── */}
+      {/* ── 3D perspective container displaying all 7 cards in a circular arc ── */}
       <div
-        className="relative mx-auto h-[520px] w-full touch-none cursor-grab active:cursor-grabbing"
+        className="relative mx-auto mt-20 h-[500px] w-full max-w-7xl touch-none cursor-grab active:cursor-grabbing"
         style={{ perspective: `${PERSPECTIVE}px`, transformStyle: "preserve-3d" }}
         onPointerDown={onDown}
         onPointerMove={onMove}
@@ -125,24 +109,19 @@ const VideoSlider = () => {
       >
         {SLIDES.map((slide, i) => {
           const N = SLIDES.length;
-          // shortest signed distance around the loop → infinite wrap, no empty side
           let offset = ((i - current) % N + N) % N;
           if (offset > N / 2) offset -= N;
           const abs = Math.abs(offset);
-          const sign = offset < 0 ? -1 : 1;
 
-          const flat = Math.min(abs, FLAT_COUNT);      // spacing for the flat middle
-          const edge = Math.max(0, abs - FLAT_COUNT);  // 0 for middle; grows for walls
+          // ── Circular Arc Cylindrical Math with slight spacing buffer ──
+          const angle = offset * 0.34; // slightly increased from 0.32 to add a small gap
+          const x = Math.sin(angle) * 780; // slightly increased horizontal spread for card separation
+          // Center card (offset 0) is recessed deep in background (-850), outer cards curve forward (+Z)
+          const z = -850 + (Math.abs(angle) * 650) + (Math.pow(abs, 1.2) * 60);
+          const rotateY = -angle * (180 / Math.PI) * 1.15; // natural rotation matching the cylinder
 
-          // flat middle sits back & even; outer cards sweep forward and rotate hard
-          const x = sign * (CARD_STEP * flat + EDGE_X * edge);
-          const z = -MIDDLE_DEPTH + EDGE_FORWARD * edge;
-          const y = LIFT * Math.pow(abs, 1.35);       // ∧ curve: centre peak, sides curve DOWN (eased)
-          const rotateX = -TILT_X * Math.pow(abs, 1.2);// tilt following the ∧ curve
-          const rotateY = -sign * Math.min(MAX_ROT, EDGE_ROT * edge);
-
-          const opacity = abs > VISIBLE + 0.6 ? 0 : 1;
-          const zIndex = 1000 + Math.round(z);         // nearer cards on top
+          const opacity = abs > VISIBLE ? 0 : 1;
+          const zIndex = 1000 + Math.round(z);
 
           return (
             <div
@@ -150,21 +129,21 @@ const VideoSlider = () => {
               onClick={() => {
                 if (!drag) setActive(i);
               }}
-              className="absolute left-1/2 top-[40px]"
+              className="absolute left-1/2 top-[70px]"
               style={{
                 width: `${CARD_W}px`,
                 height: `${CARD_H}px`,
                 marginLeft: `-${CARD_W / 2}px`,
                 marginTop: `-${CARD_H / 2}px`,
-                transform: `translateX(${x}px) translateY(${y}px) translateZ(${z}px) rotateY(${rotateY}deg) rotateX(${rotateX}deg)`,
+                transform: `translateX(${x}px) translateZ(${z}px) rotateY(${rotateY}deg)`,
                 transformStyle: "preserve-3d",
                 zIndex,
                 opacity,
-                transition: dragging.current ? "none" : "transform 0.5s ease-out, opacity 0.4s ease",
+                transition: dragging.current ? "none" : "transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease",
               }}
             >
               {/* card */}
-              <div className="w-full h-full rounded-2xl overflow-hidden shadow-2xl bg-card ring-1 ring-black/10">
+              <div className="w-full h-full rounded-2xl overflow-hidden shadow-2xl bg-card ring-1 ring-black/15">
                 {slide.src ? (
                   <video
                     ref={(el) => {
@@ -190,7 +169,7 @@ const VideoSlider = () => {
 
               {/* caption */}
               {slide.caption && (
-                <p className="absolute left-1/2 -translate-x-1/2 top-full mt-4 whitespace-nowrap text-center text-xl font-serif italic text-foreground">
+                <p className="absolute left-1/2 -translate-x-1/2 top-full mt-3 whitespace-nowrap text-center text-lg font-serif italic text-foreground">
                   {slide.caption}
                 </p>
               )}
@@ -200,7 +179,7 @@ const VideoSlider = () => {
       </div>
 
       {/* drag handle hint */}
-      <div className="mt-2 flex justify-center">
+      <div className="mt-4 flex justify-center">
         <div className="w-10 h-5 rounded-full border border-border-color flex items-center justify-center">
           <div className="w-4 h-1 rounded-full bg-card/80" />
         </div>

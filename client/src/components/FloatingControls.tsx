@@ -25,12 +25,12 @@ export default function FloatingControls() {
   };
 
   return (
-    <div className="fixed right-4 sm:right-6 top-1/2 -translate-y-1/2 z-40 flex flex-col items-center gap-3">
+    <div className="fixed right-4 sm:right-6 bottom-6 z-40 flex flex-col items-center gap-3">
       {/* Theme toggle */}
       <button
         onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
         aria-label="Toggle theme"
-        className="group w-13 h-13 rounded-full flex items-center justify-center bg-card border border-border-color shadow-lg hover:border-[#B90808]/60 hover:scale-105 active:scale-95 transition-all duration-300"
+        className="group w-15 h-15 rounded-full flex items-center justify-center bg-card border border-border-color shadow-lg hover:border-[#B90808]/60 hover:scale-105 active:scale-95 transition-all duration-300"
       >
         <span className="relative w-5 h-5 block">
           {/* Sun — visible in dark mode (tap to go light) */}
@@ -69,7 +69,7 @@ export default function FloatingControls() {
       <button
         onClick={scrollToTop}
         aria-label="Scroll to top"
-        className={`group w-13 h-13 rounded-full flex items-center justify-center bg-card border border-border-color shadow-lg hover:border-[#B90808]/60 hover:scale-105 active:scale-95 transition-all duration-300 ${
+        className={`group w-15 h-15 rounded-full flex items-center justify-center bg-card border border-border-color shadow-lg hover:border-[#B90808]/60 hover:scale-105 active:scale-95 transition-all duration-300 ${
           showScrollTop ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-4 pointer-events-none"
         }`}
       >
