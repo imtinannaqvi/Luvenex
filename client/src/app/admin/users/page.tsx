@@ -56,7 +56,7 @@ export default function AdminUsersPage() {
 
     useEffect(() => {
         loadUsers();
-        const interval = setInterval(load, 15000);
+        const interval = setInterval(loadUsers, 15000);
   return () => clearInterval(interval);
     }, []);
 
@@ -341,3 +341,4 @@ export default function AdminUsersPage() {
         </div>
     );
 }
+
