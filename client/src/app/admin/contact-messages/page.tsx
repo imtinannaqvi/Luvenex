@@ -76,7 +76,6 @@ export default function AdminContactMessagePage() {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center gap-3">
         <div className="w-8 h-8 border-2 border-t-primary border-primary/20 rounded-full animate-spin" />
-        <p className="text-xs text-muted font-medium">Loading inbox…</p>
       </div>
     );
   }

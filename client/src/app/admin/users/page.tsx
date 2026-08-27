@@ -225,7 +225,6 @@ export default function AdminUsersPage() {
                                     <td colSpan={6} className="px-5 py-20 text-center">
                                         <div className="flex flex-col items-center justify-center gap-3">
                                             <div className="w-6 h-6 border-2 border-border-color border-t-red-600 rounded-full animate-spin" />
-                                            <span className="text-sm text-zinc-500">Loading users…</span>
                                         </div>
                                     </td>
                                 </tr>
@@ -270,7 +269,6 @@ export default function AdminUsersPage() {
                 {loading && users.length === 0 ? (
                     <div className={`${softCard} py-16 flex flex-col items-center gap-3`}>
                         <div className="w-6 h-6 border-2 border-border-color border-t-red-600 rounded-full animate-spin" />
-                        <span className="text-sm text-zinc-500">Loading users…</span>
                     </div>
                 ) : users.length === 0 ? (
                     <div className={`${softCard} py-14 text-center text-zinc-500 italic`}>No users found.</div>

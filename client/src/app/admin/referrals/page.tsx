@@ -13,20 +13,20 @@ export default function AdminReferralsPage() {
   const [allReferrals, setAllReferrals] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-useEffect(() => {
-  const loadReferrals = () => {
-    apiFetch("/api/admin/referrals", { token: getToken()! })
-      .then((data) => {
-        setTopReferrers(data.topReferrers || []);
-        setAllReferrals(data.allReferrals || []);
-      })
-      .finally(() => setLoading(false));
-  };
+  useEffect(() => {
+    const loadReferrals = () => {
+      apiFetch("/api/admin/referrals", { token: getToken()! })
+        .then((data) => {
+          setTopReferrers(data.topReferrers || []);
+          setAllReferrals(data.allReferrals || []);
+        })
+        .finally(() => setLoading(false));
+    };
 
-  loadReferrals();
-  const interval = setInterval(loadReferrals, 15000);
-  return () => clearInterval(interval);
-}, []);
+    loadReferrals();
+    const interval = setInterval(loadReferrals, 15000);
+    return () => clearInterval(interval);
+  }, []);
 
   const money = (minor: number) => `PKR ${(minor / 100).toLocaleString("en-PK")}`;
 
@@ -39,25 +39,30 @@ useEffect(() => {
   }
 
   const totalReferred = allReferrals.length;
-  const totalPaid = 0;
-  const totalPending = 0;
+  // Real numbers from the data the controller actually returns.
+  const totalPaidMinor = topReferrers.reduce(
+    (sum, r) => sum + (r.referralRewardsEarnedMinor || 0),
+    0
+  );
+  const activeReferrers = topReferrers.length;
 
   const stats = [
     { label: "Total Referred", value: totalReferred, accent: false },
-    { label: "Total Paid", value: `Rs ${totalPaid}`, accent: false },
-    { label: "Total Pending", value: `Rs ${totalPending}`, accent: true },
+    { label: "Total Paid Out", value: money(totalPaidMinor), accent: false },
+    { label: "Active Referrers", value: activeReferrers, accent: true },
   ];
 
   return (
-    <div className="max-w-7xl  px-4 sm:px-6 py-8 space-y-6">
+    <div className="max-w-7xl px-4 sm:px-6 py-8 space-y-6">
       {/* Header */}
       <div>
-       
         <h1 className="text-2xl font-bold text-foreground italic">Referrals Overview</h1>
-        <p className="text-sm text-foreground mt-1">Monitor influencer referrals, assignees, and payout balances.</p>
+        <p className="text-sm text-foreground mt-1">
+          Monitor influencer referrals, top referrers, and payout balances.
+        </p>
       </div>
 
-      {/* Stat cards — flat, no per-card top bars */}
+      {/* Stat cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {stats.map((s) => (
           <div key={s.label} className={`${softCard} p-5`}>
@@ -71,10 +76,68 @@ useEffect(() => {
         ))}
       </div>
 
-      {/* Activity table */}
+      {/* Top Referrers leaderboard */}
       <div className={`${softCard} overflow-hidden`}>
         <div className="px-5 py-4 flex items-center justify-between border-b border-line">
-          <h2 className="text-lg font-bold text-foreground ">Referral Activity</h2>
+          <h2 className="text-lg font-bold text-foreground">Top Referrers</h2>
+          <span className="text-[11px] font-semibold text-foreground bg-background/[0.04] px-2.5 py-0.5 rounded-full">
+            {topReferrers.length} earning
+          </span>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="text-foreground text-[11px] bg-background/[0.015] border-b border-line">
+                <th className="px-5 py-3 font-semibold">#</th>
+                <th className="px-5 py-3 font-semibold">Referrer</th>
+                <th className="px-5 py-3 font-semibold">Role</th>
+                <th className="px-5 py-3 font-semibold">Referral Code</th>
+                <th className="px-5 py-3 font-semibold text-right">Earned</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-background text-sm text-foreground">
+              {topReferrers.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-5 py-12 text-center text-foreground italic">
+                    No one has earned referral rewards yet.
+                  </td>
+                </tr>
+              ) : (
+                topReferrers.map((r, idx) => (
+                  <tr key={r._id} className="hover:bg-background/[0.015] transition-colors">
+                    <td className="px-5 py-3.5 font-bold text-muted tabular-nums">
+                      {idx + 1}
+                    </td>
+                    <td className="px-5 py-3.5 font-semibold text-foreground">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-7 h-7 rounded-full bg-background text-foreground text-xs font-bold flex items-center justify-center shrink-0">
+                          {r.name ? r.name[0].toUpperCase() : "U"}
+                        </div>
+                        <span>{r.name}</span>
+                      </div>
+                    </td>
+                    <td className="px-5 py-3.5 capitalize text-muted">{r.role || "—"}</td>
+                    <td className="px-5 py-3.5">
+                      <span className="font-mono text-xs bg-background/[0.04] px-2 py-0.5 rounded-md text-foreground">
+                        {r.referralCode || "—"}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3.5 text-right font-bold text-primary tabular-nums">
+                      {money(r.referralRewardsEarnedMinor || 0)}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Referral Activity table — Status column removed (no real status in data) */}
+      <div className={`${softCard} overflow-hidden`}>
+        <div className="px-5 py-4 flex items-center justify-between border-b border-line">
+          <h2 className="text-lg font-bold text-foreground">Referral Activity</h2>
           <span className="text-[11px] font-semibold text-foreground bg-background/[0.04] px-2.5 py-0.5 rounded-full">
             {allReferrals.length} total
           </span>
@@ -83,10 +146,10 @@ useEffect(() => {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="text-foreground text-[11px]  bg-background/[0.015] border-b border-line">
-                <th className="px-5 py-3 font-semibold">Influencer</th>
-                <th className="px-5 py-3 font-semibold">Referrer</th>
-                <th className="px-5 py-3 font-semibold">Status</th>
+              <tr className="text-foreground text-[11px] bg-background/[0.015] border-b border-line">
+                <th className="px-5 py-3 font-semibold">Referred User</th>
+                <th className="px-5 py-3 font-semibold">Role</th>
+                <th className="px-5 py-3 font-semibold">Referred By</th>
                 <th className="px-5 py-3 font-semibold">Joined</th>
               </tr>
             </thead>
@@ -98,50 +161,36 @@ useEffect(() => {
                   </td>
                 </tr>
               ) : (
-                allReferrals.map((u, idx) => {
-                  const approved = idx % 2 === 0; // TODO: replace with real u.status
-                  return (
-                    <tr key={u._id} className="hover:bg-background/[0.015] transition-colors">
-                      <td className="px-5 py-3.5 font-semibold text-foreground">
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-7 h-7 rounded-full bg-background text-foreground text-xs font-bold flex items-center justify-center shrink-0">
-                            {u.name ? u.name[0].toUpperCase() : "I"}
-                          </div>
-                          <span>{u.name}</span>
+                allReferrals.map((u) => (
+                  <tr key={u._id} className="hover:bg-background/[0.015] transition-colors">
+                    <td className="px-5 py-3.5 font-semibold text-foreground">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-7 h-7 rounded-full bg-background text-foreground text-xs font-bold flex items-center justify-center shrink-0">
+                          {u.name ? u.name[0].toUpperCase() : "U"}
                         </div>
-                      </td>
+                        <span>{u.name}</span>
+                      </div>
+                    </td>
 
-                      <td className="px-5 py-3.5 text-muted">
-                        {u.referredBy?.name ? (
-                          <span className="font-medium text-foreground">{u.referredBy.name}</span>
-                        ) : (
-                          <span className="text-foreground">—</span>
-                        )}
-                      </td>
+                    <td className="px-5 py-3.5 capitalize text-muted">{u.role || "—"}</td>
 
-                      <td className="px-5 py-3.5">
-                        <span
-                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold border ${
-                            approved
-                              ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                              : "bg-amber-50 text-amber-700 border-amber-200"
-                          }`}
-                        >
-                          <span className={`w-1.5 h-1.5 rounded-full ${approved ? "bg-emerald-500" : "bg-amber-500"}`} />
-                          {approved ? "Approved" : "Pending"}
-                        </span>
-                      </td>
+                    <td className="px-5 py-3.5 text-muted">
+                      {u.referredBy?.name ? (
+                        <span className="font-medium text-foreground">{u.referredBy.name}</span>
+                      ) : (
+                        <span className="text-foreground">—</span>
+                      )}
+                    </td>
 
-                      <td className="px-5 py-3.5 text-muted">
-                        {new Date(u.createdAt).toLocaleDateString("en-PK", {
-                          year: "numeric",
-                          month: "short",
-                          day: "numeric",
-                        })}
-                      </td>
-                    </tr>
-                  );
-                })
+                    <td className="px-5 py-3.5 text-muted">
+                      {new Date(u.createdAt).toLocaleDateString("en-PK", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </td>
+                  </tr>
+                ))
               )}
             </tbody>
           </table>

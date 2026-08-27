@@ -45,18 +45,19 @@ export const updatePlatformSettings = async (req, res) => {
 };
 
 
-export const getPublicSettings = async(req,res) => {
+export const getPublicSettings = async (req, res) => {
     try {
         const settings = await PlatformSettings.getSettings();
         res.json({
-            maintenanceMode:settings.maintenanceMode,
+            maintenanceMode: settings.maintenanceMode,
             maintenanceMessage: settings.maintenanceMessage,
-            announcementEnabled: settings.accouncementEnabled,
-            announcementMessage: settings.accounceMessage
+            announcementEnabled: settings.announcementEnabled,
+            announcementMessage: settings.announcementMessage,
+            referralRewardPercent: settings.referralRewardPercent,
         })
 
     } catch (error) {
-        res.status(500).json({error:{message: error.message}})
-        
+        res.status(500).json({ error: { message: error.message } })
+
     }
 }

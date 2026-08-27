@@ -69,6 +69,10 @@ function SettingsCard({
   );
 }
 
+// Safe divide-by-100 for PKR inputs — never returns NaN/undefined for the value prop.
+const pkr = (minor: any) =>
+  minor === undefined || minor === null || isNaN(minor) ? "" : minor / 100;
+
 export default function AdminSettingsPage() {
   const [settings, setSettings] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -211,7 +215,7 @@ export default function AdminSettingsPage() {
                     <label className="block text-xs font-semibold text-foreground mb-1.5">Brand fee (%)</label>
                     <input
                       type="number"
-                      value={settings.brandFeePercent}
+                      value={settings.brandFeePercent ?? ""}
                       onChange={(e) => update("brandFeePercent", Number(e.target.value))}
                       className={inputCls}
                     />
@@ -220,7 +224,7 @@ export default function AdminSettingsPage() {
                     <label className="block text-xs font-semibold text-foreground mb-1.5">Influencer fee (%)</label>
                     <input
                       type="number"
-                      value={settings.influencerFeePercent}
+                      value={settings.influencerFeePercent ?? ""}
                       onChange={(e) => update("influencerFeePercent", Number(e.target.value))}
                       className={inputCls}
                     />
@@ -228,7 +232,7 @@ export default function AdminSettingsPage() {
                 </div>
                 <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary/5 border border-primary/10">
                   <span className="text-xs font-semibold text-primary">
-                    Total commission: {settings.brandFeePercent + settings.influencerFeePercent}%
+                    Total commission: {(settings.brandFeePercent ?? 0) + (settings.influencerFeePercent ?? 0)}%
                   </span>
                 </div>
               </div>
@@ -241,20 +245,20 @@ export default function AdminSettingsPage() {
               icon={<FiDollarSign size={16} />}
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-               <div>
-  <label className="block text-xs font-semibold text-ink mb-1.5">Referral reward (%)</label>
-  <input
-    type="number"
-    value={settings.referralRewardPercent}
-    onChange={(e) => update("referralRewardPercent", Number(e.target.value))}
-    className="w-full px-3.5 py-2.5 rounded-xl border border-line text-sm"
-  />
-</div>
+                <div>
+                  <label className="block text-xs font-semibold text-ink mb-1.5">Referral reward (%)</label>
+                  <input
+                    type="number"
+                    value={settings.referralRewardPercent ?? ""}
+                    onChange={(e) => update("referralRewardPercent", Number(e.target.value))}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-line text-sm"
+                  />
+                </div>
                 <div>
                   <label className="block text-xs font-semibold text-foreground mb-1.5">Min withdrawal (PKR)</label>
                   <input
                     type="number"
-                    value={settings.minWithdrawalMinor / 100}
+                    value={pkr(settings.minWithdrawalMinor)}
                     onChange={(e) => update("minWithdrawalMinor", Number(e.target.value) * 100)}
                     className={inputCls}
                   />
@@ -263,7 +267,7 @@ export default function AdminSettingsPage() {
                   <label className="block text-xs font-semibold text-foreground mb-1.5">Min deal price (PKR)</label>
                   <input
                     type="number"
-                    value={settings.minDealPriceMinor / 100}
+                    value={pkr(settings.minDealPriceMinor)}
                     onChange={(e) => update("minDealPriceMinor", Number(e.target.value) * 100)}
                     className={inputCls}
                   />
@@ -272,7 +276,7 @@ export default function AdminSettingsPage() {
                   <label className="block text-xs font-semibold text-foreground mb-1.5">Max deal price (0 = no limit)</label>
                   <input
                     type="number"
-                    value={settings.maxDealPriceMinor / 100}
+                    value={pkr(settings.maxDealPriceMinor)}
                     onChange={(e) => update("maxDealPriceMinor", Number(e.target.value) * 100)}
                     className={inputCls}
                   />
@@ -292,7 +296,7 @@ export default function AdminSettingsPage() {
                     <label className="block text-xs font-semibold text-foreground mb-1.5">Auto-release (days)</label>
                     <input
                       type="number"
-                      value={settings.autoReleaseDays}
+                      value={settings.autoReleaseDays ?? ""}
                       onChange={(e) => update("autoReleaseDays", Number(e.target.value))}
                       className={inputCls}
                     />
@@ -301,7 +305,7 @@ export default function AdminSettingsPage() {
                     <label className="block text-xs font-semibold text-foreground mb-1.5">Complaint flag threshold</label>
                     <input
                       type="number"
-                      value={settings.complaintAutoFlagThreshold}
+                      value={settings.complaintAutoFlagThreshold ?? ""}
                       onChange={(e) => update("complaintAutoFlagThreshold", Number(e.target.value))}
                       className={inputCls}
                     />
@@ -312,7 +316,7 @@ export default function AdminSettingsPage() {
                   <label className="flex items-center gap-2.5 text-sm cursor-pointer">
                     <input
                       type="checkbox"
-                      checked={settings.reviewModerationEnabled}
+                      checked={settings.reviewModerationEnabled ?? false}
                       onChange={(e) => update("reviewModerationEnabled", e.target.checked)}
                       className="w-4 h-4"
                     />
@@ -324,7 +328,7 @@ export default function AdminSettingsPage() {
                       min="1"
                       max="5"
                       placeholder="Reviews at or below this rating need approval"
-                      value={settings.reviewModerationMinRating}
+                      value={settings.reviewModerationMinRating ?? ""}
                       onChange={(e) => update("reviewModerationMinRating", Number(e.target.value))}
                       className="w-full mt-2 px-3.5 py-2.5 rounded-xl border border-line text-sm"
                     />
@@ -337,7 +341,7 @@ export default function AdminSettingsPage() {
                   </label>
                   <input
                     type="number"
-                    value={settings.inactiveAccountAutoSuspendDays}
+                    value={settings.inactiveAccountAutoSuspendDays ?? ""}
                     onChange={(e) => update("inactiveAccountAutoSuspendDays", Number(e.target.value))}
                     className={inputCls}
                   />
@@ -356,7 +360,7 @@ export default function AdminSettingsPage() {
                   <span className="text-sm font-medium text-foreground">Require KYC for withdrawals</span>
                   <input
                     type="checkbox"
-                    checked={settings.kycRequired}
+                    checked={settings.kycRequired ?? false}
                     onChange={(e) => update("kycRequired", e.target.checked)}
                     className="w-4 h-4"
                   />
@@ -367,7 +371,7 @@ export default function AdminSettingsPage() {
                     <span className="text-sm font-medium text-foreground">Show announcement banner</span>
                     <input
                       type="checkbox"
-                      checked={settings.announcementEnabled}
+                      checked={settings.announcementEnabled ?? false}
                       onChange={(e) => update("announcementEnabled", e.target.checked)}
                       className="w-4 h-4"
                     />
@@ -376,7 +380,7 @@ export default function AdminSettingsPage() {
                     <input
                       type="text"
                       placeholder="Banner message shown site-wide"
-                      value={settings.announcementMessage}
+                      value={settings.announcementMessage ?? ""}
                       onChange={(e) => update("announcementMessage", e.target.value)}
                       className="w-full mt-2 px-3.5 py-2.5 rounded-xl border border-line text-sm"
                     />
@@ -431,7 +435,7 @@ export default function AdminSettingsPage() {
                   <span className="text-sm font-medium text-foreground">Maintenance mode</span>
                   <input
                     type="checkbox"
-                    checked={settings.maintenanceMode}
+                    checked={settings.maintenanceMode ?? false}
                     onChange={(e) => update("maintenanceMode", e.target.checked)}
                     className="w-4 h-4"
                   />
@@ -442,7 +446,7 @@ export default function AdminSettingsPage() {
                   <input
                     type="text"
                     placeholder="We'll be back shortly — performing scheduled maintenance."
-                    value={settings.maintenanceMessage || ""}
+                    value={settings.maintenanceMessage ?? ""}
                     onChange={(e) => update("maintenanceMessage", e.target.value)}
                     className={inputCls}
                   />
@@ -490,7 +494,7 @@ export default function AdminSettingsPage() {
                   </span>
                   <input
                     type="checkbox"
-                    checked={settings.deactivationReasonRequired || false}
+                    checked={settings.deactivationReasonRequired ?? false}
                     onChange={(e) => update("deactivationReasonRequired", e.target.checked)}
                     className="w-4 h-4"
                   />
@@ -520,7 +524,7 @@ export default function AdminSettingsPage() {
                   </span>
                   <input
                     type="checkbox"
-                    checked={settings.lowRatingFlagEnabled || false}
+                    checked={settings.lowRatingFlagEnabled ?? false}
                     onChange={(e) => update("lowRatingFlagEnabled", e.target.checked)}
                     className="w-4 h-4"
                   />

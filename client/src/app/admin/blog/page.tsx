@@ -454,14 +454,14 @@ useEffect(() => {
                           <div className="flex items-center justify-end gap-3 font-semibold text-xs">
                             <button
                               onClick={() => startEdit(p)}
-                              className="text-primary hover:text-foreground cursor-pointer"
+                              className="text-primary hover:text-foreground cursor-pointer border px-4 py-2 border-primary rounded-sm"
                             >
                               Edit
                             </button>
                             <button
                               onClick={() => handleDelete(p._id)}
                               disabled={deletingId === p._id}
-                              className="text-red-600 hover:text-foreground disabled:opacity-50 cursor-pointer"
+                              className="text-red-600 hover:text-foreground disabled:opacity-50 cursor-pointer border px-4 py-2 border-primary rounded-sm"
                             >
                               {deletingId === p._id ? "..." : "Delete"}
                             </button>

@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 
 /* soft card shell — matches dashboard + users pages */
 const softCard =
-  "bg-background rounded-3xl border border-black/[0.06] shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_28px_-16px_rgba(0,0,0,0.10)]";
+  "bg-background rounded-3xl border border-primary/20 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_28px_-16px_rgba(0,0,0,0.10)]";
 
 const Spinner = ({ className = "" }: { className?: string }) => (
   <div
@@ -54,10 +54,7 @@ export default function AdminServiceRequestsPage() {
   useEffect(() => {
   apiFetch("/api/influencers?limit=100", {})
     .then((data) => {
-      // Filter out orphaned influencer profiles whose linked user account
-      // no longer exists (e.g. deleted directly in the DB) — these have a
-      // null/missing userId and would otherwise render an <option> with no
-      // usable key or value.
+      
       const valid = (data.profiles || []).filter((p: any) => p.userId?._id);
       setInfluencers(valid);
     })

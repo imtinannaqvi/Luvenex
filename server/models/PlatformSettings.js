@@ -9,10 +9,21 @@ const platformSettingsSchema = new mongoose.Schema({
      type: Number,
       default: 5
      },
+
+  // ── Referral reward as a PERCENT of the referred user's first deal ──
+  // This is what the referral service and the referral page both read.
+  referralRewardPercent: {
+     type: Number,
+      default: 5
+     },
+
+  // Legacy fixed-amount field — kept for backward compatibility.
+  // Safe to remove once you confirm nothing else references it.
   referralRewardMinor: {
      type: Number,
       default: 50000
      },
+
   minWithdrawalMinor: {
      type: Number,
       default: 100000
@@ -75,6 +86,14 @@ inactiveAccountAutoSuspendDays: { type: Number, default: 0 },
 platformSettingsSchema.statics.getSettings = async function () {
   let settings = await this.findOne();
   if (!settings) settings = await this.create({});
+
+  // Self-heal: if this document was created before referralRewardPercent
+  // existed, write the default in once so reads return a real value.
+  if (settings.referralRewardPercent === undefined || settings.referralRewardPercent === null) {
+    settings.referralRewardPercent = 5;
+    await settings.save();
+  }
+
   return settings;
 };
 

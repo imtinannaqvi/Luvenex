@@ -167,9 +167,9 @@ export default function AdminServicesPage() {
         <h1 className="text-2xl font-bold text-foreground italic">Services</h1>
         <button
           onClick={() => (showForm ? resetForm() : setShowForm(true))}
-          className="px-4 py-2 rounded-lg bg-primary text-foreground text-sm font-medium hover:bg-primary-dark transition"
+          className="px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary-dark hover:text-foreground transition"
         >
-          {showForm ? "Close" : "+ New service"}
+          {showForm ? "Close" : " New service"}
         </button>
       </div>
 
@@ -424,7 +424,7 @@ export default function AdminServicesPage() {
                         <button
                           onClick={() => handleDelete(s._id)}
                           disabled={deletingId === s._id}
-                          className="w-20 py-2 px-3 text-white bg-black border border-ink font-semibold rounded-lg hover:bg-background/30 transition disabled:opacity-50 inline-flex items-center justify-center"
+                          className="w-20 py-2 px-3 text-foreground bg-background border border-ink font-semibold rounded-lg hover:bg-background/30 transition disabled:opacity-50 inline-flex items-center justify-center"
                         >
                           {deletingId === s._id ? "..." : "Delete"}
                         </button>

@@ -215,8 +215,7 @@ export default function AdminUsersPage() {
                                 <tr>
                                     <td colSpan={6} className="px-6 py-24 text-center">
                                         <div className="flex flex-col items-center justify-center gap-2">
-                                            <div className="w-5 h-5 border-2 border-slate-200 border-t-slate-900 rounded-full animate-spin" />
-                                            <span className="text-xs text-slate-400 font-semibold tracking-wider uppercase mt-2">Parsing Database Matrix...</span>
+                                            <div className="w-5 h-5 border-2 border-primary/30 border-t-primary-dark rounded-full animate-spin" />
                                         </div>
                                     </td>
                                 </tr>

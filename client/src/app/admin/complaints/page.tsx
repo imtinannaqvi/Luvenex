@@ -114,7 +114,7 @@ return (
                 <button
                   disabled={actionLoadingId === c._id}
                   onClick={() => review(c._id, "dismissed")}
-                  className="text-xs px-3.5 py-1.5 rounded-xl bg-background/[0.03] border border-line text-foreground font-medium hover:bg-background/[0.06] transition disabled:opacity-50"
+                  className="text-sm px-3.5 py-1.5 rounded-xl bg-background border border-line text-foreground font-medium hover:bg-primary transition disabled:opacity-50"
                 >
                   Dismiss
                 </button>

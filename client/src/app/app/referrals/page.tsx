@@ -9,6 +9,7 @@ export default function ReferralPage() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [referralPercent, setReferralPercent] = useState(5);
 
   useEffect(() => {
     const token = getToken();
@@ -24,6 +25,17 @@ export default function ReferralPage() {
       })
       .catch((error) => toast.error(error?.message ?? "Something went wrong"))
       .finally(() => setLoading(false));
+  }, []);
+
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/settings/public`)
+      .then((res) => res.json())
+      .then((settingsData) => {
+        if (settingsData.referralRewardPercent) {
+          setReferralPercent(settingsData.referralRewardPercent);
+        }
+      })
+      .catch(() => {});
   }, []);
 
   const money = (minor: number) => `PKR ${(minor / 100).toLocaleString("en-PK")}`;
@@ -70,7 +82,7 @@ export default function ReferralPage() {
         <div>
           <h1 className="text-xl sm:text-xl font-bold text-foreground italic">Refer & Earn</h1>
           <p className="text-xs sm:text-sm text-zinc-400 mt-0.5">
-            Invite creators to Luvenex and earn PKR 500 when they complete their first deal.
+            Invite creators to Luvenex and earn {referralPercent}% of their first deal's value when they complete it.
           </p>
         </div>
       </div>
@@ -114,7 +126,7 @@ export default function ReferralPage() {
             <div>
               <h3 className="text-sm font-bold text-foreground">You earn rewards</h3>
               <p className="text-xs text-zinc-400 mt-1 leading-relaxed">
-                You receive PKR 500 directly in rewards every time a referral completes their deal.
+                You receive {referralPercent}% of their first deal's value directly in your wallet, automatically.
               </p>
             </div>
           </div>
