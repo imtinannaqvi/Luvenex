@@ -28,7 +28,7 @@ export default function AdminKycQueuePage() {
 
     useEffect(() => {
         loadQueue();
-         const interval = setInterval(load, 15000);
+         const interval = setInterval(loadQueue, 15000);
   return () => clearInterval(interval);
     }, []);
 
