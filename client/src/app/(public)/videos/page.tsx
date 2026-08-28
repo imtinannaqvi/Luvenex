@@ -322,7 +322,7 @@ export default function PublicVideoPage() {
 
   if (loading) {
     return (
-      <div className="h-screen flex items-center justify-center bg-ink">
+      <div className="h-screen flex items-center justify-center bg-background">
         <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
       </div>
     );
@@ -330,10 +330,10 @@ export default function PublicVideoPage() {
 
   if (videos.length === 0) {
     return (
-      <div className="h-screen flex items-center justify-center bg-ink text-center px-6">
+      <div className="h-screen flex items-center justify-center bg-background text-center px-6">
         <div>
-          <p className="text-sm font-semibold text-paper">No videos yet</p>
-          <p className="text-xs text-white/50 mt-1">Check back soon for new content.</p>
+          <p className="text-sm font-semibold text-foreground">No videos yet</p>
+          <p className="text-xs text-foreground/50 mt-1">Check back soon for new content.</p>
         </div>
       </div>
     );
@@ -346,7 +346,7 @@ export default function PublicVideoPage() {
 
   return (
     <div
-      className="h-screen bg-ink flex items-center justify-center overflow-hidden relative"
+      className="h-screen bg-background flex items-center justify-center overflow-hidden relative"
       onWheel={handleWheel}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
@@ -366,10 +366,8 @@ export default function PublicVideoPage() {
         </div>
       )}
 
-    
-
       {/* the single active video, centered, portrait-framed */}
-      <div className="relative h-full max-h-screen w-full max-w-[420px] flex items-center justify-center">
+      <div className="relative h-full max-h-screen w-full max-w-[420px] mt-4 flex items-center justify-center">
         <video
           key={v._id}
           ref={videoRef}
@@ -384,7 +382,7 @@ export default function PublicVideoPage() {
 
         <button
           onClick={() => setIsMuted((prev) => !prev)}
-          className="absolute top-6 right-4 z-20 w-9 h-9 rounded-full bg-paper/10 backdrop-blur-md border border-paper/20 flex items-center justify-center text-paper hover:bg-paper/20 transition"
+          className="absolute top-6 right-4 z-20 w-9 h-9 rounded-full bg-background backdrop-blur-md border border-border-color flex items-center justify-center text-foreground hover:bg-surface transition"
         >
           {isMuted ? (
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -398,21 +396,21 @@ export default function PublicVideoPage() {
         </button>
 
         {/* caption, bottom-left over the video */}
-        <div className="absolute bottom-8 left-0 right-16 p-4 bg-gradient-to-t from-ink/90 to-transparent">
+        <div className="absolute bottom-8 left-0 right-16 p-4 bg-gradient-to-t from-background to-transparent">
           <Link href={profileHref} className="flex items-center gap-2 mb-2 w-fit">
-            <span className="text-sm font-bold text-paper drop-shadow hover:text-primary transition">
+            <span className="text-sm font-bold text-foreground drop-shadow hover:text-primary transition">
               {v.postedBy?.name}
             </span>
           </Link>
           {v.caption && (
-            <p className="text-xs text-paper/90 leading-relaxed drop-shadow">{v.caption}</p>
+            <p className="text-xs text-foreground leading-relaxed drop-shadow">{v.caption}</p>
           )}
         </div>
 
         <div className="absolute right-3 bottom-8 flex flex-col items-center gap-5 z-10">
           <div className="relative">
             <Link href={profileHref} className="block">
-              <div className="w-12 h-12 rounded-full bg-primary/20 backdrop-blur-md border-2 border-paper flex items-center justify-center text-paper font-bold text-sm overflow-hidden">
+              <div className="w-12 h-12 rounded-full bg-primary/20 backdrop-blur-md border-2 border-foreground/20 flex items-center justify-center text-foreground font-bold text-sm overflow-hidden">
                 {v.postedBy?.name?.[0]?.toUpperCase() || "?"}
               </div>
             </Link>
@@ -422,8 +420,8 @@ export default function PublicVideoPage() {
               <button
                 onClick={toggleFollow}
                 disabled={followLoading}
-                className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold border-2 border-ink transition disabled:opacity-50 ${
-                  isFollowing ? "bg-paper/30 text-paper" : "bg-primary text-paper"
+                className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold border-2 border-background transition disabled:opacity-50 ${
+                  isFollowing ? "bg-background text-foreground" : "bg-primary text-foreground"
                 }`}
                 title={isFollowing ? "Unfollow" : "Follow"}
               >
@@ -433,10 +431,10 @@ export default function PublicVideoPage() {
           </div>
 
           {/* like */}
-          <button onClick={() => toggleLike(v._id)} className="flex flex-col items-center gap-1 text-paper">
+          <button onClick={() => toggleLike(v._id)} className="flex flex-col items-center gap-1 text-foreground">
             <div
               className={`w-11 h-11 rounded-full backdrop-blur-md flex items-center justify-center transition ${
-                isLiked(v) ? "bg-primary" : "bg-paper/10 hover:bg-paper/20"
+                isLiked(v) ? "bg-primary" : "bg-background hover:bg-surface"
               }`}
             >
               <svg
@@ -457,8 +455,8 @@ export default function PublicVideoPage() {
           </button>
 
           {/* comments */}
-          <button onClick={() => openComments(v._id)} className="flex flex-col items-center gap-1 text-paper">
-            <div className="w-11 h-11 rounded-full bg-paper/10 hover:bg-paper/20 flex items-center justify-center transition">
+          <button onClick={() => openComments(v._id)} className="flex flex-col items-center gap-1 text-foreground">
+            <div className="w-11 h-11 rounded-full bg-background hover:bg-surface flex items-center justify-center transition">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
@@ -472,10 +470,10 @@ export default function PublicVideoPage() {
           </button>
 
           {/* save */}
-          <button onClick={() => toggleSave(v._id)} className="flex flex-col items-center gap-1 text-paper">
+          <button onClick={() => toggleSave(v._id)} className="flex flex-col items-center gap-1 text-foreground">
             <div
               className={`w-11 h-11 rounded-full backdrop-blur-md flex items-center justify-center transition ${
-                isSaved(v) ? "bg-primary" : "bg-paper/10 hover:bg-paper/20"
+                isSaved(v) ? "bg-primary" : "bg-background hover:bg-surface"
               }`}
             >
               <svg
@@ -497,8 +495,8 @@ export default function PublicVideoPage() {
 
           {/* share — opens a small menu with WhatsApp / Instagram / Copy link / Download */}
           <div className="relative">
-            <button onClick={() => setShowShareMenu((prev) => !prev)} className="flex flex-col items-center gap-1 text-paper">
-              <div className="w-11 h-11 rounded-full bg-paper/10 backdrop-blur-md hover:bg-paper/20 flex items-center justify-center transition">
+            <button onClick={() => setShowShareMenu((prev) => !prev)} className="flex flex-col items-center gap-1 text-foreground">
+              <div className="w-11 h-11 rounded-full bg-background backdrop-blur-md hover:bg-surface flex items-center justify-center transition">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
@@ -512,36 +510,36 @@ export default function PublicVideoPage() {
             </button>
 
             {showShareMenu && (
-              <div className="absolute right-14 bottom-0 bg-ink border border-paper/20 rounded-2xl p-2 flex flex-col gap-1 shadow-xl min-w-[160px] z-20">
+              <div className="absolute right-14 bottom-0 bg-background border border-border-color rounded-2xl p-2 flex flex-col gap-1 shadow-xl min-w-[160px] z-20">
                 <button
                   onClick={shareToWhatsApp}
-                  className="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-paper/10 transition text-left"
+                  className="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-surface transition text-left"
                 >
                   <svg className="w-5 h-5 text-green-500 shrink-0" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
                     <path d="M12.001 2.001c-5.514 0-9.984 4.469-9.984 9.984 0 1.761.463 3.416 1.271 4.849L2.001 22l5.283-1.253a9.94 9.94 0 004.717 1.202c5.514 0 9.984-4.469 9.984-9.984 0-5.514-4.47-9.984-9.984-9.984zm0 18.049a8.052 8.052 0 01-4.101-1.121l-.294-.174-3.038.809.812-3.006-.191-.309a8.038 8.038 0 01-1.239-4.284c0-4.452 3.622-8.074 8.074-8.074 4.452 0 8.074 3.622 8.074 8.074-.001 4.452-3.623 8.085-8.097 8.085z" />
                   </svg>
-                  <span className="text-white text-xs font-medium whitespace-nowrap">WhatsApp</span>
+                  <span className="text-foreground text-xs font-medium whitespace-nowrap">WhatsApp</span>
                 </button>
 
                 <button
                   onClick={shareToInstagram}
-                  className="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-paper/10 transition text-left"
+                  className="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-surface transition text-left"
                 >
                   <svg className="w-5 h-5 text-pink-500 shrink-0" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
                   </svg>
-                  <span className="text-white text-xs font-medium whitespace-nowrap">Instagram</span>
+                  <span className="text-foreground text-xs font-medium whitespace-nowrap">Instagram</span>
                 </button>
 
                 <button
                   onClick={copyLink}
-                  className="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-paper/10 transition text-left"
+                  className="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-surface transition text-left"
                 >
-                  <svg className="w-5 h-5 text-paper/70 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 text-foreground shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 010 5.656l-3 3a4 4 0 01-5.656-5.656l1.5-1.5M10.172 13.828a4 4 0 010-5.656l3-3a4 4 0 015.656 5.656l-1.5 1.5" />
                   </svg>
-                  <span className="text-white text-xs font-medium whitespace-nowrap">Copy link</span>
+                  <span className="text-foreground text-xs font-medium whitespace-nowrap">Copy link</span>
                 </button>
 
                 {/* Download — only shown if this video allows downloading */}
@@ -551,12 +549,12 @@ export default function PublicVideoPage() {
                       handleDownload(v);
                       setShowShareMenu(false);
                     }}
-                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-paper/10 transition text-left"
+                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-surface transition text-left"
                   >
-                    <svg className="w-5 h-5 text-paper/70 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 text-foreground/70 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                     </svg>
-                    <span className="text-white text-xs font-medium whitespace-nowrap">Download</span>
+                    <span className="text-foreground text-xs font-medium whitespace-nowrap">Download</span>
                   </button>
                 )}
               </div>
@@ -568,7 +566,7 @@ export default function PublicVideoPage() {
           <button
             onClick={goPrev}
             disabled={activeIndex === 0 && page === 1}
-            className="w-9 h-9 rounded-full bg-paper/10 backdrop-blur-md border border-paper/20 flex items-center justify-center text-paper hover:bg-paper/20 transition disabled:opacity-30"
+            className="w-9 h-9 rounded-full bg-background backdrop-blur-md border border-border-color flex items-center justify-center text-foreground hover:bg-surface transition disabled:opacity-30"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 15l7-7 7 7" />
@@ -577,7 +575,7 @@ export default function PublicVideoPage() {
           <button
             onClick={goNext}
             disabled={activeIndex === videos.length - 1 && (!pagination || page === pagination.totalPages)}
-            className="w-9 h-9 rounded-full bg-paper/10 backdrop-blur-md border border-paper/20 flex items-center justify-center text-paper hover:bg-paper/20 transition disabled:opacity-30"
+            className="w-9 h-9 rounded-full bg-background backdrop-blur-md border border-border-color flex items-center justify-center text-foreground hover:bg-surface transition disabled:opacity-30"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
@@ -587,23 +585,23 @@ export default function PublicVideoPage() {
 
         {showComments && (
           <div
-            className="fixed inset-0 bg-black/70 z-50 flex items-end sm:items-center justify-center"
+            className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center"
             onClick={() => setShowComments(false)}
           >
             <div
-              className="bg-ink w-full sm:max-w-md sm:rounded-2xl max-h-[70vh] flex flex-col"
+              className="bg-card w-full sm:max-w-md sm:rounded-2xl max-h-[70vh] flex flex-col border border-border-color shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center justify-between p-4 border-b border-white/10">
-                <h3 className="text-sm font-bold text-paper">Comments ({comments.length})</h3>
-                <button onClick={() => setShowComments(false)} className="text-white/50 hover:text-white">
+              <div className="flex items-center justify-between p-4 border-b border-border-color">
+                <h3 className="text-sm font-bold text-foreground">Comments ({comments.length})</h3>
+                <button onClick={() => setShowComments(false)} className="text-foreground/50 hover:text-foreground">
                   ✕
                 </button>
               </div>
 
               <div className="flex-1 overflow-y-auto p-4 space-y-3">
                 {comments.filter((c) => !c.parentCommentId).length === 0 ? (
-                  <p className="text-xs text-white/40 text-center py-6">No comments yet — be the first.</p>
+                  <p className="text-xs text-foreground/60 text-center py-6">No comments yet — be the first.</p>
                 ) : (
                   comments
                     .filter((c) => !c.parentCommentId)
@@ -611,13 +609,13 @@ export default function PublicVideoPage() {
                       <div key={c._id}>
                         <div className="flex justify-between items-start gap-2">
                           <div className="flex-1">
-                            <p className="text-xs font-semibold text-paper">{c.userId?.name}</p>
+                            <p className="text-xs font-semibold text-foreground">{c.userId?.name}</p>
                             {editingCommentId === c._id ? (
                               <div className="mt-1 space-y-1">
                                 <textarea
                                   value={editCommentText}
                                   onChange={(e) => setEditCommentText(e.target.value)}
-                                  className="w-full px-2 py-1.5 rounded-lg bg-white/10 text-white text-xs"
+                                  className="w-full px-2 py-1.5 rounded-lg bg-surface text-foreground text-xs border border-border-color"
                                   rows={2}
                                 />
                                 <button
@@ -628,7 +626,7 @@ export default function PublicVideoPage() {
                                 </button>
                               </div>
                             ) : (
-                              <p className="text-xs text-white/70 mt-0.5">{c.body}</p>
+                              <p className="text-xs text-foreground/80 mt-0.5">{c.body}</p>
                             )}
                           </div>
                           {user?.id === c.userId?._id && editingCommentId !== c._id && (
@@ -638,7 +636,7 @@ export default function PublicVideoPage() {
                                   setEditingCommentId(c._id);
                                   setEditCommentText(c.body);
                                 }}
-                                className="text-white/50 hover:text-white"
+                                className="text-foreground/50 hover:text-foreground"
                               >
                                 Edit
                               </button>
@@ -650,7 +648,7 @@ export default function PublicVideoPage() {
                         </div>
                         <button
                           onClick={() => setReplyingTo(c._id)}
-                          className="text-[10px] text-white/40 hover:text-white mt-1"
+                          className="text-[10px] text-foreground/40 hover:text-foreground mt-1"
                         >
                           Reply
                         </button>
@@ -659,9 +657,9 @@ export default function PublicVideoPage() {
                         {comments
                           .filter((r) => r.parentCommentId === c._id)
                           .map((r) => (
-                            <div key={r._id} className="ml-4 mt-2 pl-3 border-l border-white/10">
-                              <p className="text-xs font-semibold text-paper">{r.userId?.name}</p>
-                              <p className="text-xs text-white/70">{r.body}</p>
+                            <div key={r._id} className="ml-4 mt-2 pl-3 border-l border-border-color">
+                              <p className="text-xs font-semibold text-foreground">{r.userId?.name}</p>
+                              <p className="text-xs text-foreground/70">{r.body}</p>
                             </div>
                           ))}
                       </div>
@@ -669,18 +667,18 @@ export default function PublicVideoPage() {
                 )}
               </div>
 
-              <div className="p-3 border-t border-white/10 flex gap-2">
+              <div className="p-3 border-t border-border-color flex gap-2 bg-card">
                 <input
                   type="text"
                   placeholder={replyingTo ? "Write a reply..." : "Add a comment..."}
                   value={commentText}
                   onChange={(e) => setCommentText(e.target.value)}
-                  className="flex-1 px-3 py-2 rounded-lg bg-white/10 text-white text-xs placeholder-white/40"
+                  className="flex-1 px-3 py-2 rounded-lg bg-surface text-foreground text-xs placeholder:text-foreground/40 border border-border-color"
                 />
                 <button
                   onClick={() => submitComment(videos[activeIndex]?._id || videos[0]?._id)}
                   disabled={submittingComment || !commentText.trim()}
-                  className="px-4 py-2 rounded-lg bg-primary text-paper text-xs font-semibold disabled:opacity-50"
+                  className="px-4 py-2 rounded-lg bg-primary text-foreground text-xs font-semibold disabled:opacity-50 hover:opacity-90 transition"
                 >
                   Send
                 </button>

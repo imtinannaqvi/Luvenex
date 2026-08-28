@@ -312,4 +312,4 @@ export default function ServiceDetailPage() {
       </section>
     </div>
   );
-}
+} 
