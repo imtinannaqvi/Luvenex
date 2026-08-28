@@ -22,23 +22,23 @@ export default function GigsPage() {
   >([]);
   const [newDeliverableItem, setNewDeliverableItem] = useState("");
   const [newDeliverableQty, setNewDeliverableQty] = useState("1");
-const load = async () => {
-  setLoading(true);
+const load = async (isInitial = false) => {
+  if (isInitial) setLoading(true);
   try {
-    const data = await apiFetch("/api/gigs/my", {   // ← changed from "/api/gigs?mine=true"
+    const data = await apiFetch("/api/gigs/my", {
       token: getToken()!,
     });
     setGigs(data.gigs || []);
   } catch (err: any) {
     toast(err.message);
   } finally {
-    setLoading(false);
+    if (isInitial) setLoading(false);
   }
 };
 
 useEffect(() => {
-  load();
-  const interval = setInterval(load, 15000);
+  load(true);
+  const interval = setInterval(() => load(false), 15000);
   return () => clearInterval(interval);
 }, []);
 
