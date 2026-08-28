@@ -88,7 +88,7 @@ const VideoSlider = () => {
   return (
     <section ref={sectionRef} className="relative w-full pt-12 pb-6 overflow-hidden select-none">
       <div className="relative z-10 max-w-3xl mx-auto text-center px-4 mb-6">
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl italic font-black text-foreground tracking-tight leading-tight whitespace-nowrap">
+        <h2 className="text-3xl sm:text-4xl lg:text-6xl italic font-black text-foreground tracking-tight leading-tight whitespace-nowrap">
           Run your creator  <br /> <span className="text-[#B90808]"> marketing here</span>
         </h2>
 
@@ -100,7 +100,7 @@ const VideoSlider = () => {
 
       {/* ── 3D perspective container displaying all 7 cards in a circular arc ── */}
       <div
-        className="relative mx-auto mt-20 h-[500px] w-full max-w-7xl touch-none cursor-grab active:cursor-grabbing"
+        className="relative mx-auto mt-20 h-[280px] w-full max-w-7xl touch-none cursor-grab active:cursor-grabbing"
         style={{ perspective: `${PERSPECTIVE}px`, transformStyle: "preserve-3d" }}
         onPointerDown={onDown}
         onPointerMove={onMove}
@@ -129,7 +129,7 @@ const VideoSlider = () => {
               onClick={() => {
                 if (!drag) setActive(i);
               }}
-              className="absolute left-1/2 top-[70px]"
+              className="absolute left-1/2 top-[30px]"
               style={{
                 width: `${CARD_W}px`,
                 height: `${CARD_H}px`,
@@ -189,3 +189,4 @@ const VideoSlider = () => {
 };
 
 export default VideoSlider;
+

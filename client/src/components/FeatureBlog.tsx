@@ -58,14 +58,13 @@ export default function FeatureBlog() {
           <div className="w-72 sm:w-80 aspect-square rounded-sm bg-surface border border-border-color animate-pulse" />
         </div>
       ) : (
-        <div className="relative max-w-4xl mx-auto h-[480px] sm:h-[520px] flex items-center justify-center px-4 select-none">
-          {/* Left Card (Fans out on scroll) */}
+        <div className="relative max-w-4xl mx-auto h-[360px] sm:h-[520px] flex items-center justify-center px-4 select-none">          {/* Left Card (Fans out on scroll) */}
           {left && (
             <Link
               href={`/blog/${left.slug}`}
-              className={`absolute z-10 w-60 sm:w-72 rounded-sm border border-border-color bg-surface overflow-hidden shadow-2xl transition-all duration-700 ease-out group ${
+                            className={`absolute z-10 w-32 sm:w-72 rounded-sm border border-border-color bg-surface overflow-hidden shadow-2xl transition-all duration-700 ease-out group ${
                 isVisible
-                  ? "-translate-x-[150px] sm:-translate-x-[230px] lg:-translate-x-[280px] opacity-100 scale-100 rotate-[-4deg]"
+                  ? "-translate-x-[95px] sm:-translate-x-[230px] lg:-translate-x-[280px] opacity-100 scale-100 rotate-[-4deg]"
                   : "translate-x-0 opacity-0 scale-75 pointer-events-none rotate-0"
               }`}
             >
@@ -93,8 +92,8 @@ export default function FeatureBlog() {
           {center && (
             <Link
               href={`/blog/${center.slug}`}
-              className={`relative z-20 w-72 sm:w-80 md:w-88 rounded-sm border border-border-color bg-surface overflow-hidden shadow-2xl transition-all duration-700 ease-out group hover:border-zinc-500 hover:shadow-black/40 ${
-                isVisible ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-90 translate-y-10"
+              className={`relative z-20 w-52 sm:w-80 md:w-88 rounded-sm border border-border-color bg-surface overflow-hidden shadow-2xl transition-all duration-700 ease-out group hover:border-zinc-500 hover:shadow-black/40 ${
+                                isVisible ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-90 translate-y-10"
               }`}
             >
               {center.image && (
@@ -128,9 +127,9 @@ export default function FeatureBlog() {
           {right && (
             <Link
               href={`/blog/${right.slug}`}
-              className={`absolute z-10 w-60 sm:w-72 rounded-sm border border-border-color bg-surface overflow-hidden shadow-2xl transition-all duration-700 ease-out group ${
+                           className={`absolute z-10 w-32 sm:w-72 rounded-sm border border-border-color bg-surface overflow-hidden shadow-2xl transition-all duration-700 ease-out group ${
                 isVisible
-                  ? "translate-x-[150px] sm:translate-x-[230px] lg:translate-x-[280px] opacity-100 scale-100 rotate-[4deg]"
+                  ? "translate-x-[95px] sm:translate-x-[230px] lg:translate-x-[280px] opacity-100 scale-100 rotate-[4deg]"
                   : "translate-x-0 opacity-0 scale-75 pointer-events-none rotate-0"
               }`}
             >

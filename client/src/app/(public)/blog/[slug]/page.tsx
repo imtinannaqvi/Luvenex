@@ -41,11 +41,24 @@ export default function BlogArticlePage() {
     );
   }
 
-  const cleanContent = DOMPurify.sanitize(post.content || "");
+  // ── THE FIX ──
+  // The stored content uses &nbsp; (non-breaking space) between EVERY word.
+  // A non-breaking space forbids the browser from wrapping there, so it is
+  // forced to break inside words instead ("intimidatin-g"). We convert those
+  // non-breaking spaces (char \u00A0 after the browser decodes &nbsp;) back
+  // into normal spaces so text wraps correctly at word boundaries.
+  const rawFixed = (post.content || "")
+    .replace(/&nbsp;/gi, " ")   // literal entity, if present in the raw string
+    .replace(/\u00A0/g, " ");   // decoded non-breaking space character
+
+  const cleanContent = DOMPurify.sanitize(rawFixed, {
+    FORBID_TAGS: ["script", "style"],
+    FORBID_ATTR: ["style"],
+  });
 
   return (
     <div className="bg-background text-foreground min-h-screen px-4 sm:px-6 py-12 sm:py-16 overflow-x-hidden">
-      <article className="max-w-3xl mx-auto w-full">
+      <article className="max-w-3xl mx-auto w-full min-w-0">
         <Link href="/blog" className="text-xs text-foreground hover:text-foreground transition">
           ← Back to blog
         </Link>
@@ -64,12 +77,10 @@ export default function BlogArticlePage() {
         {/* ── Meta ── */}
         <div className="mt-8">
           {post.category && (
-            <span className="text-xl text-red-500 font-semibold">
-              {post.category}
-            </span>
+            <span className="text-xl text-red-500 font-semibold">{post.category}</span>
           )}
 
-          <h1 className="text-3xl sm:text-3xl font-semibold mt-3 leading-tight">
+          <h1 className="text-3xl sm:text-3xl font-semibold mt-3 leading-tight break-words">
             {post.title}
           </h1>
 
@@ -107,14 +118,21 @@ export default function BlogArticlePage() {
           )}
         </div>
 
-        {/* ── Content (rendered HTML from the editor) ── */}
+        {/* ── Content ── */}
         <div
-          className="mt-10 prose prose-invert max-w-none w-full break-words text-foreground leading-relaxed
+          className="mt-10 prose prose-invert w-full min-w-0 max-w-full text-foreground leading-relaxed
                      prose-headings:text-foreground prose-strong:text-foreground prose-a:text-red-500
-                     prose-p:break-words prose-p:[overflow-wrap:anywhere]
+                     prose-p:break-words prose-headings:break-words prose-li:break-words
                      prose-img:rounded-xl prose-img:border prose-img:border-border-color prose-img:my-6
                      prose-img:max-h-[420px] prose-img:w-auto prose-img:max-w-full prose-img:mx-auto prose-img:block"
-          style={{ overflowWrap: "anywhere", wordBreak: "break-word" }}
+          style={{
+            overflowWrap: "break-word",
+            wordBreak: "normal",
+            hyphens: "none",
+            WebkitHyphens: "none",
+            textAlign: "left",
+            maxWidth: "100%",
+          } as React.CSSProperties}
           dangerouslySetInnerHTML={{ __html: cleanContent }}
         />
 

@@ -5,8 +5,7 @@ import Link from "next/link";
 
 export default function Page() {
   return (
-    <div className="relative w-full min-h-screen bg-background text-foreground flex flex-col justify-between p-6 sm:p-12 overflow-hidden selection:bg-white selection:text-black">
-      {/* Background Subtle Pattern — currentColor follows the theme */}
+    <div className="relative w-full sm:min-h-screen bg-background text-foreground flex flex-col sm:justify-between p-6 sm:p-12 overflow-hidden selection:bg-white selection:text-black gap-10 sm:gap-0">
       <div
         className="absolute inset-0 opacity-[0.04] pointer-events-none text-foreground"
         style={{
@@ -71,9 +70,8 @@ export default function Page() {
       <div className="w-full z-10 flex justify-between items-center min-h-[40px]" />
 
       {/* Main Content Area */}
-      <main className="relative z-10 w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 py-12">
-        {/* Left Navigation */}
-        <nav className="flex flex-col space-y-6 text-center md:text-left text-sm italic font-semibold  text-foreground/70">
+      <main className="relative z-10 w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 py-4 sm:py-12">
+                <nav className="flex flex-col space-y-3 sm:space-y-6 text-center md:text-left text-sm italic font-semibold  text-foreground/70">
           <Link href="/about" className="hover:text-foreground transition-colors">ABOUT US</Link>
           <Link href="/how-it-works" className="hover:text-foreground transition-colors">HOW IT WORKS</Link>
           <Link href="/discover" className="hover:text-foreground transition-colors">DISCOVER CREATORS</Link>
@@ -95,8 +93,7 @@ export default function Page() {
 </p>
         </div>
 
-        {/* Right Navigation */}
-        <nav className="flex flex-col space-y-6 text-center md:text-right text-sm font-semibold italic text-foreground/70">
+               <nav className="flex flex-col space-y-3 sm:space-y-6 text-center md:text-right text-sm font-semibold italic text-foreground/70">
           <Link href="/services" className="hover:text-foreground transition-colors">SERVICES</Link>
           <Link href="/blog" className="hover:text-foreground transition-colors">BLOG</Link>
           <Link href="/videos" className="hover:text-foreground transition-colors">VIDEOS</Link>

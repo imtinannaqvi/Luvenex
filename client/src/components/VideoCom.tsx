@@ -65,26 +65,25 @@ export default function VideoCom() {
         </p>
       </div>
 
-      {/* ── Video row ── */}
-      <div className="relative flex items-center justify-center gap-4 sm:gap-6 px-4">
-        {videos.map((v, i) => {
+     
+      <div className="relative flex items-center sm:justify-center gap-3 sm:gap-6 px-4 overflow-x-auto sm:overflow-visible snap-x snap-mandatory sm:snap-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">        {videos.map((v, i) => {
           const isSpotlight = i === spotlightIndex;
 
-          // Direction each card flies in from, based on its position relative to center
+       
           const distFromCenter = i - center;
-          const entranceX = inView ? 0 : distFromCenter * 60; // px, left/right
-          const entranceZ = inView ? 0 : -400; // comes from "behind"
+          const entranceX = inView ? 0 : distFromCenter * 60; 
+          const entranceZ = inView ? 0 : -400;
           const entranceOpacity = inView ? 1 : 0;
           const entranceScale = inView ? 1 : 0.7;
-          const delay = inView ? i * 220 : 0; // ms, sequential left-to-right so each video appears one by one
+          const delay = inView ? i * 220 : 0; 
 
           return (
             <div
               key={v._id}
-              className={`relative rounded-2xl overflow-hidden border shrink-0 ${
+                           className={`relative rounded-2xl overflow-hidden border shrink-0 snap-center ${
                 isSpotlight
-                  ? "w-40 sm:w-56 md:w-64 aspect-[9/16] scale-105 z-10"
-                  : "w-28 sm:w-36 md:w-44 aspect-[9/16] scale-95"
+                  ? "w-32 sm:w-56 md:w-64 aspect-[9/16] scale-105 z-10"
+                  : "w-24 sm:w-36 md:w-44 aspect-[9/16] scale-95"
               }`}
               style={{
                 transform: `translateX(${entranceX}px) translateZ(${entranceZ}px) scale(${entranceScale})`,

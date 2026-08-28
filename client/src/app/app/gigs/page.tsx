@@ -383,7 +383,7 @@ useEffect(() => {
                           </button>
                           <button
                             onClick={() => handleDelete(g._id)}
-                            className="px-3 lg:px-4 py-1 lg:py-1.5 rounded-sm text-xs lg:text-sm font-semibold text-foreground bg-background hover:bg-primary border border-red-500/20 transition"
+                            className="px-3 lg:px-4 py-1 lg:py-1.5 rounded-sm text-xs lg:text-sm font-semibold text-foreground bg-background hover:bg-primary border border-border-color  transition"
                           >
                             Delete
                           </button>

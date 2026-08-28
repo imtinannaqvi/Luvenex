@@ -22,7 +22,7 @@ export default function Home() {
       <ServicesMarquee />
       <GigsCom/>
       <FeatureBlog/>
-      <Sliders />
+      {/* <Sliders /> */}
       <ContactUs />
       <Footer/>
     </div>

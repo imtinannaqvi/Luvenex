@@ -58,18 +58,14 @@ export default function ServiceDetailPage() {
     }
   };
 
-  // Word/Docs paste artifact cleanup — the admin editor content sometimes carries
-  // hard-wrapped hyphenation from a pasted source (e.g. "agency-<br>style" instead
-  // of "agency-style"), and literal &nbsp; instead of normal spaces. Both survive
-  // regardless of container width, which is why it looked identical on mobile and
-  // full screen. We rejoin hyphen + forced-break pairs (keeping the hyphen, since
-  // these are legitimate compound words like "agency-style", "in-house", "wrap-up")
-  // and normalize non-breaking spaces back to regular spaces.
+  // Word/Docs paste artifact cleanup — rejoin hyphen + forced-break pairs and
+  // normalize non-breaking spaces (&nbsp; / \u00A0) back to regular spaces, so
+  // text wraps correctly instead of breaking mid-word.
   const cleanDescription = (html?: string) => {
     if (!html) return "";
     return html
-      .replace(/-(\s*)(<br\s*\/?>\s*)+/gi, "-") // "word-<br>next" -> "word-next"
-      .replace(/-(\s*)\n+/g, "-") // same, but for literal newline characters
+      .replace(/-(\s*)(<br\s*\/?>\s*)+/gi, "-")
+      .replace(/-(\s*)\n+/g, "-")
       .replace(/&nbsp;/gi, " ")
       .replace(/\u00A0/g, " ");
   };
@@ -87,14 +83,14 @@ export default function ServiceDetailPage() {
   if (error || !service) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center text-center px-4">
-        <div className="bg-surface backdrop-blur-xl border border-border-color p-8 rounded-3xl max-w-sm w-full shadow-2xl shadow-red-950/20">
+        <div className="bg-surface backdrop-blur-xl border border-border-color p-8 rounded-3xl max-w-sm w-full shadow-2xl">
           <div className="w-12 h-12 rounded-2xl bg-red-950/50 border border-red-800/50 text-red-500 flex items-center justify-center mx-auto mb-4 shadow-inner">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
           </div>
           <p className="text-foreground font-bold text-base">Service Unavailable</p>
-          <p className="text-zinc-500 text-xs mt-1.5 leading-relaxed">
+          <p className="text-muted text-xs mt-1.5 leading-relaxed">
             {error || "The requested service could not be found."}
           </p>
           <button
@@ -130,13 +126,13 @@ export default function ServiceDetailPage() {
           />
         )}
 
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/40 to-background/10" />
+        {/* Dark scrim so the title is always legible on any photo, in light OR dark mode */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-black/20" />
 
         {/* Title with lines */}
         <div className="relative z-10 flex items-center justify-center gap-6 px-4 max-w-5xl w-full">
           <div className="flex-1 h-px bg-red-600 hidden sm:block"></div>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-foreground tracking-tight text-center leading-tight drop-shadow-lg">
+          <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight text-center leading-tight drop-shadow-lg">
             {service.category}
           </h1>
           <div className="flex-1 h-px bg-red-600 hidden sm:block"></div>
@@ -146,13 +142,13 @@ export default function ServiceDetailPage() {
       {/* Title (left) + Short Description row */}
       <section className="pt-12 pb-6 px-4">
         <div className="max-w-4xl mx-auto flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-8 border-b border-border-color pb-8">
-          <h2 className="text-xl italic sm:text-2xl font-extrabold text-foreground shrink-0 sm:w-56 whitespace-nowrap">
+          <h2 className="text-xl italic sm:text-2xl font-extrabold text-foreground break-words">
             Title: {service.title}
           </h2>
         </div>
       </section>
       <div className="text-center items-center px-4">
-        <p className="text-lg text-zinc-500 leading-relaxed max-w-4xl mx-auto">
+        <p className="text-lg text-muted leading-relaxed max-w-4xl mx-auto">
           {service.shortDescription}
         </p>
       </div>
@@ -190,7 +186,7 @@ export default function ServiceDetailPage() {
               margin-bottom: 0.5rem;
             }
             .service-fulldesc p {
-              color: #a1a1aa;
+              color: var(--muted);
               margin-top: 0.75rem;
               margin-bottom: 0.75rem;
               line-height: 1.8;
@@ -211,7 +207,7 @@ export default function ServiceDetailPage() {
             }
             .service-fulldesc ul,
             .service-fulldesc ol {
-              color: #a1a1aa;
+              color: var(--muted);
               padding-left: 1.25rem;
               margin-top: 0.5rem;
             }
@@ -226,7 +222,7 @@ export default function ServiceDetailPage() {
 
           <div className="max-w-md mx-auto text-center space-y-2 mb-8">
             <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-foreground">Interested in working together?</h2>
-            <p className="text-zinc-500 text-sm leading-relaxed">
+            <p className="text-muted text-sm leading-relaxed">
               Submit your project brief today. Our team will get back to you shortly.
             </p>
           </div>
@@ -240,7 +236,7 @@ export default function ServiceDetailPage() {
                 </svg>
               </div>
               <p className="text-base font-bold text-foreground">Request Submitted!</p>
-              <p className="text-xs text-zinc-500 leading-relaxed">
+              <p className="text-xs text-muted leading-relaxed">
                 We received your brief and will be in touch with a matched creator shortly.
               </p>
             </div>
@@ -254,7 +250,7 @@ export default function ServiceDetailPage() {
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   required
-                  className="w-full px-4 py-3 rounded-xl border border-border-color bg-card text-foreground text-sm placeholder:text-zinc-500 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition-all"
+                  className="w-full px-4 py-3 rounded-xl border border-border-color bg-card text-foreground text-sm placeholder:text-muted focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition-all"
                 />
               </div>
 
@@ -266,7 +262,7 @@ export default function ServiceDetailPage() {
                   onChange={(e) => setDescription(e.target.value)}
                   rows={3}
                   required
-                  className="w-full px-4 py-3 rounded-xl border border-border-color bg-card text-foreground text-sm placeholder:text-zinc-500 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition-all resize-none"
+                  className="w-full px-4 py-3 rounded-xl border border-border-color bg-card text-foreground text-sm placeholder:text-muted focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition-all resize-none"
                 />
               </div>
 
@@ -278,7 +274,7 @@ export default function ServiceDetailPage() {
                     placeholder="Min"
                     value={budgetMin}
                     onChange={(e) => setBudgetMin(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-border-color bg-card text-foreground text-sm placeholder:text-zinc-500 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition-all"
+                    className="w-full px-4 py-3 rounded-xl border border-border-color bg-card text-foreground text-sm placeholder:text-muted focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition-all"
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -288,7 +284,7 @@ export default function ServiceDetailPage() {
                     placeholder="Max"
                     value={budgetMax}
                     onChange={(e) => setBudgetMax(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-border-color bg-card text-foreground text-sm placeholder:text-zinc-500 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition-all"
+                    className="w-full px-4 py-3 rounded-xl border border-border-color bg-card text-foreground text-sm placeholder:text-muted focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition-all"
                   />
                 </div>
               </div>
