@@ -30,6 +30,50 @@ export const createGig = async (req, res) => {
   }
 };
 
+export const orderGig = async (req, res) => {
+  try {
+    if (req.user.role !== 'brand') {
+      return res.status(403).json({ error: { message: 'Only brands can book gigs' } });
+    }
+
+    const gig = await Gig.findById(req.params.id);
+    if (!gig) return res.status(404).json({ error: { message: 'Gig not found' } });
+    if (gig.status !== 'active') {
+      return res.status(400).json({ error: { message: 'This gig is not currently available' } });
+    }
+
+    const { brandFeeMinor, influencerFeeMinor, commissionMinor } = await computeFees(gig.priceMinor);
+
+    const deal = await Deal.create({
+      brandId: req.user._id,
+      influencerId: gig.influencerId,
+      title: gig.title,
+      description: gig.description,
+      priceMinor: gig.priceMinor,
+      brandFeeMinor,
+      influencerFeeMinor,
+      commissionMinor,
+      sourceType: 'gig',
+      sourceId: gig._id,
+      status: 'agreed',
+    });
+
+    await logActivity(deal._id, 'created', req.user._id, `Booked from gig: "${gig.title}"`);
+
+    await notify(
+      gig.influencerId,
+      'gig_ordered',
+      'Your gig was booked!',
+      `A brand just booked "${gig.title}". Check your deals.`,
+      deal._id
+    );
+
+    res.status(201).json({ deal });
+  } catch (err) {
+    res.status(500).json({ error: { message: err.message } });
+  }
+};
+
 
 export const getGigs = async (req, res) => {
   try {
@@ -80,7 +124,6 @@ export const getMyGigs = async (req, res) => {
   }
 };
 
-// GET /api/gigs/:id — public single gig
 export const getGigById = async (req, res) => {
   try {
     const gig = await Gig.findById(req.params.id).populate('influencerId', 'name');
@@ -102,7 +145,6 @@ export const getGigById = async (req, res) => {
   }
 };
 
-// PATCH /api/gigs/:id — influencer edits their OWN gig
 export const updateGig = async (req, res) => {
   try {
     const gig = await Gig.findById(req.params.id);
@@ -125,7 +167,6 @@ export const updateGig = async (req, res) => {
   }
 };
 
-// DELETE /api/gigs/:id — influencer deletes their OWN gig
 export const deleteGig = async (req, res) => {
   try {
     const gig = await Gig.findById(req.params.id);

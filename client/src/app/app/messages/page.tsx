@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import { getSocket, connectSocket, disconnectSocket } from "@/lib/socket";
 import { useNotifications } from "@/context/Notificationscontext";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams,useRouter } from "next/navigation";
 import {
   FiSearch,
   FiHome,
@@ -43,8 +43,8 @@ export default function MessagesPage() {
   const activeIdRef = useRef<string | null>(null);
 
   const user = getUser();
+  const router = useRouter()
 
-  // Lets us refresh the sidebar unread badge the moment a chat is opened.
   const { reload } = useNotifications();
   const searchParams = useSearchParams();
 
@@ -289,6 +289,18 @@ export default function MessagesPage() {
       sendTextMessage();
     }
   };
+
+  const handleBookGig = async (gigId: string) => {
+  try {
+    const data = await apiFetch(`/api/gigs/${gigId}/order`, {
+      method: "POST",
+      token: getToken()!,
+    });
+    router.push(`/app/deals/${data.deal._id}`);
+  } catch (err: any) {
+    toast.error(err.message || "Failed to book gig");
+  }
+};
 
   const formatTime = (dateStr: string) => {
     if (!dateStr) return "";
@@ -613,18 +625,29 @@ export default function MessagesPage() {
                   </div>
                 </div>
               )}
+{/* Requests banner */}
+{isPendingRequest(activeConv) && (
+  <div className="px-5 py-3 border-b border-zinc-800/60 bg-zinc-950 shrink-0 flex items-center justify-between gap-3">
+    <p className="text-xs text-zinc-400">
+      <span className="font-semibold text-white">
+        {activeOtherUser?.name || activeOtherUser?.handle}
+      </span>{" "}
+      sent you a message request. Reply to accept the conversation.
+    </p>
+  </div>
+)}
 
-              {/* Requests banner */}
-              {isPendingRequest(activeConv) && (
-                <div className="px-5 py-3 border-b border-zinc-800/60 bg-zinc-950 shrink-0 flex items-center justify-between gap-3">
-                  <p className="text-xs text-zinc-400">
-                    <span className="font-semibold text-white">
-                      {activeOtherUser?.name || activeOtherUser?.handle}
-                    </span>{" "}
-                    sent you a message request. Reply to accept the conversation.
-                  </p>
-                </div>
-              )}
+{activeConv?.relatedGigId && (
+  <div className="px-5 py-3 border-b border-zinc-800/60 bg-zinc-950 shrink-0 flex items-center justify-between gap-3">
+    <p className="text-xs text-zinc-400">Ready to move forward with this gig?</p>
+    <button
+      onClick={() => handleBookGig(activeConv.relatedGigId)}
+      className="px-3 py-1.5 rounded-lg bg-[#B90808] text-white text-xs font-bold hover:bg-[#a10707] transition shrink-0"
+    >
+      Book This Gig
+    </button>
+  </div>
+)}
 
               {/* Messages Feed */}
               <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 space-y-1 scrollbar-thin scrollbar-thumb-zinc-800">

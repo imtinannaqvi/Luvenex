@@ -7,7 +7,7 @@ import { notify } from "../services/notification.service.js";
 
 export const startConversation = async (req, res) => {
   try {
-    const { otherUserId, dealId } = req.body;
+    const { otherUserId, dealId, gigId } = req.body;
     if (!otherUserId) {
       return res
         .status(400)
@@ -22,6 +22,7 @@ export const startConversation = async (req, res) => {
       conversation = await Conversation.create({
         participants: [req.user._id, otherUserId],
         dealId,
+        relatedGigId: gigId,
       });
     }
 

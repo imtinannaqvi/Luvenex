@@ -10,6 +10,7 @@ const conversationSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref:"Deal"
     },
+    relatedGigId: { type: mongoose.Schema.Types.ObjectId, ref: 'Gig' },
     lastMessageAt:{
         type:Date,
         default: Date.now

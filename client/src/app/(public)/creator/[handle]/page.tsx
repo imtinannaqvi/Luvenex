@@ -16,12 +16,12 @@ const PLATFORM_ICON: Record<string, any> = {
   youtube: FaYoutube,
 };
 
-// external URLs (portfolio) are stored whole; local uploads (avatar/video) need the API host
 const mediaSrc = (url: string) =>
   url?.startsWith("http") ? url : `${process.env.NEXT_PUBLIC_API_URL}${url}`;
 
 export default function CreatorProfilePage() {
   const params = useParams();
+  const router = useRouter()
   const handle = params.handle as string;
 
   const [profile, setProfile] = useState<any>(null);
@@ -58,7 +58,6 @@ export default function CreatorProfilePage() {
         setGigs(gigsData.gigs || []);
         setVideos(videosData.videos || []);
 
-        // work history is optional — a missing/404 route must NOT break the page
         try {
           const workHistoryData = await apiFetch(`/api/deals/work-history/${handle}`);
           setWorkHistory(workHistoryData.workHistory || []);
@@ -101,6 +100,32 @@ export default function CreatorProfilePage() {
       toast.error(err.message);
     }
   };
+  const handleBookGig = async (gigId: string) => {
+  if (!user) return router.push("/login");
+  try {
+    const data = await apiFetch(`/api/gigs/${gigId}/order`, {
+      method: "POST",
+      token: getToken()!,
+    });
+    router.push(`/app/deals/${data.deal._id}`);
+  } catch (err: any) {
+    toast.error(err.message || "Failed to book gig");
+  }
+};
+
+const startConversationAboutGig = async (gig: any) => {
+  if (!user) return router.push("/login");
+  try {
+    const convData = await apiFetch("/api/conversations", {
+      method: "POST",
+      token: getToken()!,
+      body: { otherUserId: profile.userId._id, gigId: gig._id },
+    });
+    router.push(`/app/messages?conversationId=${convData.conversation._id}`);
+  } catch (err: any) {
+    toast.error(err.message || "Failed to start conversation");
+  }
+};
 
   const toggleFollow = async () => {
     if (!user) return (window.location.href = "/login");
@@ -473,17 +498,25 @@ export default function CreatorProfilePage() {
             </div>
                        <div className="flex items-center justify-between pt-2.5 border-t border-border-color gap-2">
               <span className="text-sm font-extrabold text-[#B90808]">{money(g.priceMinor)}</span>
-              {!isOwnProfile && (
-                <button
-                  onClick={startConversation}
-                  className="flex items-center gap-1 text-[11px] font-bold text-foreground bg-[#B90808] hover:bg-[#a10707] px-3 py-1.5 rounded-md transition active:scale-95"
-                >
-                  Order
-                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-              )}
+    {!isOwnProfile && (
+  <div className="flex gap-2">
+    <button
+      onClick={() => startConversationAboutGig(g)}
+      className="flex items-center gap-1 text-[11px] font-bold text-ink border border-line hover:bg-surface px-3 py-1.5 rounded-md transition active:scale-95"
+    >
+      Discuss First
+    </button>
+    <button
+      onClick={() => handleBookGig(g._id)}
+      className="flex items-center gap-1 text-[11px] font-bold text-white bg-[#B90808] hover:bg-[#a10707] px-3 py-1.5 rounded-md transition active:scale-95"
+    >
+      Book This Gig
+      <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+      </svg>
+    </button>
+  </div>
+)}
             </div>
           </div>
         ))}
