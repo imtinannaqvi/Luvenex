@@ -53,6 +53,11 @@ type Ctx = {
 
 const NotificationsContext = createContext<Ctx | null>(null);
 
+// Notifications shown in the bell exclude message notifications (those have
+// their own Messages badge). The bell count and the bell list must use the
+// SAME filter, or the badge shows a number while the list looks empty.
+const isBellNoti = (n: Noti) => n.type !== "new_message";
+
 export function NotificationsProvider({
   children,
   pollMs = 30000,
@@ -83,9 +88,13 @@ export function NotificationsProvider({
   };
 
   const load = async () => {
+    // Guard: don't hit protected endpoints when logged out (avoids 401 spam).
+    const token = getToken();
+    if (!token) return;
+
     // Notifications (toasts + bell + non-message badges)
     try {
-      const data = await apiFetch("/api/notifications", { token: getToken()! });
+      const data = await apiFetch("/api/notifications", { token });
       const list: Noti[] = data.notifications || [];
       setNotifications(list);
 
@@ -112,9 +121,7 @@ export function NotificationsProvider({
 
     // Live unread message count (drives the Messages badge)
     try {
-      const mc = await apiFetch("/api/messages/unread-count", {
-        token: getToken()!,
-      });
+      const mc = await apiFetch("/api/messages/unread-count", { token });
       setMessageUnread(mc.count || 0);
     } catch {
       // ignore
@@ -129,6 +136,7 @@ export function NotificationsProvider({
   }, []);
 
   const markAsRead = async (id: string) => {
+    if (!getToken()) return;
     try {
       await apiFetch(`/api/notifications/${id}/read`, {
         token: getToken()!,
@@ -141,6 +149,7 @@ export function NotificationsProvider({
   };
 
   const markAllAsRead = async () => {
+    if (!getToken()) return;
     try {
       await apiFetch(`/api/notifications/read-all`, {
         token: getToken()!,
@@ -150,7 +159,11 @@ export function NotificationsProvider({
     } catch {}
   };
 
-  const unreadCount = notifications.filter((n) => !n.isRead).length;
+  // Count ONLY the notifications the bell actually shows, so the badge number
+  // matches the visible list (message notifications are excluded here).
+  const unreadCount = notifications.filter(
+    (n) => isBellNoti(n) && !n.isRead
+  ).length;
 
   // Per-href badge counts from notifications…
   const badgeCounts: Record<string, number> = {};
