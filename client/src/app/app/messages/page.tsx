@@ -84,8 +84,10 @@ export default function MessagesPage() {
   };
 
   useEffect(() => {
+    useEffect(() => {
     const socket = connectSocket();
     socket.on("new_messages", (msg: any) => {
+      console.log("SOCKET MSG RECEIVED:", msg);   
       if (msg.conversationId === activeIdRef.current) {
         setMessages((prev) => {
           if (prev.some((m) => m._id === msg._id)) return prev;

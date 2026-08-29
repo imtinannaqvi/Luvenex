@@ -2,7 +2,6 @@ import Conversation from "../models/Conversation.js";
 import Message from "../models/Message.js";
 import { scanMessage } from "../lib/contentFilter.js";
 import { uploadAttachment } from "../middleware/upload.js";
-// ⚠️ Adjust this import path/name to match your project.
 import { notify } from "../services/notification.service.js";
 
 export const startConversation = async (req, res) => {
