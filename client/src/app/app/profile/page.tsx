@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { getUser, getToken } from "@/lib/auth";
 import { apiFetch } from "@/lib/api";
+import { useRouter } from "next/navigation";
 import {
   FiCamera,
   FiEdit2,
@@ -90,6 +91,7 @@ export default function ProfilePage() {
 
   const u = getUser();
   const isInfluencer = u?.role === "influencer";
+  const router = useRouter()
 
   const load = async () => {
     setLoading(true);
@@ -271,7 +273,7 @@ export default function ProfilePage() {
         token: getToken()!,
         body: { password: deactivatePassword, reason: deactivateReason },
       });
-      window.location.href = "/login";
+      router.push( "/login");
     } catch (err: any) {
       toast(err.message);
     } finally {

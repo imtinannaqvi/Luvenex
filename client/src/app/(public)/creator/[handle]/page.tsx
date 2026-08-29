@@ -88,14 +88,14 @@ export default function CreatorProfilePage() {
   const money = (minor: number) => `PKR ${(minor / 100).toLocaleString("en-PK")}`;
 
   const startConversation = async () => {
-    if (!user) return (window.location.href = "/login");
+    if (!user) return router.push("/login");
     try {
       await apiFetch("/api/conversations", {
         method: "POST",
         token: getToken()!,
         body: { otherUserId: profile.userId._id },
       });
-      window.location.href = `/app/messages`;
+      router.push( `/app/messages`);
     } catch (err: any) {
       toast.error(err.message);
     }
@@ -128,7 +128,7 @@ const startConversationAboutGig = async (gig: any) => {
 };
 
   const toggleFollow = async () => {
-    if (!user) return (window.location.href = "/login");
+    if (!user) return router.push ( "/login");
     setFollowLoading(true);
     try {
       if (isFollowing) {

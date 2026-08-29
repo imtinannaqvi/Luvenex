@@ -57,25 +57,22 @@ export async function apiFetch(
   const res = await fetch(`${API_URL}${path}`, {
     method,
     headers,
-    // IMPORTANT: without this, the browser's HTTP cache can serve a
-    // previously logged-in user's response for the same GET URL
-    // (e.g. /api/applications/me) even after a different user's token
-    // is sent, since the cache key does not include the Authorization
-    // header unless the server sends "Vary: Authorization".
+ 
     cache: "no-store",
     body: isFormData ? body : body ? JSON.stringify(body) : undefined,
   });
+if (res.status === 401 && !isRetry && token) {
+  const newToken = await tryRefresh();
 
-  if (res.status === 401 && !isRetry && token) {
-    const newToken = await tryRefresh();
-
-    if (newToken) {
-      return apiFetch(path, { ...options, token: newToken }, true);
-    }
-
-    window.location.href = "/login";
-    return;
+  if (newToken) {
+    return apiFetch(path, { ...options, token: newToken }, true);
   }
+
+  if (typeof window !== "undefined") {
+    window.location.href = "/login";
+  }
+  return;
+}
 
   const data = await res.json();
 

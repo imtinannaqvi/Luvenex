@@ -106,45 +106,45 @@ export default function BrandProfilePage() {
   const websiteUrl = (w?: string) =>
     !w ? "" : w.startsWith("http") ? w : `https://${w}`;
 
-  const startConversation = async () => {
-    if (!user) return (window.location.href = "/login");
-    try {
-      await apiFetch("/api/conversations", {
+ const startConversation = async () => {
+  if (!user) return router.push("/login");
+  try {
+    await apiFetch("/api/conversations", {
+      method: "POST",
+      token: getToken()!,
+      body: { otherUserId: profile.userId._id },
+    });
+    router.push(`/app/messages`);
+  } catch (err: any) {
+    toast.error(err.message || "Failed to start conversation");
+  }
+};
+
+ const toggleFollow = async () => {
+  if (!user) return router.push("/login");
+  setFollowLoading(true);
+  try {
+    if (isFollowing) {
+      await apiFetch(`/api/follow/${profile.userId._id}`, {
+        method: "DELETE",
+        token: getToken()!,
+      });
+      setIsFollowing(false);
+      setFollowerCount((c) => Math.max(c - 1, 0));
+    } else {
+      await apiFetch(`/api/follow/${profile.userId._id}`, {
         method: "POST",
         token: getToken()!,
-        body: { otherUserId: profile.userId._id },
       });
-      window.location.href = `/app/messages`;
-    } catch (err: any) {
-      toast.error(err.message || "Failed to start conversation");
+      setIsFollowing(true);
+      setFollowerCount((c) => c + 1);
     }
-  };
-
-  const toggleFollow = async () => {
-    if (!user) return (window.location.href = "/login");
-    setFollowLoading(true);
-    try {
-      if (isFollowing) {
-        await apiFetch(`/api/follow/${profile.userId._id}`, {
-          method: "DELETE",
-          token: getToken()!,
-        });
-        setIsFollowing(false);
-        setFollowerCount((c) => Math.max(c - 1, 0));
-      } else {
-        await apiFetch(`/api/follow/${profile.userId._id}`, {
-          method: "POST",
-          token: getToken()!,
-        });
-        setIsFollowing(true);
-        setFollowerCount((c) => c + 1);
-      }
-    } catch (err: any) {
-      toast.error(err.message || "Action failed");
-    } finally {
-      setFollowLoading(false);
-    }
-  };
+  } catch (err: any) {
+    toast.error(err.message || "Action failed");
+  } finally {
+    setFollowLoading(false);
+  }
+};
 
   if (loading) {
     return (
