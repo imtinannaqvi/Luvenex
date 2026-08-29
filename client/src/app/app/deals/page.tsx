@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getToken,getUser } from "@/lib/auth";
+import { getToken, getUser } from "@/lib/auth";
 import { apiFetch } from "@/lib/api";
 import { FiFileText, FiChevronRight, FiUser } from "react-icons/fi";
 import Link from "next/link";
@@ -28,14 +28,19 @@ export default function DealsListPage() {
     "refunded",
   ];
 
- useEffect(() => {
-  setUsers(getUser());
-  load();
-  const interval = setInterval(load, 15000);
-  return () => clearInterval(interval);
-}, []);
-  const load = async () => {
-    setLoading(true);
+  useEffect(() => {
+    setUsers(getUser());
+    // First load shows the spinner; background polls refresh silently.
+    load(true);
+    const interval = setInterval(() => load(false), 15000);
+    return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // `initial` = true only for the very first load. On polls we DON'T flip the
+  // full-page spinner, so the table stays on screen and just updates in place.
+  const load = async (initial = false) => {
+    if (initial) setLoading(true);
     setError("");
     try {
       const data = await apiFetch("/api/deals", {
@@ -45,7 +50,7 @@ export default function DealsListPage() {
     } catch (error: any) {
       setError(error.message);
     } finally {
-      setLoading(false);
+      if (initial) setLoading(false);
     }
   };
 
@@ -86,134 +91,121 @@ export default function DealsListPage() {
     );
   }
 
-return (
-  <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-    {/* Page Header */}
-    <div className="w-full flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-6 lg:mb-8 pb-4 lg:pb-5 border-b border-border-color/60">
-      {/* Left */}
-      <div className="flex items-center gap-2.5">
-        <div className="w-1.5 h-5 lg:h-6 bg-primary rounded-full" />
-        <h1 className="text-xl lg:text-2xl font-bold italic text-foreground tracking-tight">
-          Deals
-        </h1>
+  return (
+    <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+      {/* Page Header */}
+      <div className="w-full flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-6 lg:mb-8 pb-4 lg:pb-5 border-b border-border-color/60">
+        {/* Left */}
+        <div className="flex items-center gap-2.5">
+          <div className="w-1.5 h-5 lg:h-6 bg-primary rounded-full" />
+          <h1 className="text-xl lg:text-2xl font-bold italic text-foreground tracking-tight">
+            Deals
+          </h1>
+        </div>
+
+        {/* Right */}
+        <div className="w-full sm:w-auto sm:ml-auto">
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="w-full sm:w-auto px-4 lg:px-5 py-2 lg:py-2.5 rounded-sm border border-border-color bg-background text-foreground text-xs lg:text-sm font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary cursor-pointer capitalize"
+          >
+            {statuses.map((s) => (
+              <option key={s} value={s}>
+                {s === "" ? "All Statuses" : formatStatus(s)}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
-      {/* Right */}
-      <div className="w-full sm:w-auto sm:ml-auto">
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="w-full sm:w-auto px-4 lg:px-5 py-2 lg:py-2.5 rounded-sm border border-border-color bg-background text-foreground text-xs lg:text-sm font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary cursor-pointer capitalize"
-        >
-          {statuses.map((s) => (
-            <option key={s} value={s}>
-              {s === "" ? "All Statuses" : formatStatus(s)}
-            </option>
-          ))}
-        </select>
-      </div>
+      {error && (
+        <div className="bg-primary/10 border border-primary/20 text-primary text-xs lg:text-sm font-medium rounded-xl p-3.5 lg:p-4 mb-5">
+          {error}
+        </div>
+      )}
+
+      {/* Deals List / Table */}
+      {filtered.length === 0 ? (
+        <div className="bg-card border border-border-color rounded-3xl p-8 sm:p-12 lg:p-16 text-center shadow-2xs">
+          <div className="w-11 h-11 lg:w-14 lg:h-14 rounded-2xl bg-surface border border-border-color/60 flex items-center justify-center mx-auto mb-3 text-foreground/40">
+            <FiFileText size={20} className="lg:hidden" />
+            <FiFileText size={24} className="hidden lg:block" />
+          </div>
+          <p className="text-sm lg:text-base font-semibold italic text-foreground">No deals found</p>
+          <p className="text-xs lg:text-sm text-muted mt-1 max-w-xs lg:max-w-sm mx-auto">
+            {statusFilter
+              ? "Try selecting a different status filter to view other deals."
+              : "You don't have any active or past deals yet."}
+          </p>
+        </div>
+      ) : (
+        <div className="overflow-x-auto rounded-sm border border-border-color bg-card shadow-sm">
+          <div className="min-w-[640px]">
+            {/* Table Header Row */}
+            <div className="bg-surface text-foreground px-4 sm:px-6 lg:px-8 py-3.5 lg:py-4 grid grid-cols-12 text-xs sm:text-sm lg:text-base italic font-semibold items-center">
+              <div className="col-span-4">Title</div>
+              <div className="col-span-3">Party</div>
+              <div className="col-span-2">Amount</div>
+              <div className="col-span-2">Status</div>
+              <div className="col-span-1 text-right">Action</div>
+            </div>
+
+            {/* Table Data Rows */}
+            <div className="divide-y divide-border-color/60">
+              {filtered.map((d) => {
+                const otherParty = users?.role === "brand" ? d.influencerId : d.brandId;
+                const style = getStatusStyle(d.status);
+
+                return (
+                  <Link
+                    key={d._id}
+                    href={`/app/deals/${d._id}`}
+                    className="group grid grid-cols-12 items-center px-4 sm:px-6 lg:px-8 py-4 lg:py-5 text-xs lg:text-sm hover:bg-foreground/[0.03] transition-colors duration-150"
+                  >
+                    {/* 1. Title */}
+                    <div className="col-span-4 min-w-0 pr-3">
+                      <p className="font-bold text-foreground  transition truncate text-xs sm:text-sm lg:text-base">
+                        {d.title}
+                      </p>
+                    </div>
+
+                    {/* 2. Name / Party */}
+                    <div className="col-span-3 flex items-center gap-2.5 min-w-0 pr-3">
+                      <span className="font-semibold text-foreground truncate lg:text-base">
+                        {otherParty?.name || "—"}
+                      </span>
+                    </div>
+
+                    {/* 3. Amount */}
+                    <div className="col-span-2 font-bold text-foreground text-xs sm:text-sm lg:text-base">
+                      {money(d.priceMinor)}
+                    </div>
+
+                    {/* 4. Status */}
+                    <div className="col-span-2">
+                      <span
+                        className={`inline-flex items-center gap-1.5 text-[10px] lg:text-xs font-semibold px-2.5 lg:px-3 py-0.5 lg:py-1 rounded-full border capitalize ${style.bg}`}
+                      >
+                        <span className={`w-1.5 h-1.5 rounded-full ${style.dot}`} />
+                        {formatStatus(d.status)}
+                      </span>
+                    </div>
+
+                    {/* 5. Chevron / Action */}
+                    <div className="col-span-1 flex justify-end">
+                      <FiChevronRight
+                        size={18}
+                        className="text-muted group-hover:text-primary group-hover:translate-x-1 transition-all"
+                      />
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
-
-    {error && (
-      <div className="bg-primary/10 border border-primary/20 text-primary text-xs lg:text-sm font-medium rounded-xl p-3.5 lg:p-4 mb-5">
-        {error}
-      </div>
-    )}
-
-    {/* Deals List / Table */}
-    {filtered.length === 0 ? (
-      <div className="bg-card border border-border-color rounded-3xl p-8 sm:p-12 lg:p-16 text-center shadow-2xs">
-        <div className="w-11 h-11 lg:w-14 lg:h-14 rounded-2xl bg-surface border border-border-color/60 flex items-center justify-center mx-auto mb-3 text-foreground/40">
-          <FiFileText size={20} className="lg:hidden" />
-          <FiFileText size={24} className="hidden lg:block" />
-        </div>
-        <p className="text-sm lg:text-base font-semibold italic text-foreground">No deals found</p>
-        <p className="text-xs lg:text-sm text-muted mt-1 max-w-xs lg:max-w-sm mx-auto">
-          {statusFilter
-            ? "Try selecting a different status filter to view other deals."
-            : "You don't have any active or past deals yet."}
-        </p>
-      </div>
-    ) : (
-      <div className="overflow-x-auto rounded-sm border border-border-color bg-card shadow-sm">
-        <div className="min-w-[640px]">
-          {/* Table Header Row */}
-          <div className="bg-surface text-foreground px-4 sm:px-6 lg:px-8 py-3.5 lg:py-4 grid grid-cols-12 text-xs sm:text-sm lg:text-base italic font-semibold items-center">
-            <div className="col-span-4">Title</div>
-            <div className="col-span-3">Party</div>
-            <div className="col-span-2">Amount</div>
-            <div className="col-span-2">Status</div>
-            <div className="col-span-1 text-right">Action</div>
-          </div>
-
-          {/* Table Data Rows */}
-          <div className="divide-y divide-border-color/60">
-            {filtered.map((d) => {
-              const otherParty = users?.role === "brand" ? d.influencerId : d.brandId;
-              const style = getStatusStyle(d.status);
-
-              return (
-                <Link
-                  key={d._id}
-                  href={`/app/deals/${d._id}`}
-                  className="group grid grid-cols-12 items-center px-4 sm:px-6 lg:px-8 py-4 lg:py-5 text-xs lg:text-sm hover:bg-foreground/[0.03] transition-colors duration-150"
-                >
-                  {/* 1. Title */}
-                  <div className="col-span-4 min-w-0 pr-3">
-                    <p className="font-bold text-foreground  transition truncate text-xs sm:text-sm lg:text-base">
-                      {d.title}
-                    </p>
-                  </div>
-
-                  {/* 2. Name / Party */}
-                  <div className="col-span-3 flex items-center gap-2.5 min-w-0 pr-3">
-                    {/* <div className="w-7 h-7 rounded-lg bg-surface border border-line/60 flex items-center justify-center shrink-0 text-ink/70 group-hover:bg-primary/10 group-hover:border-primary/20 group-hover:text-primary transition-colors">
-                      {otherParty?.avatar ? (
-                        <img
-                          src={otherParty.avatar}
-                          alt={otherParty.name || "User"}
-                          className="w-full h-full rounded-lg object-cover"
-                        />
-                      ) : (
-                        <span className="text-[10px] font-bold uppercase">
-                          {otherParty?.name ? otherParty.name.charAt(0) : <FiUser size={12} />}
-                        </span>
-                      )}
-                    </div> */}
-                    <span className="font-semibold text-foreground truncate lg:text-base">
-                      {otherParty?.name || "—"}
-                    </span>
-                  </div>
-
-                  {/* 3. Amount */}
-                  <div className="col-span-2 font-bold text-foreground text-xs sm:text-sm lg:text-base">
-                    {money(d.priceMinor)}
-                  </div>
-
-                  {/* 4. Status */}
-                  <div className="col-span-2">
-                    <span
-                      className={`inline-flex items-center gap-1.5 text-[10px] lg:text-xs font-semibold px-2.5 lg:px-3 py-0.5 lg:py-1 rounded-full border capitalize ${style.bg}`}
-                    >
-                      <span className={`w-1.5 h-1.5 rounded-full ${style.dot}`} />
-                      {formatStatus(d.status)}
-                    </span>
-                  </div>
-
-                  {/* 5. Chevron / Action */}
-                  <div className="col-span-1 flex justify-end">
-                    <FiChevronRight
-                      size={18}
-                      className="text-muted group-hover:text-primary group-hover:translate-x-1 transition-all"
-                    />
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-    )}
-  </div>
-);
+  );
 }

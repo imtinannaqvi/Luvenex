@@ -144,7 +144,6 @@ export default function VideosPage() {
         </button>
       </div>
 
-     {/* Conditionally render ONLY the Upload Form OR the Video Grid */}
 {showForm ? (
   /* ── Upload Studio Section ── */
   <div className="max-w-2xl mx-auto bg-surface border border-line rounded-md p-5 sm:p-6 shadow-2xs space-y-4">
@@ -231,7 +230,7 @@ export default function VideosPage() {
         <button
           type="submit"
           disabled={uploading || !videoFile}
-          className="px-6 py-2 rounded-md bg-red-700 text-paper hover:bg-primary-dark text-xs font-semibold  transition disabled:opacity-50 shadow-2xs"
+          className="px-6 py-2 rounded-md bg-primary text-paper hover:bg-primary text-xs font-semibold  transition disabled:opacity-50 shadow-2xs"
         >
           {uploading ? "Uploading Video..." : "Post Video"}
         </button>
