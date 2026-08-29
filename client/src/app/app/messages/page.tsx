@@ -635,18 +635,17 @@ export default function MessagesPage() {
                   </p>
                 </div>
               )}
-
-              {activeConv?.relatedGigId && (
-                <div className="px-5 py-3 border-b border-zinc-800/60 bg-zinc-950 shrink-0 flex items-center justify-between gap-3">
-                  <p className="text-xs text-zinc-400">Ready to move forward with this gig?</p>
-                  <button
-                    onClick={() => handleBookGig(activeConv.relatedGigId)}
-                    className="px-3 py-1.5 rounded-lg bg-[#B90808] text-white text-xs font-bold hover:bg-[#a10707] transition shrink-0"
-                  >
-                    Book This Gig
-                  </button>
-                </div>
-              )}
+{activeConv?.relatedGigId && user?.role === "brand" && (
+  <div className="px-5 py-3 border-b border-border-color bg-background shrink-0 flex items-center justify-between gap-3">
+    <p className="text-xs text-zinc-400">Ready to move forward with this gig?</p>
+    <button
+      onClick={() => handleBookGig(activeConv.relatedGigId)}
+      className="px-3 py-1.5 rounded-lg bg-[#B90808] text-foreground text-xs font-bold hover:bg-[#a10707] transition shrink-0"
+    >
+      Book Now
+    </button>
+  </div>
+)}
 
               {/* Messages Feed */}
               <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 space-y-1 scrollbar-thin scrollbar-thumb-zinc-800">
