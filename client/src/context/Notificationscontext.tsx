@@ -60,7 +60,7 @@ const isBellNoti = (n: Noti) => n.type !== "new_message";
 
 export function NotificationsProvider({
   children,
-  pollMs = 30000,
+  pollMs = 8000,
 }: {
   children: ReactNode;
   pollMs?: number;
