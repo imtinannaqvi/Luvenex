@@ -194,7 +194,7 @@ export default function ServiceRequestsPage() {
       {/* Request List — only shown when the form is closed */}
       {!showForm && (
         requests.length === 0 ? (
-          <div className="bg-paper border border-line rounded-2xl p-6 sm:p-8 text-center shadow-2xs">
+          <div className="bg-background border border-line rounded-2xl p-6 sm:p-8 text-center shadow-2xs">
             <p className="text-muted text-xs sm:text-sm">
               You haven't submitted any requests yet.
             </p>

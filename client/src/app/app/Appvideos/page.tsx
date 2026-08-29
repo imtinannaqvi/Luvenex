@@ -240,7 +240,7 @@ export default function VideosPage() {
 ) : (
         /* ── Video grid ── */
         videos.length === 0 ? (
-          <div className="bg-paper border border-line/80 rounded-2xl p-10 text-center shadow-2xs">
+          <div className="bg-background border border-line/80 rounded-2xl p-10 text-center shadow-2xs">
             <p className="text-xs text-muted">No videos posted yet — share your first one above.</p>
           </div>
         ) : (

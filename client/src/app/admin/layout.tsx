@@ -110,11 +110,11 @@ export default function AdminLayout({
         }`}
       >
         <h2
-          className={`font-bold text-lg tracking-tight overflow-hidden whitespace-nowrap transition-all duration-300 ${
+          className={`font-bold text-xl tracking-tight overflow-hidden whitespace-nowrap transition-all duration-300 ${
             sidebarExpanded ? "opacity-100" : "opacity-0 w-0"
           }`}
         >
-          <span className="text-primary">Luvenex</span> Admin
+           Admin
         </h2>
 
         <button

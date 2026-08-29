@@ -44,7 +44,7 @@ export default function SavedVideosPage() {
       <h1 className="text-2xl font-bold text-foreground tracking-tight mb-1">Saved Videos</h1>
 
       {videos.length === 0 ? (
-        <div className="bg-paper border border-line rounded-2xl p-8 text-center">
+        <div className="bg-background border border-line rounded-2xl p-8 text-center">
           <p className="text-muted text-sm">No saved videos yet.</p>
         </div>
       ) : (

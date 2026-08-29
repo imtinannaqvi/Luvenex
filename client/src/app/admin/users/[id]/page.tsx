@@ -12,7 +12,7 @@ const softCard =
 
 const Spinner = ({ className = "" }: { className?: string }) => (
   <div
-    className={`border-2 border-border-color border-t-foreground rounded-full animate-spin ${className}`}
+    className={`border-2 border-white border-t-primary rounded-full animate-spin ${className}`}
     role="status"
     aria-label="Loading"
   />
@@ -91,7 +91,6 @@ export default function AdminuserDetailPage() {
     return (
       <div className="flex flex-col items-center justify-center py-24 gap-3">
         <Spinner className="w-6 h-6" />
-        <span className="text-sm text-muted">Loading user…</span>
       </div>
     );
 

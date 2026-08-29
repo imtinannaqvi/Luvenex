@@ -189,8 +189,9 @@ function AppShell({
             sidebarExpanded ? "opacity-100" : "opacity-0 w-0"
           }`}
         >
-          <span className="text-primary">Luvenex</span>
-        </h2>
+ <div className="flex justify-center mb-4">
+                        <img src="/file_00000000b0e88211bb2c2f2e15c336ee.png" alt="Luvenex" className="h-10 w-auto " />
+                    </div>        </h2>
 
         
         <button

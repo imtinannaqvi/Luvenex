@@ -305,7 +305,7 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-[70vh] flex items-center justify-center bg-background">
+      <div className="min-h-[70vh] flex items-center justify-center ">
         <div className="w-8 h-8 border-2 border-border-color border-t-primary rounded-full animate-spin" />
       </div>
     );
@@ -319,7 +319,7 @@ export default function ProfilePage() {
   ] as const;
 
   return (
-    <div className="w-full min-h-screen bg-background text-foreground flex justify-start py-10 px-4 sm:px-6 md:px-10 lg:px-16 sm:pl-10 md:pl-12 lg:pl-16 font-sans">
+    <div className="w-full min-h-screen  text-foreground flex justify-start py-10 px-4 sm:px-6 md:px-10 lg:px-16 sm:pl-10 md:pl-12 lg:pl-16 font-sans">
       <div className="max-w-4xl lg:max-w-5xl xl:max-w-6xl w-full space-y-6">
         
         {/* ── Header Card ── */}
