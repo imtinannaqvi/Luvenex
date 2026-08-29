@@ -502,7 +502,7 @@ const startConversationAboutGig = async (gig: any) => {
   <div className="flex gap-2">
     <button
       onClick={() => startConversationAboutGig(g)}
-      className="flex items-center gap-1 text-[11px] font-bold text-ink border border-line hover:bg-surface px-3 py-1.5 rounded-md transition active:scale-95"
+      className="flex items-center gap-1 text-[11px] font-bold text-foreground border border-line hover:bg-surface px-3 py-1.5 rounded-md transition active:scale-95"
     >
       Discuss First
     </button>
