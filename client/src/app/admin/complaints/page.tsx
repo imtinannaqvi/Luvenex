@@ -13,13 +13,14 @@ export default function AdminComplaintsPage(){
 
 
 
-const load = async () => {
-    setLoading(true);
+const load = async (isInitial = false) => {
+  if (isInitial) setLoading(true);
     try {
         const data = await apiFetch("/api/complaints", {
             token: getToken()!
         });
         setComplaints(data.complaints);
+        if (isInitial) setLoading(false);
     } catch (error: any) {
         toast.error(error.message);
     } finally {
@@ -28,8 +29,8 @@ const load = async () => {
 };
 
 useEffect(() => {
-    load();
-     const interval = setInterval(load, 15000);
+    load(true);
+     const interval = setInterval(() => load(false), 15000);
   return () => clearInterval(interval);
 }, []);
 

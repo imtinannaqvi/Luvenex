@@ -31,9 +31,9 @@ export default function AdminUsersPage() {
         setTimeout(() => setToast(null), 3500);
     };
 
-    const loadUsers = async () => {
-        setLoading(true);
-        setError("");
+    const loadUsers = async (isInitial = false) => {
+  if (isInitial) setLoading(true);
+          setError("");
         try {
             const params = new URLSearchParams();
             if (search) params.set('q', search);
@@ -42,6 +42,7 @@ export default function AdminUsersPage() {
                 token: getToken()!,
             });
             setUsers(data.users);
+            if (isInitial) setLoading(false);
         } catch (err: any) {
             setError(err.message);
             showToast(err.message, 'error');
@@ -51,8 +52,8 @@ export default function AdminUsersPage() {
     };
 
     useEffect(() => {
-        loadUsers()
-         const interval = setInterval(loadUsers, 15000);
+        loadUsers(true)
+         const interval = setInterval(() => loadUsers(false), 15000);
   return () => clearInterval(interval);
     }, [])
 

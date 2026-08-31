@@ -5,6 +5,7 @@ import { apiFetch } from "@/lib/api";
 import { getToken } from "@/lib/auth";
 import { toast } from "react-toastify";
 import Link from "next/link";
+import { FiEdit3, FiCheckCircle, FiXCircle, FiPauseCircle, FiTarget } from "react-icons/fi";
 
 export default function CampaignsPage() {
   const [campaigns, setCampaigns] = useState<any[]>([]);
@@ -130,12 +131,20 @@ export default function CampaignsPage() {
     cancelled: campaigns.filter((c) => c.status === "cancelled").length,
   };
 
+  const TAB_ICONS: Record<string, any> = {
+    all: FiTarget,
+    open: FiCheckCircle,
+    draft: FiEdit3,
+    closed: FiPauseCircle,
+    cancelled: FiXCircle,
+  };
+
   return (
     <div className="max-w-6xl pb-12">
       {/* Header section */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-foreground tracking-tight">Campaigns</h1>
+          <h1 className="text-lg sm:text-xl font-bold text-foreground tracking-tight">Campaigns</h1>
           <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">Manage and track your brand partnership campaigns.</p>
         </div>
         <button
@@ -208,7 +217,7 @@ export default function CampaignsPage() {
 
           {/* Deliverables section */}
           <div className="pt-2">
-            <label className="block text-md font-bold text-foreground mb-2">Deliverables</label>
+            <label className="block text-sm font-bold text-foreground mb-2">Deliverables</label>
             <div className="space-y-2 mb-3">
               {deliverableItems.map((d, i) => (
                 <div key={i} className="flex items-center justify-between bg-background border border-border-color rounded-sm px-4 py-2">
@@ -257,19 +266,25 @@ export default function CampaignsPage() {
       {/* Filter Tabs */}
       {!showForm && (
         <div className="flex items-center gap-2 border-b border-border-color pb-4 mb-6 overflow-x-auto">
-          {(["all", "open", "draft", "closed", "cancelled"] as const).map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2 rounded-sm text-xs font-bold uppercase transition shrink-0 ${
-                activeTab === tab
-                  ? "bg-primary text-white shadow-sm"
-                  : "bg-surface text-zinc-600 dark:text-zinc-400 hover:text-foreground border border-border-color"
-              }`}
-            >
-              {tab} ({counts[tab]})
-            </button>
-          ))}
+          {(["all", "open", "draft", "closed", "cancelled"] as const).map((tab) => {
+            const Icon = TAB_ICONS[tab];
+            const isActive = activeTab === tab;
+            return (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-sm text-xs font-bold capitalize transition shrink-0 ${
+                  isActive
+                    ? "bg-primary text-white shadow-sm"
+                    : "bg-surface text-zinc-600 dark:text-zinc-400 hover:text-foreground border border-border-color"
+                }`}
+              >
+                <Icon size={13} className={isActive ? "text-white" : "text-zinc-500"} />
+                {tab}
+                <span className={isActive ? "text-white/80" : "text-zinc-500"}>({counts[tab]})</span>
+              </button>
+            );
+          })}
         </div>
       )}
 
@@ -303,14 +318,15 @@ function DraftCampaignCard({ c, money, updateStatus }: { c: any; money: (m?: num
         <Link href={`/app/campaigns/${c._id}`} className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1.5">
             <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-sm bg-primary/10 text-primary border border-primary/30">
+              <FiEdit3 size={11} />
               Draft
             </span>
             {c.category && <span className="text-xs text-zinc-500 dark:text-zinc-400">· {c.category}</span>}
           </div>
-          <p className="text-sm sm:text-base font-bold text-foreground">
+          <p className="text-sm font-bold text-foreground">
             {c.title || <span className="italic text-zinc-500 font-normal">Untitled campaign</span>}
           </p>
-          <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
             {c.budgetMinMinor || c.budgetMaxMinor ? `${money(c.budgetMinMinor)} – ${money(c.budgetMaxMinor)}` : "No budget set"}
           </p>
         </Link>
@@ -337,18 +353,26 @@ function CampaignCard({ c, money, updateStatus }: { c: any; money: (m?: number) 
     cancelled: "text-red-600 dark:text-red-400 bg-red-500/10 border-red-500/30",
   };
 
+  const statusIcons: Record<string, any> = {
+    open: FiCheckCircle,
+    closed: FiPauseCircle,
+    cancelled: FiXCircle,
+  };
+  const StatusIcon = statusIcons[c.status] || FiTarget;
+
   return (
     <div className="bg-surface border border-border-color rounded-sm p-5 transition hover:border-border-color/80 shadow-sm">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <Link href={`/app/campaigns/${c._id}`} className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1.5">
-            <span className={`inline-flex items-center text-[10px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-sm border ${statusColors[c.status] || ""}`}>
+            <span className={`inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-sm border ${statusColors[c.status] || ""}`}>
+              <StatusIcon size={11} />
               {c.status}
             </span>
             {c.category && <span className="text-xs text-zinc-500 dark:text-zinc-400">· {c.category}</span>}
           </div>
-          <p className="text-sm sm:text-base font-bold text-foreground">{c.title}</p>
-          <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+          <p className="text-sm font-bold text-foreground">{c.title}</p>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
             {money(c.budgetMinMinor)} – {money(c.budgetMaxMinor)}
           </p>
 

@@ -12,8 +12,8 @@ export default function AdminContactMessagePage() {
   const [statusFilter, setStatusFilter] = useState("");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
 
-  const load = async () => {
-    setLoading(true);
+ const load = async (isInitial = false) => {
+  if (isInitial) setLoading(true);
     try {
       const params = new URLSearchParams();
       if (statusFilter) params.set("status", statusFilter);
@@ -21,6 +21,7 @@ export default function AdminContactMessagePage() {
         token: getToken()!,
       });
       setMessages(data.messages);
+      if (isInitial) setLoading(false);
     } catch (error: any) {
       toast.error(error.message || "Failed to load message");
     } finally {
@@ -29,8 +30,8 @@ export default function AdminContactMessagePage() {
   };
 
   useEffect(() => {
-    load();
-     const interval = setInterval(load, 15000);
+    load(true);
+     const interval = setInterval(() =>load(false), 15000);
   return () => clearInterval(interval);
   }, [statusFilter]);
 

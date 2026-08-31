@@ -7,17 +7,20 @@ import { toast } from "react-toastify";
 export default function AdminVerificationPage() {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+const load = (isInitial = false) => {
+  if (isInitial) setLoading(true);
+  apiFetch("/api/admin/verification-queue", { token: getToken()! })
+    .then((data) => setUsers(data.users || []))
+    .finally(() => {
+      if (isInitial) setLoading(false);
+    });
+};
 
-  const load = () => {
-    apiFetch("/api/admin/verification-queue", { token: getToken()! })
-      .then((data) => setUsers(data.users || []))
-      .finally(() => setLoading(false));
-  };
-
-  useEffect(() => { load();
-    const interval = setInterval(load, 15000);
+useEffect(() => {
+  load(true);
+  const interval = setInterval(() => load(false), 15000);
   return () => clearInterval(interval);
-   }, []);
+}, []);
 
   const review = async (userId: string, decision: string) => {
     try {

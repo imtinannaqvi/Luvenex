@@ -7,6 +7,7 @@ import { ContactPanelProvider } from "@/components/ContactPanel";
 import Navbar from "@/components/Navbar";
 import { ThemeProvider } from "next-themes";
 import { NotificationsProvider } from "@/context/Notificationscontext";
+import SplashScreen from "@/components/SplashScreen";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,6 +37,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+          <SplashScreen />
           <NotificationsProvider>
             <ContactPanelProvider>
               <Navbar />

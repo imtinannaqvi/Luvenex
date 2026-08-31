@@ -28,19 +28,21 @@ export default function ApplicationsPage() {
   const [saving, setSaving] = useState(false);
   const [statusFilter, setStatusFilter] = useState("all");
 
-  const load = () => {
-    setLoading(true);
-    apiFetch("/api/applications/me", { token: getToken()! })
-      .then((data) => setApplications(data.applications || []))
-      .catch((err) => {
-        toast.error(err.message || "Failed to load applications");
-      })
-      .finally(() => setLoading(false));
-  };
+ const load = (isInitial = false) => {
+  if (isInitial) setLoading(true);
+  apiFetch("/api/applications/me", { token: getToken()! })
+    .then((data) => setApplications(data.applications || []))
+    .catch((err) => {
+      toast.error(err.message || "Failed to load applications");
+    })
+    .finally(() => {
+      if (isInitial) setLoading(false);
+    });
+};
 
-  useEffect(() => {
-  load();
-  const interval = setInterval(load, 15000);
+useEffect(() => {
+  load(true);
+  const interval = setInterval(() => load(false), 15000);
   return () => clearInterval(interval);
 }, []);
 

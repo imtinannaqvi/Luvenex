@@ -240,7 +240,7 @@ return (
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-surface border border-border-color  text-foreground font-bold text-xs uppercase tracking-widest transition-all duration-300 hover:scale-105 shadow-2xl disabled:opacity-50 cursor-pointer"
+                className="w-full sm:w-auto px-8 py-4 rounded-sm bg-surface border border-border-color  text-foreground font-bold text-xs uppercase tracking-widest transition-all duration-300 hover:scale-105 shadow-2xl disabled:opacity-50 cursor-pointer"
               >
                 {submitting ? "Sending..." : "Send Message"}
               </button>

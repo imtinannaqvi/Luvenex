@@ -20,11 +20,13 @@ const Navbar = () => {
 
   const [mounted, setMounted] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
 
   useEffect(() => {
     setMounted(true);
     const readAuth = () => setLoggedIn(!!getToken());
     readAuth();
+    setLoggingOut(false);
 
     window.addEventListener("storage", readAuth);
     window.addEventListener("auth-change", readAuth);
@@ -34,13 +36,17 @@ const Navbar = () => {
     };
   }, [pathname]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("luvenex_token");
-    localStorage.removeItem("luvenex_refresh");
-    localStorage.removeItem("luvenex_user");
-    setLoggedIn(false);
-    window.dispatchEvent(new Event("auth-change"));
-    router.push("/");
+   const handleLogout = () => {
+    setLoggingOut(true);
+    setTimeout(() => {
+      localStorage.removeItem("luvenex_token");
+      localStorage.removeItem("luvenex_refresh");
+      localStorage.removeItem("luvenex_user");
+      setLoggedIn(false);
+      window.dispatchEvent(new Event("auth-change"));
+      router.push("/login");
+      setLoggingOut(false);
+    }, 700);
   };
 
   if (pathname.startsWith("/admin") || pathname.startsWith("/app")) return null;
@@ -103,9 +109,10 @@ const Navbar = () => {
             (loggedIn ? (
               <button
                 onClick={handleLogout}
+                disabled={loggingOut}
                 aria-label="Log out"
                 title="Log out"
-                className="flex items-center gap-1.5 sm:gap-2 h-9 px-3 sm:px-4 rounded-full text-foreground/80 hover:text-foreground hover:bg-foreground/10 transition cursor-pointer"
+                className="flex items-center gap-1.5 sm:gap-2 h-9 px-3 sm:px-4 rounded-full text-foreground/80 hover:text-foreground hover:bg-foreground/10 transition cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 <svg
                   width="18"
@@ -174,6 +181,13 @@ const Navbar = () => {
           </Link>
         ))}
       </div>
+
+      {/* Full-screen logout overlay */}
+      {loggingOut && (
+        <div className="fixed inset-0 z-[100] bg-background/95 backdrop-blur-sm flex flex-col items-center justify-center gap-4">
+          <div className="w-10 h-10 border-2 border-[#B90808]/20 border-t-[#B90808] rounded-full animate-spin" />
+        </div>
+      )}
     </header>
   );
 };

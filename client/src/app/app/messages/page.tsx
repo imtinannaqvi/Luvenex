@@ -39,8 +39,9 @@ export default function MessagesPage() {
   const [pendingPreviewUrl, setPendingPreviewUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const bottomRef = useRef<HTMLDivElement>(null);
+    const bottomRef = useRef<HTMLDivElement>(null);
   const activeIdRef = useRef<string | null>(null);
+  const conversationsRef = useRef<any[]>([]);
 
   const user = getUser();
   const router = useRouter();
@@ -57,7 +58,6 @@ export default function MessagesPage() {
       const convs = data.conversations || [];
       setConversations(convs);
 
-      // if we arrived here with a specific conversation to open, select it
       const conversationIdFromUrl = searchParams.get("conversationId");
       if (conversationIdFromUrl) {
         setActiveId(conversationIdFromUrl);
@@ -76,29 +76,56 @@ export default function MessagesPage() {
         { token: getToken()! }
       );
       setMessages(data.messages || []);
-      // Opening the thread marked it read on the server — refresh the badge.
       reload();
     } catch {
       setMessages([]);
     }
   };
 
+  // Keep a ref in sync so the socket handler below always sees the
+  // latest conversations list without depending on a stale closure.
+  useEffect(() => {
+    conversationsRef.current = conversations;
+  }, [conversations]);
+
   useEffect(() => {
     const socket = connectSocket();
     socket.on("new_messages", (msg: any) => {
-      if (msg.conversationId === activeIdRef.current) {
-        setMessages((prev) => {
-          if (prev.some((m) => m._id === msg._id)) return prev;
-          return [...prev, msg];
-        });
+    
+           if (msg.conversationId === activeIdRef.current) {
+        loadMessages(msg.conversationId);
       }
+
+      
+      const preview =
+        msg.attachmentType === "image"
+          ? "📷 Photo"
+          : msg.attachmentType === "video"
+          ? "🎥 Video"
+          : msg.attachmentType === "pdf"
+          ? "📄 Document"
+          : msg.body || "New message";
+
+      const conversationExists = conversationsRef.current.some(
+        (c) => c._id === msg.conversationId
+      );
+
+      if (!conversationExists) {
+        // Brand-new conversation/request we don't have yet — pull the
+        // full list so it appears in the sidebar.
+        loadConversations();
+        return;
+      }
+
       setConversations((prev) => {
         const updated = prev.map((c) =>
           c._id === msg.conversationId
             ? {
                 ...c,
-                lastMessagePreview: msg.body || c.lastMessagePreview,
+                lastMessagePreview: preview,
                 lastMessageAt: msg.createdAt,
+                isRequest: false,
+                status: "accepted",
               }
             : c
         );
@@ -346,8 +373,8 @@ export default function MessagesPage() {
               </h1>
             </div>
 
-            <Link
-              href="/dashboard"
+                      <Link
+              href="/app"
               className="p-2 rounded-full text-zinc-300 hover:bg-zinc-900 transition"
               title="Home"
             >
@@ -594,8 +621,8 @@ export default function MessagesPage() {
                     <FiSearch size={18} />
                   </button>
                   {activeOtherUser?.handle && (
-                    <Link
-                      href={`/creators/${activeOtherUser.handle}`}
+                                        <Link
+                      href={`/creator/${activeOtherUser.handle}`}
                       className="p-2 rounded-full text-zinc-300 hover:bg-zinc-900 transition"
                       title="View Profile"
                     >

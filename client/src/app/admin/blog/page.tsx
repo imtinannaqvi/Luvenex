@@ -44,11 +44,12 @@ export default function AdminBlogPage() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const load = async () => {
-    setLoading(true);
+const load = async (isInitial = false) => {
+  if (isInitial) setLoading(true);
     try {
       const data = await apiFetch("/api/blogs/admin/all", { token: getToken()! });
       setPosts(data?.blogs || []);
+      if (isInitial) setLoading(false);
     } catch (err: any) {
       toast.error(err.message || "Failed to load posts");
     } finally {
@@ -57,8 +58,8 @@ export default function AdminBlogPage() {
   };
 
 useEffect(() => {
-  load();
-  const interval = setInterval(load, 15000);
+  load(true);                            
+  const interval = setInterval(() => load(false), 15000);  
   return () => clearInterval(interval);
 }, []);
 

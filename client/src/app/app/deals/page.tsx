@@ -28,31 +28,27 @@ export default function DealsListPage() {
     "refunded",
   ];
 
-  useEffect(() => {
-    setUsers(getUser());
-    // First load shows the spinner; background polls refresh silently.
-    load(true);
-    const interval = setInterval(() => load(false), 15000);
-    return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+ const load = async (isInitial = false) => {
+  if (isInitial) setLoading(true);
+  setError("");
+  try {
+    const data = await apiFetch("/api/deals", {
+      token: getToken()!,
+    });
+    setDeals(data.deals || []);
+  } catch (error: any) {
+    setError(error.message);
+  } finally {
+    if (isInitial) setLoading(false);
+  }
+};
 
-  // `initial` = true only for the very first load. On polls we DON'T flip the
-  // full-page spinner, so the table stays on screen and just updates in place.
-  const load = async (initial = false) => {
-    if (initial) setLoading(true);
-    setError("");
-    try {
-      const data = await apiFetch("/api/deals", {
-        token: getToken()!,
-      });
-      setDeals(data.deals || []);
-    } catch (error: any) {
-      setError(error.message);
-    } finally {
-      if (initial) setLoading(false);
-    }
-  };
+useEffect(() => {
+  setUsers(getUser());
+  load(true);
+  const interval = setInterval(() => load(false), 15000);
+  return () => clearInterval(interval);
+}, []);
 
   const money = (minor: number) => `PKR ${(minor / 100).toLocaleString("en-PK")}`;
 

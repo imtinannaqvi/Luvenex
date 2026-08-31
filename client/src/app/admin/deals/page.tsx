@@ -22,28 +22,28 @@ export default function AdminDealsPage() {
 
   const RELEASABLE_STATUSES = ["funded", "in_progress", "delivered", "disputed"];
 
-  const load = async () => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams();
-      if (statusFilter) params.set("status", statusFilter);
+const load = async (isInitial = false) => {
+  if (isInitial) setLoading(true);
+  try {
+    const params = new URLSearchParams();
+    if (statusFilter) params.set("status", statusFilter);
 
-      const data = await apiFetch(`/api/admin/deals?${params.toString()}`, {
-        token: getToken()!,
-      });
-      setDeals(data.deals);
-    } catch (err: any) {
-      toast.error(err.message || "Failed to load deals");
-    } finally {
-      setLoading(false);
-    }
-  };
+    const data = await apiFetch(`/api/admin/deals?${params.toString()}`, {
+      token: getToken()!,
+    });
+    setDeals(data.deals);
+  } catch (err: any) {
+    toast.error(err.message || "Failed to load deals");
+  } finally {
+    if (isInitial) setLoading(false);
+  }
+};
 
-  useEffect(() => {
-    load();
-     const interval = setInterval(load, 15000);
+useEffect(() => {
+  load(true);
+  const interval = setInterval(() => load(false), 15000);
   return () => clearInterval(interval);
-  }, [statusFilter]);
+}, [statusFilter]);
 
   const money = (minor: number) => `PKR ${(minor / 100).toLocaleString("en-PK")}`;
 

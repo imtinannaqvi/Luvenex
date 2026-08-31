@@ -45,26 +45,26 @@ export default function AdminServicesPage() {
   const [iconPreview, setIconPreview] = useState<string | null>(null);
   const [iconLoadError, setIconLoadError] = useState(false);
 
-  const load = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/services`, {
-        headers: { Authorization: `Bearer ${getToken()}` },
-      });
-      const data = await res.json();
-      setServices(data.services || []);
-    } catch {
-      toast.error("Failed to load services");
-    } finally {
-      setLoading(false);
-    }
-  };
+const load = async (isInitial = false) => {
+  if (isInitial) setLoading(true);
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/services`, {
+      headers: { Authorization: `Bearer ${getToken()}` },
+    });
+    const data = await res.json();
+    setServices(data.services || []);
+  } catch {
+    toast.error("Failed to load services");
+  } finally {
+    if (isInitial) setLoading(false);
+  }
+};
 
-  useEffect(() => {
-    load();
-    const interval = setInterval(load, 15000);
+useEffect(() => {
+  load(true);
+  const interval = setInterval(() => load(false), 15000);
   return () => clearInterval(interval);
-  }, []);
+}, []);
 
   const resetForm = () => {
     setTitle(""); setShortDescription(""); setDescription(""); setCategory(""); setPriceMinor("");
@@ -356,86 +356,92 @@ export default function AdminServicesPage() {
         </form>
       )}
 
-      {!showForm &&
-        (services.length === 0 ? (
-          <div className="bg-background border border-line rounded-2xl p-8 text-center">
-            <p className="text-muted text-sm">No services created yet.</p>
-          </div>
-        ) : (
-          <div className="bg-background border border-line rounded-2xl overflow-hidden shadow-sm">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm text-foreground border-collapse">
-                <thead>
-                  <tr className="border-b border-line bg-background text-[14px] font-bold text-foreground italic">
-                    <th scope="col" className="px-6 py-4">Image</th>
-                    <th scope="col" className="px-6 py-4">Title</th>
-                    <th scope="col" className="px-6 py-4">Category</th>
-                    <th scope="col" className="px-6 py-4">Status</th>
-                    <th scope="col" className="px-6 py-4">Uploaded By</th>
-                    <th scope="col" className="px-6 py-4 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-line/60">
-                  {services.map((s) => (
-                    <tr key={s._id} className="hover:bg-surface transition">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {s.coverImage ? (
-                          <img
-                            src={`${process.env.NEXT_PUBLIC_API_URL}${s.coverImage}`}
-                            alt={s.title}
-                            className="w-10 h-10 object-cover rounded-lg border border-line"
-                          />
-                        ) : (
-                          <div className="w-10 h-10 rounded-lg bg-gray-100 border border-line flex items-center justify-center text-[10px] text-muted">
-                            No img
-                          </div>
-                        )}
-                      </td>
+     {loading ? (
+  <div className="flex justify-center py-12">
+    <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
+  </div>
+) : (
+  !showForm &&
+  (services.length === 0 ? (
+    <div className="bg-background border border-line rounded-2xl p-8 text-center">
+      <p className="text-muted text-sm">No services created yet.</p>
+    </div>
+  ) : (
+    <div className="bg-background border border-line rounded-2xl overflow-hidden shadow-sm">
+      <div className="overflow-x-auto">
+        <table className="w-full text-left text-sm text-foreground border-collapse">
+          <thead>
+            <tr className="border-b border-line bg-background text-[14px] font-bold text-foreground italic">
+              <th scope="col" className="px-6 py-4">Image</th>
+              <th scope="col" className="px-6 py-4">Title</th>
+              <th scope="col" className="px-6 py-4">Category</th>
+              <th scope="col" className="px-6 py-4">Status</th>
+              <th scope="col" className="px-6 py-4">Uploaded By</th>
+              <th scope="col" className="px-6 py-4 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-line/60">
+            {services.map((s) => (
+              <tr key={s._id} className="hover:bg-surface transition">
+                <td className="px-6 py-4 whitespace-nowrap">
+                  {s.coverImage ? (
+                    <img
+                      src={`${process.env.NEXT_PUBLIC_API_URL}${s.coverImage}`}
+                      alt={s.title}
+                      className="w-10 h-10 object-cover rounded-lg border border-line"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-lg bg-gray-100 border border-line flex items-center justify-center text-[10px] text-muted">
+                      No img
+                    </div>
+                  )}
+                </td>
 
-                      <td className="px-6 py-4 max-w-xs">
-                        <div className="font-bold text-foreground line-clamp-1">{s.title}</div>
-                      </td>
+                <td className="px-6 py-4 max-w-xs">
+                  <div className="font-bold text-foreground line-clamp-1">{s.title}</div>
+                </td>
 
-                      <td className="px-6 py-4 whitespace-nowrap text-xs font-semibold text-primary">
-                        {s.category || "Uncategorized"}
-                      </td>
+                <td className="px-6 py-4 whitespace-nowrap text-xs font-semibold text-primary">
+                  {s.category || "Uncategorized"}
+                </td>
 
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span
-                          className={`inline-block text-[10px] font-semibold px-2.5 py-0.5 rounded-full ${
-                            s.isActive ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-600"
-                          }`}
-                        >
-                          {s.isActive ? "Active" : "Inactive"}
-                        </span>
-                      </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <span
+                    className={`inline-block text-[10px] font-semibold px-2.5 py-0.5 rounded-full ${
+                      s.isActive ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-600"
+                    }`}
+                  >
+                    {s.isActive ? "Active" : "Inactive"}
+                  </span>
+                </td>
 
-                      <td className="px-6 py-4 whitespace-nowrap text-xs text-muted font-medium">
-                        {s.author?.name || s.author || "Admin"}
-                      </td>
+                <td className="px-6 py-4 whitespace-nowrap text-xs text-muted font-medium">
+                  {s.author?.name || s.author || "Admin"}
+                </td>
 
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-medium space-x-2">
-                        <button
-                          onClick={() => startEdit(s)}
-                          className="w-20 py-2 px-3 text-white bg-primary font-semibold rounded-lg hover:bg-primary-dark transition inline-flex items-center justify-center"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDelete(s._id)}
-                          disabled={deletingId === s._id}
-                          className="w-20 py-2 px-3 text-foreground bg-background border border-ink font-semibold rounded-lg hover:bg-background/30 transition disabled:opacity-50 inline-flex items-center justify-center"
-                        >
-                          {deletingId === s._id ? "..." : "Delete"}
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        ))}
+                <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-medium space-x-2">
+                  <button
+                    onClick={() => startEdit(s)}
+                    className="w-20 py-2 px-3 text-white bg-primary font-semibold rounded-lg hover:bg-primary-dark transition inline-flex items-center justify-center"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(s._id)}
+                    disabled={deletingId === s._id}
+                    className="w-20 py-2 px-3 text-foreground bg-background border border-ink font-semibold rounded-lg hover:bg-background/30 transition disabled:opacity-50 inline-flex items-center justify-center"
+                  >
+                    {deletingId === s._id ? "..." : "Delete"}
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  ))
+)}
     </div>
   );
 }

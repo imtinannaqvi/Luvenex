@@ -28,8 +28,8 @@ export default function AdminServiceRequestsPage() {
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
   const [influencers, setInfluencers] = useState<any[]>([])
 
-  const load = async () => {
-    setLoading(true);
+const load = async (isInitial = false) => {
+  if (isInitial) setLoading(true);
     setError("");
     try {
       const params = new URLSearchParams();
@@ -38,6 +38,7 @@ export default function AdminServiceRequestsPage() {
         token: getToken()!,
       });
       setRequests(data.requests);
+       if (isInitial) setLoading(false);
     } catch (err: any) {
       toast.error(err.message);
     } finally {
@@ -46,8 +47,8 @@ export default function AdminServiceRequestsPage() {
   };
 
   useEffect(() => {
-    load();
-    const interval = setInterval(load, 15000);
+    load(true);
+    const interval = setInterval(() => load(false), 15000);
   return () => clearInterval(interval);
   }, [statusFilter]);
 
