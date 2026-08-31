@@ -1,23 +1,26 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 export default function SplashScreen() {
-  const [shouldRender, setShouldRender] = useState(true);
+  const pathname = usePathname();
+  const [shouldRender, setShouldRender] = useState(pathname === "/");
   const [fadeOut, setFadeOut] = useState(false);
   const [typedText, setTypedText] = useState("");
   const [showCursor, setShowCursor] = useState(true);
   const fullText = "Luvenex";
 
   useEffect(() => {
-    const alreadyShown = sessionStorage.getItem("luvenex_splash_shown");
-    if (alreadyShown) {
+    if (pathname !== "/") {
       setShouldRender(false);
       return;
     }
-    sessionStorage.setItem("luvenex_splash_shown", "true");
 
-    // type one letter at a time
+    setShouldRender(true);
+    setFadeOut(false);
+    setTypedText("");
+
     let index = 0;
     const typeInterval = setInterval(() => {
       index++;
@@ -27,12 +30,10 @@ export default function SplashScreen() {
       }
     }, 180);
 
-    // blink the cursor continuously
     const cursorInterval = setInterval(() => {
       setShowCursor((prev) => !prev);
     }, 450);
 
-    // start fade-out after typing finishes + a longer pause
     const fadeTimer = setTimeout(() => setFadeOut(true), 3000);
     const removeTimer = setTimeout(() => setShouldRender(false), 3500);
 
@@ -42,7 +43,7 @@ export default function SplashScreen() {
       clearTimeout(fadeTimer);
       clearTimeout(removeTimer);
     };
-  }, []);
+  }, [pathname]);
 
   if (!shouldRender) return null;
 
