@@ -1,5 +1,15 @@
 import mongoose from "mongoose";
 
+// Each section powers one item in the left-hand list on the service detail page.
+// `description` is rich HTML (from the editor, images embedded inline).
+const sectionSchema = new mongoose.Schema(
+  {
+    title: { type: String, default: "" },
+    description: { type: String, default: "" },
+  },
+  { _id: false }
+);
+
 const serviceSchema = new mongoose.Schema({
     title: {
         type: String,
@@ -13,10 +23,15 @@ const serviceSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    // Tabbed sections shown on the public detail page (left list + right content).
+    sections: {
+        type: [sectionSchema],
+        default: [],
+    },
     coverImage: {
         type: String
     },
-iconUrl: { type: String },
+    iconUrl: { type: String },
     additionalImages: [{
         type: String
     }],
@@ -29,9 +44,10 @@ iconUrl: { type: String },
     priceMinor: {
         type: Number
     },
+    highlightTitle: { type: String },
     isActive: {
         type: Boolean,
-        default: true   // ✅ changed — services are visible immediately unless manually hidden
+        default: true
     },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,

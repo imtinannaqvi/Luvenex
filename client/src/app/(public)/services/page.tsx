@@ -90,61 +90,62 @@ export default function ServicesPage() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {services.map((s, i) => (
-              <Link
-                key={s._id}
-                href={`/services/${s._id}`}
-                className={`group relative bg-card border border-border-color/80 rounded-xl p-8 flex flex-col min-h-[300px] overflow-hidden
-                           transition-all duration-300 ease-out hover:-translate-y-1 hover:border-red-600/60
-                           hover:shadow-[0_20px_50px_-20px_rgba(220,38,38,0.5)] ${
-                             mounted ? "opacity-100" : "opacity-0"
-                           }`}
-                style={
-                  mounted
-                    ? {
-                        animation: "fade-up 0.6s ease-out forwards",
-                        animationDelay: `${i * 80}ms`,
-                      }
-                    : undefined
-                }
-              >
-                {/* red glow that fades in on hover */}
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-red-600/[0.12] via-transparent to-red-600/[0.08] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+  {services.map((s, i) => (
+    <Link
+      key={s._id}
+      href={`/services/${s._id}`}
+      className={`group relative bg-card border border-border-color/80 rounded-xl p-8 flex flex-col min-h-[300px] overflow-hidden
+                 transition-all duration-300 ease-out hover:bg-primary
+                  ${
+                   mounted ? "opacity-100" : "opacity-0"
+                 }`}
+      style={
+        mounted
+          ? {
+              animation: "fade-up 0.6s ease-out forwards",
+              animationDelay: `${i * 80}ms`,
+            }
+          : undefined
+      }
+    >
+      {/* red glow that fades in on hover */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-red-600/[0.12] via-transparent to-red-600/[0.08] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-                {/* Icon — plain at rest, background tile reveals on hover */}
-<div className="w-20 h-20 rounded-2xl bg-[#161616] flex items-center justify-center text-foreground transition-all duration-300 group-hover:-translate-y-1.5 group-hover:scale-110 overflow-hidden">                  {s.iconUrl ? (
-                    <img
-                      src={`${process.env.NEXT_PUBLIC_API_URL}${s.iconUrl}`}
-                      alt=""
-                      className="w-22 h-32 object-contain"
-                    />
-                  ) : (
-                    <DefaultServiceIcon />
-                  )}
-                </div>
+      {/* Icon — plain at rest, background tile reveals on hover */}
+      <div className="w-20 h-20 rounded-2xl bg-[#161616] flex items-center justify-center text-foreground transition-all duration-300 group-hover:-translate-y-1.5 group-hover:scale-110 overflow-hidden">
+        {s.iconUrl ? (
+          <img
+            src={`${process.env.NEXT_PUBLIC_API_URL}${s.iconUrl}`}
+            alt=""
+            className="w-22 h-32 object-contain"
+          />
+        ) : (
+          <DefaultServiceIcon />
+        )}
+      </div>
 
-                {/* Content */}
-                <div className="relative mt-6 flex flex-col flex-1">
-                  <h3 className="text-xl font-bold text-foreground tracking-tight leading-tight line-clamp-2 group-hover:text-red-500 transition-colors duration-300">
-                    {s.title || "Uncategorized"}
-                  </h3>
-                  {s.shortDescription && (
-                    <p className="text-sm text-foreground leading-relaxed line-clamp-3 mt-2 transition-colors duration-300">
-                      {s.shortDescription}
-                    </p>
-                  )}
-                  {/* Explore service cue */}
-                  <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-red-500 mt-auto pt-5">
-                    Explore service
-                    <svg className="w-4 h-4 group-hover:translate-x-0.5 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                    </svg>
-                  </span>
-                </div>
-              </Link>
-            ))}
-          </div>
+      {/* Content */}
+      <div className="relative mt-6 flex flex-col flex-1">
+        <h3 className="text-xl font-bold text-foreground tracking-tight leading-tight line-clamp-2 group-hover:text-foreground transition-colors duration-300">
+          {s.title || "Uncategorized"}
+        </h3>
+        {s.shortDescription && (
+          <p className="text-sm text-foreground leading-relaxed line-clamp-3 mt-2 group-hover:text-foreground transition-colors duration-300">
+            {s.shortDescription}
+          </p>
+        )}
+        {/* Explore service cue */}
+        <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-red-500 group-hover:text-foreground mt-auto pt-5 transition-colors duration-300">
+          Explore service
+          <svg className="w-4 h-4 group-hover:translate-x-0.5 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+          </svg>
+        </span>
+      </div>
+    </Link>
+  ))}
+</div>
         )}
       </div>
     </div>

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { apiFetch } from "@/lib/api";
 import { getToken, getUser } from "@/lib/auth";
 import { useParams, useRouter } from "next/navigation";
+import { FiChevronRight } from "react-icons/fi";
 
 export default function ServiceDetailPage() {
   const params = useParams();
@@ -13,6 +14,7 @@ export default function ServiceDetailPage() {
   const [service, setService] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [activeSection, setActiveSection] = useState(0);
 
   // Form states
   const [title, setTitle] = useState("");
@@ -58,14 +60,11 @@ export default function ServiceDetailPage() {
     }
   };
 
-  // Word/Docs paste artifact cleanup — rejoin hyphen + forced-break pairs and
-  // normalize non-breaking spaces (&nbsp; / \u00A0) back to regular spaces, so
-  // text wraps correctly instead of breaking mid-word.
-  const cleanDescription = (html?: string) => {
+  // Word/Docs paste artifact cleanup — normalize non-breaking spaces.
+  const cleanHtml = (html?: string) => {
     if (!html) return "";
     return html
       .replace(/-(\s*)(<br\s*\/?>\s*)+/gi, "-")
-      .replace(/-(\s*)\n+/g, "-")
       .replace(/&nbsp;/gi, " ")
       .replace(/\u00A0/g, " ");
   };
@@ -104,9 +103,14 @@ export default function ServiceDetailPage() {
     );
   }
 
+  const sections: { title: string; description: string }[] = Array.isArray(service.sections)
+    ? service.sections
+    : [];
+  const active = sections[activeSection] || sections[0];
+
   return (
     <div className="bg-background text-foreground min-h-screen selection:bg-red-600 selection:text-white relative overflow-x-hidden">
-      {/* Hero Section with Cover Video, Overlay, and Title */}
+      {/* Hero Section */}
       <div className="group relative w-full h-[400px] md:h-[500px] overflow-hidden flex items-center justify-center bg-card">
         {service.videos?.[0] ? (
           <video
@@ -125,11 +129,7 @@ export default function ServiceDetailPage() {
             }}
           />
         )}
-
-        {/* Dark scrim so the title is always legible on any photo, in light OR dark mode */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-black/20" />
-
-        {/* Title with lines */}
         <div className="relative z-10 flex items-center justify-center gap-6 px-4 max-w-5xl w-full">
           <div className="flex-1 h-px bg-red-600 hidden sm:block"></div>
           <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight text-center leading-tight drop-shadow-lg">
@@ -139,81 +139,119 @@ export default function ServiceDetailPage() {
         </div>
       </div>
 
-      {/* Title (left) + Short Description row */}
-      <section className="pt-12 pb-6 px-4">
-        <div className="max-w-4xl mx-auto flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-8 border-b border-border-color pb-8">
-          <h2 className="text-xl italic sm:text-2xl font-extrabold text-foreground break-words">
-            Title: {service.title}
+      {/* Title + short description intro */}
+      <section className="pt-14 pb-6 px-4">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-foreground italic break-words">
+            {service.title}
           </h2>
+          {service.shortDescription && (
+            <p className="mt-3 text-base sm:text-lg text-muted leading-relaxed max-w-3xl">
+              {service.shortDescription}
+            </p>
+          )}
         </div>
       </section>
-      <div className="text-center items-center px-4">
-        <p className="text-lg text-muted leading-relaxed max-w-4xl mx-auto">
-          {service.shortDescription}
-        </p>
-      </div>
 
-      {/* Full Description (rich text, images embedded inline) */}
-      {service.description && (
-        <section className="py-6 px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="flex items-center gap-3 mb-5">
-              <span className="text-[15px] font-bold uppercase tracking-[0.2em] text-foreground">Overview</span>
-              <span className="flex-1 h-px bg-border-color" />
+      {/* ── Tabbed sections: left list + right content ── */}
+      {sections.length > 0 && (
+        <section className="pb-16 px-4">
+          <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+            {/* LEFT — clickable section titles */}
+            <div className="lg:col-span-4">
+              <div className="lg:sticky lg:top-24 divide-y divide-border-color border-y border-border-color">
+                {sections.map((sec, i) => {
+                  const isActive = i === activeSection;
+                  return (
+                    <button
+                      key={i}
+                      onClick={() => setActiveSection(i)}
+                      className="w-full text-left py-5 flex items-center justify-between gap-3 group transition-colors"
+                    >
+                      <span
+                        className={`text-xl sm:text-2xl font-extrabold tracking-tight transition-colors ${
+                          isActive ? "text-red-500" : "text-foreground group-hover:text-red-500"
+                        }`}
+                      >
+                        {sec.title || `Section ${i + 1}`}
+                      </span>
+                      <FiChevronRight
+                        size={20}
+                        className={`shrink-0 transition-colors ${
+                          isActive ? "text-red-500" : "text-muted group-hover:text-red-500"
+                        }`}
+                      />
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-            <div
-              className="service-fulldesc text-foreground text-sm sm:text-base leading-relaxed"
-              dangerouslySetInnerHTML={{ __html: cleanDescription(service.description) }}
-            />
+
+            {/* RIGHT — active section content */}
+            <div className="lg:col-span-8 min-w-0">
+              {active ? (
+                <div key={activeSection} className="animate-[fadeInScale_0.3s_ease-out_forwards]">
+                  <div
+                    className="service-fulldesc text-foreground text-sm sm:text-base leading-relaxed"
+                    dangerouslySetInnerHTML={{ __html: cleanHtml(active.description) }}
+                  />
+                </div>
+              ) : (
+                <p className="text-muted text-sm">Select a section to view its details.</p>
+              )}
+            </div>
           </div>
-          <style jsx global>{`
-            .service-fulldesc {
-              word-break: normal;
-              overflow-wrap: break-word;
-              white-space: normal;
-            }
-            .service-fulldesc h1,
-            .service-fulldesc h2,
-            .service-fulldesc h3,
-            .service-fulldesc strong,
-            .service-fulldesc b {
-              color: var(--foreground);
-              font-weight: 700;
-            }
-            .service-fulldesc h2 {
-              font-size: 1.125rem;
-              margin-top: 1.5rem;
-              margin-bottom: 0.5rem;
-            }
-            .service-fulldesc p {
-              color: var(--muted);
-              margin-top: 0.75rem;
-              margin-bottom: 0.75rem;
-              line-height: 1.8;
-            }
-            .service-fulldesc img {
-              border-radius: 1rem;
-              border: 1px solid var(--border-color);
-              margin-top: 1rem;
-              max-width: 80%;
-              height: auto;
-            }
-            .service-fulldesc a {
-              color: #ef4444;
-              text-decoration: none;
-            }
-            .service-fulldesc a:hover {
-              text-decoration: underline;
-            }
-            .service-fulldesc ul,
-            .service-fulldesc ol {
-              color: var(--muted);
-              padding-left: 1.25rem;
-              margin-top: 0.5rem;
-            }
-          `}</style>
         </section>
       )}
+
+      <style jsx global>{`
+        .service-fulldesc {
+          word-break: normal;
+          overflow-wrap: break-word;
+          white-space: normal;
+          max-width: 100%;
+        }
+        .service-fulldesc h1,
+        .service-fulldesc h2,
+        .service-fulldesc h3,
+        .service-fulldesc strong,
+        .service-fulldesc b {
+          color: var(--foreground);
+          font-weight: 700;
+        }
+        .service-fulldesc h2 {
+          font-size: 1.5rem;
+          margin-top: 1rem;
+          margin-bottom: 0.5rem;
+        }
+        .service-fulldesc p {
+          color: var(--muted);
+          margin-top: 0.75rem;
+          margin-bottom: 0.75rem;
+          line-height: 1.8;
+        }
+        .service-fulldesc img {
+          border-radius: 1rem;
+          border: 1px solid var(--border-color);
+          margin-top: 1rem;
+          margin-bottom: 1rem;
+          max-width: 100%;
+          height: auto;
+        }
+        .service-fulldesc a {
+          color: #ef4444;
+          text-decoration: none;
+        }
+        .service-fulldesc a:hover {
+          text-decoration: underline;
+        }
+        .service-fulldesc ul,
+        .service-fulldesc ol {
+          color: var(--muted);
+          padding-left: 1.25rem;
+          margin-top: 0.5rem;
+        }
+      `}</style>
 
       {/* Request Section */}
       <section className="py-16 px-4 bg-background">
@@ -227,7 +265,6 @@ export default function ServiceDetailPage() {
             </p>
           </div>
 
-          {/* Conditional display: Success message OR Form */}
           {submitted ? (
             <div className="max-w-md mx-auto bg-card border border-border-color rounded-2xl p-6 text-center space-y-3 shadow-xl">
               <div className="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center mx-auto shadow-lg shadow-red-600/40">
@@ -312,4 +349,4 @@ export default function ServiceDetailPage() {
       </section>
     </div>
   );
-} 
+}

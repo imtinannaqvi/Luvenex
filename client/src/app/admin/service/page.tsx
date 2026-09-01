@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { toast } from "react-toastify";
 import { getToken } from "@/lib/auth";
 import dynamic from "next/dynamic";
+import { FiPlus, FiTrash2 } from "react-icons/fi";
 import "react-quill-new/dist/quill.snow.css";
 
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
@@ -20,6 +21,8 @@ const quillModules = {
   ],
 };
 
+type Section = { title: string; description: string };
+
 export default function AdminServicesPage() {
   const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -27,9 +30,9 @@ export default function AdminServicesPage() {
 
   const [title, setTitle] = useState("");
   const [shortDescription, setShortDescription] = useState("");
-  const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
   const [priceMinor, setPriceMinor] = useState("");
+  const [sections, setSections] = useState<Section[]>([]);
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
   const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
@@ -45,31 +48,40 @@ export default function AdminServicesPage() {
   const [iconPreview, setIconPreview] = useState<string | null>(null);
   const [iconLoadError, setIconLoadError] = useState(false);
 
-const load = async (isInitial = false) => {
-  if (isInitial) setLoading(true);
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/services`, {
-      headers: { Authorization: `Bearer ${getToken()}` },
-    });
-    const data = await res.json();
-    setServices(data.services || []);
-  } catch {
-    toast.error("Failed to load services");
-  } finally {
-    if (isInitial) setLoading(false);
-  }
-};
+  const load = async (isInitial = false) => {
+    if (isInitial) setLoading(true);
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/services`, {
+        headers: { Authorization: `Bearer ${getToken()}` },
+      });
+      const data = await res.json();
+      setServices(data.services || []);
+    } catch {
+      toast.error("Failed to load services");
+    } finally {
+      if (isInitial) setLoading(false);
+    }
+  };
 
-useEffect(() => {
-  load(true);
-  const interval = setInterval(() => load(false), 15000);
-  return () => clearInterval(interval);
-}, []);
+  useEffect(() => {
+    load(true);
+    const interval = setInterval(() => load(false), 15000);
+    return () => clearInterval(interval);
+  }, []);
 
   const resetForm = () => {
-    setTitle(""); setShortDescription(""); setDescription(""); setCategory(""); setPriceMinor("");
-    setCoverFile(null); setCoverPreview(null); setGalleryFiles([]); setVideoFiles([]);
-    setIconFile(null); setIconPreview(null); setIconLoadError(false);
+    setTitle("");
+    setShortDescription("");
+    setCategory("");
+    setPriceMinor("");
+    setSections([]);
+    setCoverFile(null);
+    setCoverPreview(null);
+    setGalleryFiles([]);
+    setVideoFiles([]);
+    setIconFile(null);
+    setIconPreview(null);
+    setIconLoadError(false);
     setEditingId(null);
     if (coverInputRef.current) coverInputRef.current.value = "";
     if (galleryInputRef.current) galleryInputRef.current.value = "";
@@ -81,9 +93,9 @@ useEffect(() => {
     setEditingId(s._id);
     setTitle(s.title || "");
     setShortDescription(s.shortDescription || "");
-    setDescription(s.description || "");
     setCategory(s.category || "");
     setPriceMinor(s.priceMinor ? String(s.priceMinor / 100) : "");
+    setSections(Array.isArray(s.sections) ? s.sections : []);
     setCoverPreview(s.coverImage ? `${process.env.NEXT_PUBLIC_API_URL}${s.coverImage}` : null);
     setCoverFile(null);
     setIconPreview(s.iconUrl ? `${process.env.NEXT_PUBLIC_API_URL}${s.iconUrl}` : null);
@@ -94,6 +106,19 @@ useEffect(() => {
     setShowForm(true);
   };
 
+  // ── Section helpers ──
+  const addSection = () =>
+    setSections((prev) => [...prev, { title: "", description: "" }]);
+
+  const removeSection = (index: number) =>
+    setSections((prev) => prev.filter((_, i) => i !== index));
+
+  const updateSectionTitle = (index: number, value: string) =>
+    setSections((prev) => prev.map((s, i) => (i === index ? { ...s, title: value } : s)));
+
+  const updateSectionDescription = (index: number, value: string) =>
+    setSections((prev) => prev.map((s, i) => (i === index ? { ...s, description: value } : s)));
+
   const handleCoverSelect = (file: File | null) => {
     setCoverFile(file);
     setCoverPreview(file ? URL.createObjectURL(file) : null);
@@ -101,13 +126,26 @@ useEffect(() => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (sections.length === 0) {
+      toast.error("Add at least one section.");
+      return;
+    }
+
     setSubmitting(true);
     try {
       const formData = new FormData();
       formData.append("title", title);
       formData.append("shortDescription", shortDescription);
-      formData.append("description", description);
+      // Backend still requires `description`. We no longer show that editor,
+      // so we derive it from the first section's content to satisfy the model.
+      const derivedDescription =
+        sections.find((s) => s.description && s.description.replace(/<[^>]*>/g, "").trim())
+          ?.description || sections[0]?.description || "<p></p>";
+      formData.append("description", derivedDescription);
       formData.append("category", category);
+      // Sections travel as a JSON string; the controller parses them.
+      formData.append("sections", JSON.stringify(sections));
       if (priceMinor) formData.append("priceMinor", String(Number(priceMinor) * 100));
       if (coverFile) formData.append("cover", coverFile);
       if (iconFile) formData.append("icon", iconFile);
@@ -159,8 +197,6 @@ useEffect(() => {
     }
   };
 
-  const money = (minor?: number) => (minor ? `PKR ${(minor / 100).toLocaleString("en-PK")}` : null);
-
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
@@ -192,7 +228,7 @@ useEffect(() => {
             <div>
               <label className="block text-xs font-semibold text-foreground mb-1.5">Short Description</label>
               <textarea
-                placeholder="One-liner shown on the catalog card..."
+                placeholder="One-liner shown on the catalog card and at the top of the service page..."
                 value={shortDescription}
                 onChange={(e) => setShortDescription(e.target.value)}
                 rows={2}
@@ -201,18 +237,66 @@ useEffect(() => {
               />
             </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-foreground mb-1.5">Full Description</label>
-              <div className="rounded-xl border border-line overflow-hidden bg-background">
-                <ReactQuill
-                  theme="snow"
-                  value={description}
-                  onChange={setDescription}
-                  modules={quillModules}
-                  placeholder="Add headings, formatting, and details shown on the service page..."
-                  className="[&_.ql-editor]:min-h-[220px] [&_.ql-toolbar]:border-line [&_.ql-container]:border-line"
-                />
+            {/* ── Sections builder (this is now the main content) ── */}
+            <div className="pt-2 border-t border-line/60">
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <label className="block text-sm font-bold text-foreground">Detail Sections</label>
+                  <p className="text-[11px] text-muted mt-0.5">
+                    Each section is a tab on the service page — its title shows on the left, its content on the right.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={addSection}
+                  className="shrink-0 inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-primary/10 text-primary text-xs font-semibold hover:bg-primary/20 transition"
+                >
+                  <FiPlus size={14} /> Add section
+                </button>
               </div>
+
+              {sections.length === 0 ? (
+                <div className="text-center py-6 border border-dashed border-line rounded-xl">
+                  <p className="text-xs text-muted">No sections yet. Click “Add section” to create the first one.</p>
+                </div>
+              ) : (
+                <div className="space-y-5">
+                  {sections.map((sec, i) => (
+                    <div key={i} className="border border-line rounded-xl p-4 bg-surface/40 space-y-3">
+                      <div className="flex items-center gap-3">
+                        <span className="w-6 h-6 rounded-md bg-primary/10 text-primary text-xs font-bold flex items-center justify-center shrink-0">
+                          {i + 1}
+                        </span>
+                        <input
+                          type="text"
+                          placeholder="Section title (e.g. Photography Training)"
+                          value={sec.title}
+                          onChange={(e) => updateSectionTitle(i, e.target.value)}
+                          className="flex-1 px-3.5 py-2.5 rounded-xl border border-line text-sm"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removeSection(i)}
+                          className="shrink-0 p-2 rounded-lg text-muted hover:text-primary hover:bg-primary/10 transition"
+                          title="Remove section"
+                        >
+                          <FiTrash2 size={15} />
+                        </button>
+                      </div>
+                      <div className="rounded-xl border border-line overflow-hidden bg-background">
+                        <ReactQuill
+                          theme="snow"
+                          value={sec.description}
+                          onChange={(val) => updateSectionDescription(i, val)}
+                          modules={quillModules}
+                          placeholder="This section's content — add text, headings, and images..."
+                          className="[&_.ql-editor]:min-h-[160px] [&_.ql-toolbar]:border-line [&_.ql-container]:border-line"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="flex gap-4">
@@ -264,6 +348,7 @@ useEffect(() => {
                 />
               </label>
             </div>
+
             <div className="bg-background border border-line rounded-2xl p-5">
               <h3 className="text-sm font-bold text-foreground italic mb-3">Service Icon</h3>
               <p className="text-xs text-muted mb-3">
@@ -356,92 +441,92 @@ useEffect(() => {
         </form>
       )}
 
-     {loading ? (
-  <div className="flex justify-center py-12">
-    <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
-  </div>
-) : (
-  !showForm &&
-  (services.length === 0 ? (
-    <div className="bg-background border border-line rounded-2xl p-8 text-center">
-      <p className="text-muted text-sm">No services created yet.</p>
-    </div>
-  ) : (
-    <div className="bg-background border border-line rounded-2xl overflow-hidden shadow-sm">
-      <div className="overflow-x-auto">
-        <table className="w-full text-left text-sm text-foreground border-collapse">
-          <thead>
-            <tr className="border-b border-line bg-background text-[14px] font-bold text-foreground italic">
-              <th scope="col" className="px-6 py-4">Image</th>
-              <th scope="col" className="px-6 py-4">Title</th>
-              <th scope="col" className="px-6 py-4">Category</th>
-              <th scope="col" className="px-6 py-4">Status</th>
-              <th scope="col" className="px-6 py-4">Uploaded By</th>
-              <th scope="col" className="px-6 py-4 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-line/60">
-            {services.map((s) => (
-              <tr key={s._id} className="hover:bg-surface transition">
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {s.coverImage ? (
-                    <img
-                      src={`${process.env.NEXT_PUBLIC_API_URL}${s.coverImage}`}
-                      alt={s.title}
-                      className="w-10 h-10 object-cover rounded-lg border border-line"
-                    />
-                  ) : (
-                    <div className="w-10 h-10 rounded-lg bg-gray-100 border border-line flex items-center justify-center text-[10px] text-muted">
-                      No img
-                    </div>
-                  )}
-                </td>
+      {loading ? (
+        <div className="flex justify-center py-12">
+          <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
+        </div>
+      ) : (
+        !showForm &&
+        (services.length === 0 ? (
+          <div className="bg-background border border-line rounded-2xl p-8 text-center">
+            <p className="text-muted text-sm">No services created yet.</p>
+          </div>
+        ) : (
+          <div className="bg-background border border-line rounded-2xl overflow-hidden shadow-sm">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm text-foreground border-collapse">
+                <thead>
+                  <tr className="border-b border-line bg-background text-[14px] font-bold text-foreground italic">
+                    <th scope="col" className="px-6 py-4">Image</th>
+                    <th scope="col" className="px-6 py-4">Title</th>
+                    <th scope="col" className="px-6 py-4">Category</th>
+                    <th scope="col" className="px-6 py-4">Status</th>
+                    <th scope="col" className="px-6 py-4">Uploaded By</th>
+                    <th scope="col" className="px-6 py-4 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-line/60">
+                  {services.map((s) => (
+                    <tr key={s._id} className="hover:bg-surface transition">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {s.coverImage ? (
+                          <img
+                            src={`${process.env.NEXT_PUBLIC_API_URL}${s.coverImage}`}
+                            alt={s.title}
+                            className="w-10 h-10 object-cover rounded-lg border border-line"
+                          />
+                        ) : (
+                          <div className="w-10 h-10 rounded-lg bg-gray-100 border border-line flex items-center justify-center text-[10px] text-muted">
+                            No img
+                          </div>
+                        )}
+                      </td>
 
-                <td className="px-6 py-4 max-w-xs">
-                  <div className="font-bold text-foreground line-clamp-1">{s.title}</div>
-                </td>
+                      <td className="px-6 py-4 max-w-xs">
+                        <div className="font-bold text-foreground line-clamp-1">{s.title}</div>
+                      </td>
 
-                <td className="px-6 py-4 whitespace-nowrap text-xs font-semibold text-primary">
-                  {s.category || "Uncategorized"}
-                </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-xs font-semibold text-primary">
+                        {s.category || "Uncategorized"}
+                      </td>
 
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span
-                    className={`inline-block text-[10px] font-semibold px-2.5 py-0.5 rounded-full ${
-                      s.isActive ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-600"
-                    }`}
-                  >
-                    {s.isActive ? "Active" : "Inactive"}
-                  </span>
-                </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span
+                          className={`inline-block text-[10px] font-semibold px-2.5 py-0.5 rounded-full ${
+                            s.isActive ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-600"
+                          }`}
+                        >
+                          {s.isActive ? "Active" : "Inactive"}
+                        </span>
+                      </td>
 
-                <td className="px-6 py-4 whitespace-nowrap text-xs text-muted font-medium">
-                  {s.author?.name || s.author || "Admin"}
-                </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-xs text-muted font-medium">
+                        {s.author?.name || s.author || "Admin"}
+                      </td>
 
-                <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-medium space-x-2">
-                  <button
-                    onClick={() => startEdit(s)}
-                    className="w-20 py-2 px-3 text-white bg-primary font-semibold rounded-lg hover:bg-primary-dark transition inline-flex items-center justify-center"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(s._id)}
-                    disabled={deletingId === s._id}
-                    className="w-20 py-2 px-3 text-foreground bg-background border border-ink font-semibold rounded-lg hover:bg-background/30 transition disabled:opacity-50 inline-flex items-center justify-center"
-                  >
-                    {deletingId === s._id ? "..." : "Delete"}
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  ))
-)}
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-medium space-x-2">
+                        <button
+                          onClick={() => startEdit(s)}
+                          className="w-20 py-2 px-3 text-white bg-primary font-semibold rounded-lg hover:bg-primary-dark transition inline-flex items-center justify-center"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDelete(s._id)}
+                          disabled={deletingId === s._id}
+                          className="w-20 py-2 px-3 text-foreground bg-background border border-ink font-semibold rounded-lg hover:bg-background/30 transition disabled:opacity-50 inline-flex items-center justify-center"
+                        >
+                          {deletingId === s._id ? "..." : "Delete"}
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        ))
+      )}
     </div>
   );
 }
