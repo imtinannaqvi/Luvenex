@@ -30,27 +30,26 @@ export default function AdminServiceRequestsPage() {
 
 const load = async (isInitial = false) => {
   if (isInitial) setLoading(true);
-    setError("");
-    try {
-      const params = new URLSearchParams();
-      if (statusFilter) params.set("status", statusFilter);
-      const data = await apiFetch(`/api/service-requests?${params.toString()}`, {
-        token: getToken()!,
-      });
-      setRequests(data.requests);
-       if (isInitial) setLoading(false);
-    } catch (err: any) {
-      toast.error(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  setError("");
+  try {
+    const params = new URLSearchParams();
+    if (statusFilter) params.set("status", statusFilter);
+    const data = await apiFetch(`/api/service-requests?${params.toString()}`, {
+      token: getToken()!,
+    });
+    setRequests(data.requests);
+  } catch (err: any) {
+    toast.error(err.message);
+  } finally {
+    if (isInitial) setLoading(false);
+  }
+};
 
-  useEffect(() => {
-    load(true);
-    const interval = setInterval(() => load(false), 15000);
+useEffect(() => {
+  load(true);
+  const interval = setInterval(() => load(false), 15000);
   return () => clearInterval(interval);
-  }, [statusFilter]);
+}, [statusFilter]);
 
   useEffect(() => {
   apiFetch("/api/influencers?limit=100", {})
