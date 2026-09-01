@@ -63,8 +63,8 @@ const [cancelReason, setCancelReason] = useState("");
 const [submittingCancel, setSubmittingCancel] = useState(false);
 const [showRevisionForm, setShowRevisionForm] = useState(false);
 const [revisionNote, setRevisionNote] = useState("");
-  const load = async () => {
-    setLoading(true);
+ const load = async (isInitial = false) => {
+  if (isInitial) setLoading(true);
     setError("");
     try {
       const data = await apiFetch(`/api/deals/${dealId}`, { token: getToken()! });
@@ -77,6 +77,7 @@ const [revisionNote, setRevisionNote] = useState("");
         const reviewStatus = await apiFetch(`/api/deals/${dealId}/my-review-status`, { token: getToken()! });
         setHasReviewed(reviewStatus.hasReviewed);
       }
+      if (isInitial) setLoading(false);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -86,8 +87,8 @@ const [revisionNote, setRevisionNote] = useState("");
 
  useEffect(() => {
   setUser(getUser());
-  load();
-  const interval = setInterval(load, 15000);
+  load(true);
+  const interval = setInterval(() => load(false), 15000);
   return () => clearInterval(interval);
 }, [dealId]);
 

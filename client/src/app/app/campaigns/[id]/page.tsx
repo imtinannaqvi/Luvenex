@@ -18,8 +18,8 @@ export default function CampaignApplicantsPage() {
   const [matchedDeal, setMatchedDeal] = useState<any>(null);
   const [matchedInfluencerName, setMatchedInfluencerName] = useState("");
 
-  const load = async () => {
-    setLoading(true);
+const load = async (isInitial = false) => {
+  if (isInitial) setLoading(true);
     try {
       const [campaignData, applicationsData] = await Promise.all([
         apiFetch(`/api/campaigns/${id}`),
@@ -27,6 +27,7 @@ export default function CampaignApplicantsPage() {
       ]);
       setCampaign(campaignData.campaign);
       setApplications(applicationsData.applications || []);
+      if (isInitial) setLoading(false);
     } catch (err: any) {
       toast.error(err.message || "Failed to load applicants");
     } finally {
@@ -35,8 +36,8 @@ export default function CampaignApplicantsPage() {
   };
 
  useEffect(() => {
-  load();
-  const interval = setInterval(load, 15000);
+  load(true);
+  const interval = setInterval(() => load(false), 15000);
   return () => clearInterval(interval);
 }, [id]);
 

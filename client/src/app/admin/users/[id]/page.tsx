@@ -175,7 +175,7 @@ export default function AdminuserDetailPage() {
                         updateStatus("banned");
                       }
                     }}
-                    className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-primary text-white hover:bg-primary-dark transition disabled:opacity-50"
+                    className="text-xs font-semibold px-6 py-2 rounded-xl bg-primary text-white hover:bg-primary-dark transition disabled:opacity-50"
                   >
                     Ban
                   </button>
