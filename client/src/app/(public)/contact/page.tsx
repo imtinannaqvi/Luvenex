@@ -77,11 +77,11 @@ export default function ContactPage() {
     <div className="flex items-center space-x-2 text-lg font-mono font-bold tracking-widest text-foreground mb-3">
       <span className="text-foreground tracking-[0.2em]">CONTACT US</span>
     </div>
-    <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-foreground leading-[1.1]">
-      Feel Free To Ask Us
+    <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold  text-foreground leading-[1.1]">
+      Feel Free To Ask
     </h1>
     <p className="text-4xl sm:text-5xl lg:text-6xl font-serif italic font-normal text-foreground mt-1">
-      Anything
+      Us Anything
     </p>
   </div>
 

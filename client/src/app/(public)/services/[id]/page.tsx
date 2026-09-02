@@ -163,13 +163,13 @@ export default function ServiceDetailPage() {
                 {sections.map((sec, i) => {
                   const isActive = i === activeSection;
                   return (
-                    <button
+                                     <button
                       key={i}
                       onClick={() => setActiveSection(i)}
-                      className="w-full text-left py-5 flex items-center justify-between gap-3 group transition-colors"
+                      className="w-full text-left py-5 flex items-center justify-between gap-3 group transition-colors min-w-0"
                     >
                       <span
-                        className={`text-xl sm:text-2xl font-extrabold tracking-tight transition-colors ${
+                        className={`min-w-0 flex-1 text-base sm:text-lg font-bold tracking-tight whitespace-nowrap overflow-hidden text-ellipsis transition-colors ${
                           isActive ? "text-red-500" : "text-foreground group-hover:text-red-500"
                         }`}
                       >

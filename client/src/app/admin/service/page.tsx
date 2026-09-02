@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { toast } from "react-toastify";
 import { getToken } from "@/lib/auth";
 import dynamic from "next/dynamic";
-import { FiPlus, FiTrash2 } from "react-icons/fi";
+import { FiPlus, FiTrash2, FiChevronDown, FiChevronUp, FiCheckCircle } from "react-icons/fi";
 import "react-quill-new/dist/quill.snow.css";
 
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
@@ -33,6 +33,7 @@ export default function AdminServicesPage() {
   const [category, setCategory] = useState("");
   const [priceMinor, setPriceMinor] = useState("");
   const [sections, setSections] = useState<Section[]>([]);
+  const [openSection, setOpenSection] = useState<number | null>(null);
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
   const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
@@ -75,6 +76,7 @@ export default function AdminServicesPage() {
     setCategory("");
     setPriceMinor("");
     setSections([]);
+    setOpenSection(null);
     setCoverFile(null);
     setCoverPreview(null);
     setGalleryFiles([]);
@@ -96,6 +98,7 @@ export default function AdminServicesPage() {
     setCategory(s.category || "");
     setPriceMinor(s.priceMinor ? String(s.priceMinor / 100) : "");
     setSections(Array.isArray(s.sections) ? s.sections : []);
+    setOpenSection(null); // start with all collapsed on edit
     setCoverPreview(s.coverImage ? `${process.env.NEXT_PUBLIC_API_URL}${s.coverImage}` : null);
     setCoverFile(null);
     setIconPreview(s.iconUrl ? `${process.env.NEXT_PUBLIC_API_URL}${s.iconUrl}` : null);
@@ -107,17 +110,37 @@ export default function AdminServicesPage() {
   };
 
   // ── Section helpers ──
-  const addSection = () =>
-    setSections((prev) => [...prev, { title: "", description: "" }]);
+  const addSection = () => {
+    setSections((prev) => {
+      const next = [...prev, { title: "", description: "" }];
+      setOpenSection(next.length - 1); // open the new one for editing
+      return next;
+    });
+  };
 
-  const removeSection = (index: number) =>
+  const removeSection = (index: number) => {
     setSections((prev) => prev.filter((_, i) => i !== index));
+    setOpenSection((cur) => (cur === index ? null : cur !== null && cur > index ? cur - 1 : cur));
+  };
 
   const updateSectionTitle = (index: number, value: string) =>
     setSections((prev) => prev.map((s, i) => (i === index ? { ...s, title: value } : s)));
 
   const updateSectionDescription = (index: number, value: string) =>
     setSections((prev) => prev.map((s, i) => (i === index ? { ...s, description: value } : s)));
+
+  // "Done" just collapses the section — it's kept in the form, saved with the whole service.
+  const collapseSection = (index: number) => {
+    const sec = sections[index];
+    if (!sec.title.trim()) {
+      toast.error("Give this section a title first.");
+      return;
+    }
+    setOpenSection(null);
+  };
+
+  const sectionIsComplete = (s: Section) =>
+    s.title.trim() && s.description.replace(/<[^>]*>/g, "").trim();
 
   const handleCoverSelect = (file: File | null) => {
     setCoverFile(file);
@@ -137,14 +160,11 @@ export default function AdminServicesPage() {
       const formData = new FormData();
       formData.append("title", title);
       formData.append("shortDescription", shortDescription);
-      // Backend still requires `description`. We no longer show that editor,
-      // so we derive it from the first section's content to satisfy the model.
       const derivedDescription =
         sections.find((s) => s.description && s.description.replace(/<[^>]*>/g, "").trim())
           ?.description || sections[0]?.description || "<p></p>";
       formData.append("description", derivedDescription);
       formData.append("category", category);
-      // Sections travel as a JSON string; the controller parses them.
       formData.append("sections", JSON.stringify(sections));
       if (priceMinor) formData.append("priceMinor", String(Number(priceMinor) * 100));
       if (coverFile) formData.append("cover", coverFile);
@@ -237,13 +257,17 @@ export default function AdminServicesPage() {
               />
             </div>
 
-            {/* ── Sections builder (this is now the main content) ── */}
+            {/* ── Sections builder ── */}
             <div className="pt-2 border-t border-line/60">
               <div className="flex items-center justify-between mb-3">
                 <div>
-                  <label className="block text-sm font-bold text-foreground">Detail Sections</label>
+                  <label className="block text-sm font-bold text-foreground">
+                    Detail Sections {sections.length > 0 && (
+                      <span className="text-muted font-normal">({sections.length})</span>
+                    )}
+                  </label>
                   <p className="text-[11px] text-muted mt-0.5">
-                    Each section is a tab on the service page — its title shows on the left, its content on the right.
+                    Add each section, then click “Done” to collapse it and add the next. All save together when you submit.
                   </p>
                 </div>
                 <button
@@ -260,41 +284,91 @@ export default function AdminServicesPage() {
                   <p className="text-xs text-muted">No sections yet. Click “Add section” to create the first one.</p>
                 </div>
               ) : (
-                <div className="space-y-5">
-                  {sections.map((sec, i) => (
-                    <div key={i} className="border border-line rounded-xl p-4 bg-surface/40 space-y-3">
-                      <div className="flex items-center gap-3">
-                        <span className="w-6 h-6 rounded-md bg-primary/10 text-primary text-xs font-bold flex items-center justify-center shrink-0">
-                          {i + 1}
-                        </span>
-                        <input
-                          type="text"
-                          placeholder="Section title (e.g. Photography Training)"
-                          value={sec.title}
-                          onChange={(e) => updateSectionTitle(i, e.target.value)}
-                          className="flex-1 px-3.5 py-2.5 rounded-xl border border-line text-sm"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => removeSection(i)}
-                          className="shrink-0 p-2 rounded-lg text-muted hover:text-primary hover:bg-primary/10 transition"
-                          title="Remove section"
+                <div className="space-y-3">
+                  {sections.map((sec, i) => {
+                    const isOpen = openSection === i;
+                    const complete = sectionIsComplete(sec);
+
+                    // Collapsed summary bar
+                    if (!isOpen) {
+                      return (
+                        <div
+                          key={i}
+                          className="flex items-center gap-3 border border-line rounded-xl px-4 py-3 bg-surface/40"
                         >
-                          <FiTrash2 size={15} />
-                        </button>
+                          <span className="w-6 h-6 rounded-md bg-primary/10 text-primary text-xs font-bold flex items-center justify-center shrink-0">
+                            {i + 1}
+                          </span>
+                          <div className="flex-1 min-w-0 flex items-center gap-2">
+                            <span className="text-sm font-semibold text-foreground truncate">
+                              {sec.title || <span className="text-muted italic">Untitled section</span>}
+                            </span>
+                            {complete && <FiCheckCircle size={14} className="text-green-500 shrink-0" />}
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setOpenSection(i)}
+                            className="shrink-0 inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
+                          >
+                            <FiChevronDown size={14} /> Edit
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => removeSection(i)}
+                            className="shrink-0 p-1.5 rounded-lg text-muted hover:text-primary hover:bg-primary/10 transition"
+                            title="Remove section"
+                          >
+                            <FiTrash2 size={14} />
+                          </button>
+                        </div>
+                      );
+                    }
+
+                    // Expanded editor
+                    return (
+                      <div key={i} className="border border-primary/30 rounded-xl p-4 bg-surface/40 space-y-3">
+                        <div className="flex items-center gap-3">
+                          <span className="w-6 h-6 rounded-md bg-primary/10 text-primary text-xs font-bold flex items-center justify-center shrink-0">
+                            {i + 1}
+                          </span>
+                          <input
+                            type="text"
+                            placeholder="Section title (e.g. Photography Training)"
+                            value={sec.title}
+                            onChange={(e) => updateSectionTitle(i, e.target.value)}
+                            className="flex-1 px-3.5 py-2.5 rounded-xl border border-line text-sm"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => removeSection(i)}
+                            className="shrink-0 p-2 rounded-lg text-muted hover:text-primary hover:bg-primary/10 transition"
+                            title="Remove section"
+                          >
+                            <FiTrash2 size={15} />
+                          </button>
+                        </div>
+                        <div className="rounded-xl border border-line overflow-hidden bg-background">
+                          <ReactQuill
+                            theme="snow"
+                            value={sec.description}
+                            onChange={(val) => updateSectionDescription(i, val)}
+                            modules={quillModules}
+                            placeholder="This section's content — add text, headings, and images..."
+                            className="[&_.ql-editor]:min-h-[160px] [&_.ql-toolbar]:border-line [&_.ql-container]:border-line"
+                          />
+                        </div>
+                        <div className="flex justify-end">
+                          <button
+                            type="button"
+                            onClick={() => collapseSection(i)}
+                            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary/10 text-primary text-xs font-bold hover:bg-primary/20 transition"
+                          >
+                            <FiChevronUp size={14} /> Done
+                          </button>
+                        </div>
                       </div>
-                      <div className="rounded-xl border border-line overflow-hidden bg-background">
-                        <ReactQuill
-                          theme="snow"
-                          value={sec.description}
-                          onChange={(val) => updateSectionDescription(i, val)}
-                          modules={quillModules}
-                          placeholder="This section's content — add text, headings, and images..."
-                          className="[&_.ql-editor]:min-h-[160px] [&_.ql-toolbar]:border-line [&_.ql-container]:border-line"
-                        />
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
