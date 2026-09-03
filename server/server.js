@@ -47,17 +47,26 @@ connectDB();
 const app = express();
 
 // ── CORS ──────────────────────────────────────────────────────────
-// Allow the deployed frontend, plus local dev. Set CLIENT_URL in .env
-// to your Amplify URL (no trailing slash). Extra origins are listed so
-// production and local both work at once.
+// Allow the deployed frontend, plus any localhost dev port (Next.js
+// bounces between 3000/3001/3002... when a port is taken). Set
+// CLIENT_URL in .env to your Amplify URL (no trailing slash).
 const allowedOrigins = [
   process.env.CLIENT_URL,
   "https://main.d11kkkdatmlmv7.amplifyapp.com",
-  "http://localhost:3000",
 ].filter(Boolean);
 
 const corsOptions = {
-  origin: allowedOrigins,
+  origin: (origin, callback) => {
+    // no origin = curl/server-to-server/mobile apps, allow it
+    if (!origin) return callback(null, true);
+
+    const isAllowed =
+      allowedOrigins.includes(origin) ||
+      /^http:\/\/localhost:\d+$/.test(origin); // any localhost port in dev
+
+    if (isAllowed) return callback(null, true);
+    callback(new Error(`Not allowed by CORS: ${origin}`));
+  },
   credentials: true,
   methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
@@ -123,7 +132,17 @@ app.use((err, req, res, next) => {
 
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
-  cors: { origin: allowedOrigins, credentials: true },
+  cors: {
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      const isAllowed =
+        allowedOrigins.includes(origin) ||
+        /^http:\/\/localhost:\d+$/.test(origin);
+      if (isAllowed) return callback(null, true);
+      callback(new Error(`Not allowed by CORS: ${origin}`));
+    },
+    credentials: true,
+  },
 });
 setupSocket(io);
 
