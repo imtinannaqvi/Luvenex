@@ -123,10 +123,10 @@ export default function HowItWorksPage() {
           </p>
 
           {/* Toggle Pills */}
-          <div className="inline-flex p-1 bg-surface backdrop-blur-sm border border-border-color rounded-full shadow-inner mt-4 opacity-0 animate-fade-up [animation-delay:0.5s]">
+          <div className="inline-flex p-1 bg-surface backdrop-blur-sm border border-border-color rounded-sm shadow-inner mt-4 opacity-0 animate-fade-up [animation-delay:0.5s]">
             <button
               onClick={() => setTab("brand")}
-              className={`px-5 sm:px-7 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-300 ${
+              className={`px-5 sm:px-7 py-2.5 rounded-sm text-xs sm:text-sm font-semibold transition-all duration-300 ${
                 tab === "brand"
                   ? "bg-red-600 text-white shadow-lg shadow-red-600/30"
                   : "text-zinc-400 hover:text-foreground"
@@ -136,7 +136,7 @@ export default function HowItWorksPage() {
             </button>
             <button
               onClick={() => setTab("influencer")}
-              className={`px-5 sm:px-7 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-300 ${
+              className={`px-5 sm:px-7 py-2.5 rounded-sm text-xs sm:text-sm font-semibold transition-all duration-300 ${
                 tab === "influencer"
                   ? "bg-red-600 text-white shadow-lg shadow-red-600/30"
                   : "text-zinc-400 hover:text-foreground"
@@ -165,7 +165,7 @@ export default function HowItWorksPage() {
                 </div>
 
                 {/* Step Content Card */}
-                <div className="flex-1 bg-surface/80 border border-border-color/80 group-hover:border-border-color rounded-xl sm:rounded-2xl p-4 sm:p-6 transition-all duration-300 shadow-xl backdrop-blur-sm space-y-2 group-hover:-translate-y-0.5">
+                <div className="flex-1 bg-surface/80 border border-border-color/80 group-hover:border-border-color rounded-sm sm:rounded-md p-4 sm:p-6 transition-all duration-300 shadow-xl backdrop-blur-sm space-y-2 group-hover:-translate-y-0.5">
                   <div className="flex items-center gap-2 sm:gap-3 text-foreground">
                     <span className="p-1.5 sm:p-2 rounded-lg bg-red-950/40 text-red-500 border border-red-900/30">
                       {s.icon}
@@ -183,8 +183,8 @@ export default function HowItWorksPage() {
           </div>
 
           {/* Trust & Guarantee Callout Card */}
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-red-950/30 via-surface to-card border border-red-900/40 p-6 sm:p-8 text-center space-y-3 shadow-2xl opacity-0 animate-fade-up [animation-delay:0.6s]">
-            <div className="w-10 h-10 rounded-full bg-red-600/10 border border-red-600/30 text-red-500 flex items-center justify-center mx-auto animate-pulse-soft">
+          <div className="relative overflow-hidden rounded-sm bg-gradient-to-r from-red-950/30 via-surface to-card border border-red-900/40 p-6 sm:p-8 text-center space-y-3 shadow-2xl opacity-0 animate-fade-up [animation-delay:0.6s]">
+            <div className="w-10 h-10 rounded-full bg-red-600/10 border border-red-600/30 text-red-500 flex items-center justify-center mx-auto ">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
               </svg>

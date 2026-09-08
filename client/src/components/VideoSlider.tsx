@@ -5,17 +5,17 @@ import React, { useState, useRef, useCallback, useEffect } from "react";
 type Slide = { src?: string; poster?: string; caption?: string };
 
 const SLIDES: Slide[] = [
-  { src: "/videos/istockphoto-2149199638-640_adpp_is.mp4", caption: "human-vetted" },
-  { src: "/videos/istockphoto-2167055507-640_adpp_is.mp4", caption: "viewsss" },
-  { src: "/videos/istockphoto-1992011732-640_adpp_is.mp4" },
-  { src: "/videos/istockphoto-1989763073-640_adpp_is.mp4" },
-  { src: "/videos/istockphoto-1721110440-640_adpp_is.mp4" },
-  { src: "/videos/istockphoto-1572185399-640_adpp_is.mp4", caption: "AI analysed" },
-  { src: "/videos/istockphoto-1477915083-640_adpp_is.mp4" },
-  { src: "/videos/istockphoto-1470765116-640_adpp_is.mp4" },
-  { src: "/videos/istockphoto-2223963097-640_adpp_is.mp4" },
-  { src: "/videos/istockphoto-2182018031-640_adpp_is.mp4" },
-  { src: "/videos/istockphoto-2170908941-640_adpp_is.mp4" },
+  { src: "/videos/12825908_2160_3840_30fps.mp4",  },
+  { src: "/videos/12187198-hd_1080_1920_25fps.mp4",  },
+  { src: "/videos/7236766-uhd_2160_3840_24fps.mp4" },
+  { src: "/videos/7564028-hd_1080_1920_30fps.mp4" },
+  { src: "/videos/7818616-hd_1080_1920_30fps.mp4" },
+  { src: "/videos/4620921-uhd_2160_4096_25fps.mp4", },
+  { src: "/videos/7854920-uhd_2160_3806_25fps.mp4" },
+  { src: "/videos/19532053-hd_1080_1920_30fps.mp4" },
+  { src: "/videos/8165665-uhd_2160_4096_25fps.mp4" },
+  { src: "/videos/7119932-hd_1080_1920_25fps.mp4" },
+  { src: "/videos/4872939-hd_1080_1920_25fps.mp4" },
 ];
 
 /* ── EXACT 7-CARD CIRCULAR ARC CONFIGURATION (3 Left + 1 Center Deep + 3 Right) ── */

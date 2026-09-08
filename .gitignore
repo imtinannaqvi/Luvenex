@@ -6,4 +6,5 @@ node_modules/
 dist/
 build/
 *.log
-.DS_Store
+.DS_Storeclient/public/videos/
+client/public/videos/

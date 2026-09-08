@@ -96,7 +96,7 @@ export default function DiscoverPage() {
         </div>
 
         {/* ── Search & Filter Controls ── */}
-        <div className="bg-surface border border-border-color rounded-xl p-3 sm:p-5 shadow-2xl backdrop-blur-sm">
+        <div className="bg-surface border border-border-color rounded-sm p-3 sm:p-5 shadow-2xl backdrop-blur-sm">
           <form onSubmit={handleSearch} className="flex flex-col lg:flex-row gap-3">
             <div className="relative flex-1">
               <svg
@@ -112,7 +112,7 @@ export default function DiscoverPage() {
                 placeholder="Search creator handle or bio..."
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-border-color bg-background text-foreground text-xs sm:text-sm placeholder-zinc-500 focus:outline-none focus:border-red-600 transition"
+                className="w-full pl-10 pr-4 py-2.5 rounded-sm border border-border-color bg-background text-foreground text-xs sm:text-sm placeholder-zinc-500 focus:outline-none focus:border-red-600 transition"
               />
             </div>
 
@@ -122,13 +122,13 @@ export default function DiscoverPage() {
                 placeholder="Niche (e.g. tech)"
                 value={niche}
                 onChange={(e) => setNiche(e.target.value)}
-                className="px-3.5 py-2.5 rounded-lg border border-border-color bg-background text-foreground text-xs sm:text-sm placeholder-zinc-500 focus:outline-none focus:border-red-600 transition w-full lg:w-40"
+                className="px-3.5 py-2.5 rounded-sm border border-border-color bg-background text-foreground text-xs sm:text-sm placeholder-zinc-500 focus:outline-none focus:border-red-600 transition w-full lg:w-40"
               />
 
               <select
                 value={minRating}
                 onChange={(e) => setMinRating(e.target.value)}
-                className="px-3.5 py-2.5 rounded-lg border border-border-color bg-background text-foreground text-xs sm:text-sm focus:outline-none focus:border-red-600 transition w-full cursor-pointer"
+                className="px-3.5 py-2.5 rounded-sm border border-border-color bg-background text-foreground text-xs sm:text-sm focus:outline-none focus:border-red-600 transition w-full cursor-pointer"
               >
                 <option value="">Any rating</option>
                 <option value="4">★ 4.0 & above</option>
@@ -138,7 +138,7 @@ export default function DiscoverPage() {
               <select
                 value={sort}
                 onChange={(e) => setSort(e.target.value)}
-                className="px-3.5 py-2.5 rounded-lg border border-border-color bg-background text-foreground text-xs sm:text-sm focus:outline-none focus:border-red-600 transition w-full cursor-pointer"
+                className="px-3.5 py-2.5 rounded-sm border border-border-color bg-background text-foreground text-xs sm:text-sm focus:outline-none focus:border-red-600 transition w-full cursor-pointer"
               >
                 <option value="">Newest</option>
                 <option value="rating"> Highest rated</option>
@@ -149,7 +149,7 @@ export default function DiscoverPage() {
             <div className="flex gap-2">
               <button
                 type="submit"
-                className="flex-1 lg:flex-none px-6 py-2.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-semibold transition active:scale-95"
+                className="flex-1 lg:flex-none px-6 py-2.5 rounded-sm bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-semibold transition active:scale-95"
               >
                 Search
               </button>
@@ -157,7 +157,7 @@ export default function DiscoverPage() {
                 <button
                   type="button"
                   onClick={handleReset}
-                  className="px-4 py-2.5 rounded-lg border border-border-color hover:border-surface bg-background text-foreground hover:text-foreground text-xs sm:text-sm font-medium transition active:scale-95"
+                  className="px-4 py-2.5 rounded-sm border border-border-color hover:border-surface bg-background text-foreground hover:text-foreground text-xs sm:text-sm font-medium transition active:scale-95"
                 >
                   Clear
                 </button>
@@ -170,7 +170,7 @@ export default function DiscoverPage() {
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
             {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="bg-surface border border-border-color rounded-xl p-6 flex flex-col items-center animate-pulse space-y-4">
+              <div key={i} className="bg-surface border border-border-color rounded-sm p-6 flex flex-col items-center animate-pulse space-y-4">
                 <div className="w-16 h-16 rounded-full bg-card" />
                 <div className="h-4 bg-card rounded w-1/2" />
                 <div className="h-3 bg-surface rounded w-1/3" />
@@ -205,7 +205,7 @@ export default function DiscoverPage() {
                 <Link
                   key={p._id}
                   href={`/creator/${p.handle}`}
-                  className="group relative bg-surface border border-border-color hover:border-red-600 border-t-2 hover:border-t-red-600 transition-all duration-300 rounded-xl p-5 sm:p-6 flex flex-col items-center text-center justify-between backdrop-blur-sm"
+                  className="group relative bg-surface border border-border-color hover:border-red-600 border-t-2 hover:border-t-red-600 transition-all duration-300 rounded-sm p-5 sm:p-6 flex flex-col items-center text-center justify-between backdrop-blur-sm"
                 >
                   {p.isVerified && (
                     <div className="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-surface border border-red-800/40 text-red-400 text-[10px] font-semibold flex items-center gap-1">
@@ -225,7 +225,7 @@ export default function DiscoverPage() {
                           className="w-16 h-16 rounded-full object-cover ring-2 ring-surface group-hover:ring-red-600 transition duration-300"
                         />
                       ) : (
-                        <div className="w-16 h-16 rounded-full bg-surface border border-border-color flex items-center justify-center text-red-500 font-bold text-lg group-hover:border-red-600 transition duration-300">
+                        <div className="w-16 h-16 rounded-sm bg-surface border border-border-color flex items-center justify-center text-red-500 font-bold text-lg group-hover:border-red-600 transition duration-300">
                           {p.handle?.[0]?.toUpperCase() || "?"}
                         </div>
                       )}
@@ -245,7 +245,7 @@ export default function DiscoverPage() {
                       {(p.niches || []).slice(0, 2).map((n: string) => (
                         <span
                           key={n}
-                          className="text-[12px] font-medium px-2.5 py-0.5 rounded-full bg-background text-red-400 border border-red-800/40"
+                          className="text-[12px] font-medium px-2.5 py-0.5 rounded-sm bg-background text-red-400 border border-red-800/40"
                         >
                           {n}
                         </span>
@@ -266,7 +266,7 @@ export default function DiscoverPage() {
                         </span>
                       </div>
                       <div className="border-x border-border-color">
-                        <span className="block text-[9px] uppercase tracking-wider text-zinc-500 font-medium">Followers</span>
+                        <span className="block text-[9px] uppercase tracking-wider text-foreground font-medium">Followers</span>
                         <span className="text-xs font-semibold text-foreground mt-0.5 block">
                           {formatFollowers(p.followersCount)}
                         </span>
@@ -288,7 +288,7 @@ export default function DiscoverPage() {
                 <button
                   onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
                   disabled={page === 1}
-                  className="px-3 py-2 sm:px-3.5 rounded-lg bg-surface border border-border-color text-xs font-medium text-foreground hover:border-red-600 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                  className="px-3 py-2 sm:px-3.5 rounded-sm bg-surface border border-border-color text-xs font-medium text-foreground hover:border-red-600 disabled:opacity-40 disabled:cursor-not-allowed transition"
                 >
                   Previous
                 </button>
@@ -312,7 +312,7 @@ export default function DiscoverPage() {
                 <button
                   onClick={() => setPage((prev) => Math.min(prev + 1, pagination.totalPages))}
                   disabled={page === pagination.totalPages}
-                  className="px-3 py-2 sm:px-3.5 rounded-lg bg-card border border-border-color text-xs font-medium text-foreground hover:border-red-600 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                  className="px-3 py-2 sm:px-3.5 rounded-sm bg-card border border-border-color text-xs font-medium text-foreground hover:border-red-600 disabled:opacity-40 disabled:cursor-not-allowed transition"
                 >
                   Next
                 </button>

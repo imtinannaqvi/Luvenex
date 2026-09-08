@@ -96,7 +96,7 @@ export default function ServicesPage() {
       key={s._id}
       href={`/services/${s._id}`}
       className={`group relative bg-card border border-border-color/80 rounded-xl p-8 flex flex-col min-h-[300px] overflow-hidden
-                 transition-all duration-300 ease-out hover:bg-primary
+                 transition-all duration-300 ease-out hover:bg-primary/40
                   ${
                    mounted ? "opacity-100" : "opacity-0"
                  }`}
