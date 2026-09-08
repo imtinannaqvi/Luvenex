@@ -63,11 +63,11 @@ function NavBadge({ count, isOpen }: { count: number; isOpen: boolean }) {
   if (count <= 0) return null;
   const label = count > 9 ? "9+" : String(count);
   return isOpen ? (
-    <span className="ml-auto flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-white">
+    <span className="ml-auto flex h-[18px] min-w-[18px] items-center justify-center rounded-sm bg-primary px-1 text-[10px] font-bold text-white">
       {label}
     </span>
   ) : (
-    <span className="absolute right-1 top-1 flex h-[15px] min-w-[15px] items-center justify-center rounded-full bg-primary px-0.5 text-[9px] font-bold text-white">
+    <span className="absolute right-1 top-1 flex h-[15px] min-w-[15px] items-center justify-center rounded-sm bg-primary px-0.5 text-[9px] font-bold text-white">
       {label}
     </span>
   );
@@ -151,7 +151,7 @@ function AppShell({
         href={item.href}
         title={item.label}
         onClick={() => setMobileOpen(false)}
-        className={`relative flex items-center gap-3 py-2.5 rounded-xl transition-colors ${
+        className={`relative flex items-center gap-3 py-2.5 rounded-sm transition-colors ${
           sidebarExpanded ? "px-3" : "px-0 justify-center"
         } ${
           active
@@ -160,7 +160,7 @@ function AppShell({
         }`}
       >
         {active && (
-          <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-full bg-primary" />
+          <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-sm bg-primary" />
         )}
         <Icon size={17} className="shrink-0" />
         <span
@@ -198,7 +198,7 @@ function AppShell({
           type="button"
           onClick={() => setIsOpen((prev) => !prev)}
           title={isOpen ? "Collapse sidebar" : "Expand sidebar"}
-          className="hidden md:flex w-8 h-8 items-center justify-center rounded-lg text-white/50 hover:bg-white/10 hover:text-paper transition shrink-0"
+          className="hidden md:flex w-8 h-8 items-center justify-center rounded-sm text-white/50 hover:bg-white/10 hover:text-paper transition shrink-0"
         >
           <FiMoreVertical size={17} />
         </button>
@@ -208,7 +208,7 @@ function AppShell({
           type="button"
           onClick={() => setMobileOpen(false)}
           title="Close menu"
-          className="md:hidden w-8 h-8 flex items-center justify-center rounded-lg text-white/50 hover:bg-white/10 hover:text-paper transition shrink-0"
+          className="md:hidden w-8 h-8 flex items-center justify-center rounded-sm text-white/50 hover:bg-white/10 hover:text-paper transition shrink-0"
         >
           <FiX size={18} />
         </button>
@@ -225,7 +225,7 @@ function AppShell({
           <div>
             <button
               onClick={() => setWalletMenuOpen((prev) => !prev)}
-              className={`w-full relative flex items-center gap-3 py-2.5 rounded-xl transition-colors ${
+              className={`w-full relative flex items-center gap-3 py-2.5 rounded-sm transition-colors ${
                 sidebarExpanded ? "px-3" : "px-0 justify-center"
               } ${
                 pathname.startsWith("/app/wallet")
@@ -234,7 +234,7 @@ function AppShell({
               }`}
             >
               {pathname.startsWith("/app/wallet") && (
-                <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-full bg-primary" />
+                <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-sm bg-primary" />
               )}
               <FiCreditCard size={17} className="shrink-0" />
               <span
@@ -270,7 +270,7 @@ function AppShell({
                 <Link
                   href="/app/wallet"
                   onClick={() => setMobileOpen(false)}
-                  className={`text-xs py-2 px-2 rounded-lg transition-colors ${
+                  className={`text-xs py-2 px-2 rounded-sm transition-colors ${
                     pathname === "/app/wallet"
                       ? "text-paper font-medium"
                       : "text-white/50 hover:text-white/80"
@@ -281,7 +281,7 @@ function AppShell({
                 <Link
                   href="/app/wallet/withdrawals"
                   onClick={() => setMobileOpen(false)}
-                  className={`text-xs py-2 px-2 rounded-lg transition-colors ${
+                  className={`text-xs py-2 px-2 rounded-sm transition-colors ${
                     pathname === "/app/wallet/withdrawals"
                       ? "text-paper font-medium"
                       : "text-white/50 hover:text-white/80"
@@ -302,7 +302,7 @@ function AppShell({
           href="/"
           onClick={() => setMobileOpen(false)}
           title="Visit Luvenex"
-          className={`mt-4 shrink-0 w-full flex items-center gap-2 border border-white/15 text-white/70 text-sm py-2.5 rounded-xl hover:bg-white/5 hover:text-paper transition ${
+          className={`mt-4 shrink-0 w-full flex items-center gap-2 border border-white/15 text-white/70 text-sm py-2.5 rounded-sm hover:bg-white/5 hover:text-paper transition ${
             sidebarExpanded ? "px-3 justify-start" : "justify-center"
           }`}
         >
@@ -325,7 +325,7 @@ function AppShell({
             router.push("/login");
           }}
           title="Log out"
-          className={`mt-2 shrink-0 w-full flex items-center gap-2 border border-white/15 text-white/70 text-sm py-2.5 rounded-xl hover:bg-white/5 hover:text-paper transition ${
+          className={`mt-2 shrink-0 w-full flex items-center gap-2 border border-white/15 text-white/70 text-sm py-2.5 rounded-sm hover:bg-white/5 hover:text-paper transition ${
             sidebarExpanded ? "px-3 justify-start" : "justify-center"
           }`}
         >
@@ -383,7 +383,7 @@ function AppShell({
             type="button"
             onClick={() => setMobileOpen(true)}
             title="Open menu"
-            className="md:hidden w-9 h-9 flex items-center justify-center rounded-lg text-foreground hover:bg-surface transition"
+            className="md:hidden w-9 h-9 flex items-center justify-center rounded text-foreground hover:bg-surface transition"
           >
             <FiMenu size={20} />
           </button>

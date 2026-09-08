@@ -526,7 +526,7 @@ const respondToCancellation = async (agree: boolean) => {
             <button
               disabled={actionLoading}
               onClick={() => doAction("fund")}
-              className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-md bg-primary text-paper text-xs font-semibold hover:opacity-90 transition shadow-2xs disabled:opacity-50 cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-sm bg-primary text-paper text-xs font-semibold hover:opacity-90 transition shadow-2xs disabled:opacity-50 cursor-pointer"
             >
               <FiShield size={14} /> Fund Escrow
             </button>
@@ -555,7 +555,7 @@ const respondToCancellation = async (agree: boolean) => {
   <button
     disabled={actionLoading}
     onClick={() => doAction("approve")}
-    className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-surface text-foreground text-xs font-semibold hover:bg-primary transition shadow-2xs disabled:opacity-50 cursor-pointer"
+    className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-sm bg-surface text-foreground text-xs font-semibold hover:bg-primary transition shadow-2xs disabled:opacity-50 cursor-pointer"
   >
     <FiCheckCircle size={14} /> Approve & Release Funds
   </button>
@@ -584,7 +584,7 @@ const respondToCancellation = async (agree: boolean) => {
                 <FiRefreshCw size={14} /> Request Revision
               </button>
             ) : (
-              <div className="bg-surface/40 border border-line/40 rounded-2xl p-4 space-y-3">
+              <div className="bg-surface/40 border border-line/40 rounded-sm p-4 space-y-3">
                 <label className="flex items-center gap-1.5 text-xs font-bold text-foreground">
                   <FiRefreshCw size={13} className="text-amber-600" /> Request a Revision
                 </label>
@@ -593,16 +593,16 @@ const respondToCancellation = async (agree: boolean) => {
                   value={revisionNote}
                   onChange={(e) => setRevisionNote(e.target.value)}
                   rows={3}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-line text-xs bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition"
+                  className="w-full px-3.5 py-2.5 rounded-sm border border-line text-xs bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition"
                 />
                 <div className="flex gap-2 justify-end">
-                  <button type="button" onClick={() => setShowRevisionForm(false)} className="px-4 py-2 rounded-xl text-xs font-medium text-muted hover:text-foreground transition">
+                  <button type="button" onClick={() => setShowRevisionForm(false)} className="px-4 py-2 rounded-sm text-xs font-medium text-muted hover:text-foreground transition">
                     Cancel
                   </button>
                   <button
                     disabled={actionLoading || !revisionNote.trim()}
                     onClick={submitRevisionRequest}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-paper text-xs font-semibold hover:opacity-90 transition disabled:opacity-50 cursor-pointer"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-sm bg-primary text-foreground text-xs font-semibold hover:opacity-90 transition disabled:opacity-50 cursor-pointer"
                   >
                     <FiSend size={13} /> Submit Revision Request
                   </button>
@@ -612,13 +612,12 @@ const respondToCancellation = async (agree: boolean) => {
           </div>
         )}
 
-        {/* Revision requested — shown to the influencer while they rework the delivery */}
         {deal.revisionNote && deal.status === "in_progress" && (
           <div className="pt-4">
             <h3 className="text-sm font-bold text-amber-700 mb-2 flex items-center gap-1.5">
               <FiRefreshCw size={13} /> Revision Requested
             </h3>
-            <div className="p-4 rounded-md bg-amber-50/60 border border-amber-200/70 text-xs sm:text-sm text-ink leading-relaxed whitespace-pre-line">
+            <div className="p-4 rounded-md bg-amber-50/60 border border-amber-200/70 text-xs sm:text-sm text-foreground leading-relaxed whitespace-pre-line">
               {deal.revisionNote}
             </div>
           </div>
@@ -641,7 +640,7 @@ const respondToCancellation = async (agree: boolean) => {
                   <button
                     onClick={() => respondToCancellation(true)}
                     disabled={actionLoading}
-                    className="px-4 py-2 rounded-xl bg-primary text-paper text-xs font-semibold disabled:opacity-50"
+                    className="px-4 py-2 rounded-xl bg-primary text-foreground text-xs font-semibold disabled:opacity-50"
                   >
                     Agree to cancel
                   </button>
@@ -658,7 +657,7 @@ const respondToCancellation = async (agree: boolean) => {
           ) : !["completed", "cancelled", "refunded"].includes(deal.status) && !showCancelForm ? (
             <button
               onClick={() => setShowCancelForm(true)}
-              className="px-5 py-2 rounded-sm border border-line text-white bg-primary hover:bg-primary/90 text-xs font-semibold transition"
+              className="px-5 py-2 rounded-sm border border-line text-foreground bg-primary hover:bg-primary/90 text-xs font-semibold transition"
             >
               Request Cancellation
             </button>
@@ -678,7 +677,7 @@ const respondToCancellation = async (agree: boolean) => {
                 <button
                   onClick={submitCancellationRequest}
                   disabled={submittingCancel}
-                  className="px-4 py-2 rounded-xl bg-primary text-paper text-xs font-semibold disabled:opacity-50"
+                  className="px-4 py-2 rounded-xl bg-primary text-foreground text-xs font-semibold disabled:opacity-50"
                 >
                   Submit request
                 </button>
@@ -692,12 +691,12 @@ const respondToCancellation = async (agree: boolean) => {
             {hasReviewed ? (
               <div className="flex items-center gap-2 text-xs font-semibold text-foreground bg-background border border-emerald-200/80 px-4 py-3 rounded-xl">
                 <FiCheckCircle size={15} />
-                <span>You've reviewed this deal — thank you for your feedback.</span>
+                <span>You've reviewed this deal thank you for your feedback.</span>
               </div>
             ) : !showReviewForm ? (
               <button
                 onClick={() => setShowReviewForm(true)}
-                className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-primary text-paper text-xs font-semibold hover:opacity-90 transition shadow-2xs cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-primary text-foreground text-xs font-semibold hover:opacity-90 transition shadow-2xs cursor-pointer"
               >
                 <FiStar size={14} /> Leave a Review
               </button>
@@ -742,7 +741,7 @@ const respondToCancellation = async (agree: boolean) => {
                   <button
                     disabled={submittingReview || !reviewRating}
                     onClick={submitReview}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-paper text-xs font-semibold hover:opacity-90 transition disabled:opacity-50 cursor-pointer"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-foreground text-xs font-semibold hover:opacity-90 transition disabled:opacity-50 cursor-pointer"
                   >
                     <FiSend size={13} /> Submit Review
                   </button>
@@ -802,7 +801,7 @@ const respondToCancellation = async (agree: boolean) => {
                   <button
                     disabled={submittingComplaint || !complaintDescription.trim()}
                     onClick={submitComplaint}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-paper text-xs font-semibold hover:opacity-90 transition disabled:opacity-50 cursor-pointer"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-foreground text-xs font-semibold hover:opacity-90 transition disabled:opacity-50 cursor-pointer"
                   >
                     <FiSend size={13} /> Submit Complaint
                   </button>
@@ -874,7 +873,7 @@ const respondToCancellation = async (agree: boolean) => {
       <button
         disabled={actionLoading || !deliveryNote.trim()}
         onClick={submitDelivery}
-        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-paper text-xs font-semibold hover:opacity-90 transition disabled:opacity-50 cursor-pointer"
+        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-foreground text-xs font-semibold hover:opacity-90 transition disabled:opacity-50 cursor-pointer"
       >
         <FiSend size={13} /> Confirm Delivery
       </button>

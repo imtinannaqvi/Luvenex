@@ -97,72 +97,18 @@ export default function BlogListingPage() {
     <div className="min-h-screen bg-background text-foreground px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
       <div className="max-w-6xl mx-auto">
         <div className="text-center max-w-2xl mx-auto mb-10">
-          <h1 className="text-xl text-foreground sm:text-3xl lg:text-3xl font-black tracking-tight">
+          <h1 className="text-xl text-foreground sm:text-3xl lg:text-4xl font-black tracking-tight">
             Luvenex{" "}
             <span className="text-red-600">
               Blog
             </span>
           </h1>
 
-          <p className="text-zinc-500 text-sm sm:text-base mt-4 italic leading-relaxed">
-            Insights, ideas, and stories about creators, brands, <br /> digital
-            marketing, and building meaningful collaborations.
-          </p>
+       
         </div>
 
-        {/* ================= SEARCH ================= */}
 
-        <form
-          onSubmit={handleSearch}
-          className="max-w-lg mx-auto mb-12"
-        >
-          <div className="flex gap-2">
-            <input
-              type="text"
-              placeholder="Search articles..."
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              className="
-                flex-1
-                px-4
-                py-3
-                rounded-xl
-                border
-                border-border-color
-                bg-card
-                text-foreground
-                text-sm
-                placeholder:text-zinc-600
-                focus:outline-none
-                focus:border-red-600
-                focus:ring-1
-                focus:ring-red-600/30
-                transition
-              "
-            />
-
-            <button
-              type="submit"
-              className="
-                px-6
-                py-3
-                rounded-xl
-                bg-red-600
-                hover:bg-red-700
-                text-white
-                text-sm
-                font-bold
-                transition
-                shadow-lg
-                shadow-red-950/30
-              "
-            >
-              Search
-            </button>
-          </div>
-        </form>
-
-        {/* ================= LOADING ================= */}
+        
 
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7">

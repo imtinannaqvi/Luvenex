@@ -21,9 +21,7 @@ import {
   Area,
 } from "recharts";
 
-/* ── palette ──
-   INK / GRID use currentColor so they follow text-foreground and flip per theme.
-   RED and AXIS (mid-gray) read fine in both light and dark. */
+
 const INK = "currentColor";
 const RED = "#B90808";
 const GRID = "currentColor";
@@ -32,7 +30,7 @@ const DONUT = [INK, RED, "#9CA3AF"];
 
 /* soft card shell — rounded, hairline border, layered shadow */
 const softCard =
-  "bg-card rounded-3xl border border-border-color shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_28px_-16px_rgba(0,0,0,0.10)]";
+  "bg-card rounded-sm border border-border-color shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_28px_-16px_rgba(0,0,0,0.10)]";
 
 function StatCard({
   value,

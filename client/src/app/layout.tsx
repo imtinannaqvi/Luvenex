@@ -8,6 +8,7 @@ import Navbar from "@/components/Navbar";
 import { ThemeProvider } from "next-themes";
 import { NotificationsProvider } from "@/context/Notificationscontext";
 import SplashScreen from "@/components/SplashScreen";
+import ScrollToTop from "@/components/ScrollToTop";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,6 +37,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
+        <ScrollToTop/>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
           <SplashScreen />
           <NotificationsProvider>

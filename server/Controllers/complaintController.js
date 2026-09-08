@@ -1,6 +1,6 @@
 import Complaint from "../models/Complaint.js";
 import Deal from "../models/Deal.js";
-
+import { notify } from "../services/notification.service.js";
 
 export const fileComplaint = async (req, res) => {
   try {
@@ -35,63 +35,74 @@ export const fileComplaint = async (req, res) => {
     res.status(500).json({ error: { message: error.message } });
   }
 };
-export const getComplaints = async (req,res) => {
-    try {
-        if(req.user.role !== 'admin') {
-            return res.status(403).json({error:{message:"admin only"}})
-        }
-        const filter = {};
-        if(req.query.status) filter.status = req.query.status;
-        if(req.query.against) filter.against = req.query.against;
 
-        const complaints = await Complaint.find(filter)
-        .populate('filedBy','name email')
-        .populate('against', 'name email')
-        .populate('dealId', 'title priceMinor')
-        .sort({ createdAt: -1})
-
-        res.json({ complaints})
-    } catch (error) {
-        res.status(500).json({ error:{message: error.message}})
-        
+export const getComplaints = async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ error: { message: "admin only" } });
     }
-}
+    const filter = {};
+    if (req.query.status) filter.status = req.query.status;
+    if (req.query.against) filter.against = req.query.against;
 
-export const getComplaintsAgainstUser = async (req,res) => {
-    try {
-        if(req.user.role !== 'admin') {
-            return res.status(403).json({ error:{message:"admin only"}})
-        }
+    const complaints = await Complaint.find(filter)
+      .populate('filedBy', 'name email')
+      .populate('against', 'name email')
+      .populate('dealId', 'title priceMinor')
+      .sort({ createdAt: -1 });
 
-        const complaints = await Complaint.find({against: req.params.userId})
-        .populate('filedBy', 'name email')
-        .sort({ createdAt: -1})
+    res.json({ complaints });
+  } catch (error) {
+    res.status(500).json({ error: { message: error.message } });
+  }
+};
 
-        res.json({ complaints, count: complaints.length});
-
-    } catch (error) {
-        res.status(500).json({error:{message: error.message}})
-        
+export const getComplaintsAgainstUser = async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ error: { message: "admin only" } });
     }
-}
 
-export const reviewComplaint = async (req,res) => {
-    try {
-        if(req.user.role !== 'admin') {
-            return res.status(403).json({error:{message:'admin only '}})
-        }
-        const { status, adminNotes} = req.body;
-        if(!['reviewed', 'dismissed'].includes(status)) {
-            return res.status(400).json({ error:{message:'status must be reviewed or dismissed'}})
-        }
-        const complaint = await Complaint.findById(req.params.id) ;
-        if(!complaint) return res.status(404).json({error:{message:'complaint not found'}})
-            complaint.status = status;
-        if(adminNotes) complaint.adminNotes = adminNotes;
-        await complaint.save();
-    } catch (error) {
-        res.status(500).json({ error:{message: error.message}})
-        
+    const complaints = await Complaint.find({ against: req.params.userId })
+      .populate('filedBy', 'name email')
+      .sort({ createdAt: -1 });
+
+    res.json({ complaints, count: complaints.length });
+  } catch (error) {
+    res.status(500).json({ error: { message: error.message } });
+  }
+};
+
+export const reviewComplaint = async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ error: { message: 'admin only ' } });
     }
-}
+    const { status, adminNotes } = req.body;
+    if (!['reviewed', 'dismissed'].includes(status)) {
+      return res.status(400).json({ error: { message: 'status must be reviewed or dismissed' } });
+    }
+    const complaint = await Complaint.findById(req.params.id);
+    if (!complaint) return res.status(404).json({ error: { message: 'complaint not found' } });
 
+    complaint.status = status;
+    if (adminNotes) complaint.adminNotes = adminNotes;
+    await complaint.save();
+
+ 
+    if (status === 'reviewed' && complaint.filedBy) {
+      await notify(
+        complaint.filedBy,
+        'complaint_reviewed',
+        'Your complaint is under review',
+        'A complaint you filed is being reviewed by our team.',
+        complaint._id
+      );
+    }
+
+   
+    res.json({ complaint });
+  } catch (error) {
+    res.status(500).json({ error: { message: error.message } });
+  }
+};

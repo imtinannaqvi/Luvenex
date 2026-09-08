@@ -140,7 +140,7 @@ export default function ServiceDetailPage() {
       </div>
 
       {/* Title + short description intro */}
-      <section className="pt-14 pb-6 px-4">
+      {/* <section className="pt-14 pb-6 px-4">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-2xl sm:text-3xl font-extrabold text-foreground italic break-words">
             {service.title}
@@ -151,41 +151,45 @@ export default function ServiceDetailPage() {
             </p>
           )}
         </div>
-      </section>
+      </section> */}
 
       {/* ── Tabbed sections: left list + right content ── */}
       {sections.length > 0 && (
-        <section className="pb-16 px-4">
+        <section className="pb-16 px-4 mt-12">
           <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
             {/* LEFT — clickable section titles */}
-            <div className="lg:col-span-4">
-              <div className="lg:sticky lg:top-24 divide-y divide-border-color border-y border-border-color">
-                {sections.map((sec, i) => {
-                  const isActive = i === activeSection;
-                  return (
-                                     <button
-                      key={i}
-                      onClick={() => setActiveSection(i)}
-                      className="w-full text-left py-5 flex items-center justify-between gap-3 group transition-colors min-w-0"
-                    >
-                      <span
-                        className={`min-w-0 flex-1 text-base sm:text-lg font-bold tracking-tight whitespace-nowrap overflow-hidden text-ellipsis transition-colors ${
-                          isActive ? "text-red-500" : "text-foreground group-hover:text-red-500"
-                        }`}
-                      >
-                        {sec.title || `Section ${i + 1}`}
-                      </span>
-                      <FiChevronRight
-                        size={20}
-                        className={`shrink-0 transition-colors ${
-                          isActive ? "text-red-500" : "text-muted group-hover:text-red-500"
-                        }`}
-                      />
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+          <div className="lg:col-span-4">
+  <div className="lg:sticky lg:top-24 divide-y divide-border-color border-y border-border-color">
+    {sections.map((sec, i) => {
+      const isActive = i === activeSection;
+      return (
+        <button
+          key={i}
+          onClick={() => setActiveSection(i)}
+          className="w-full text-left py-5 flex items-center justify-between gap-3 group transition-all duration-300 min-w-0 cursor-pointer"
+        >
+          <span
+            className={`min-w-0 flex-1 text-base sm:text-lg font-bold tracking-tight whitespace-nowrap overflow-hidden text-ellipsis transition-all duration-300 transform ${
+              isActive 
+                ? "text-red-500 translate-x-1.5" 
+                : "text-foreground opacity-75 group-hover:opacity-100 group-hover:text-red-500 group-hover:translate-x-1.5"
+            }`}
+          >
+            {sec.title || `Section ${i + 1}`}
+          </span>
+          <FiChevronRight
+            size={20}
+            className={`shrink-0 transition-all duration-300 transform ${
+              isActive 
+                ? "text-red-500 translate-x-1.5" 
+                : "text-muted opacity-60 group-hover:opacity-100 group-hover:text-red-500 group-hover:translate-x-1.5"
+            }`}
+          />
+        </button>
+      );
+    })}
+  </div>
+</div>
 
             {/* RIGHT — active section content */}
             <div className="lg:col-span-8 min-w-0">
@@ -253,100 +257,91 @@ export default function ServiceDetailPage() {
         }
       `}</style>
 
-      {/* Request Section */}
-      <section className="py-16 px-4 bg-background">
-        <div className="max-w-2xl mx-auto rounded-xl p-6 sm:p-10 bg-surface backdrop-blur-xl border border-border-color shadow-2xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-card rounded-lg blur-3xl pointer-events-none" />
+  {/* Request Section */}
+<section className="py-16 px-4 bg-transparent">
+  <div className="max-w-4xl mx-auto p-6 sm:p-10 relative overflow-hidden">
+    <div className="max-w-xl mx-auto text-center space-y-2 mb-8">
+      <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-foreground">Interested in working together?</h2>
+      <p className="text-muted text-sm leading-relaxed">
+        Submit your project brief today. Our team will get back to you shortly.
+      </p>
+    </div>
 
-          <div className="max-w-md mx-auto text-center space-y-2 mb-8">
-            <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-foreground">Interested in working together?</h2>
-            <p className="text-muted text-sm leading-relaxed">
-              Submit your project brief today. Our team will get back to you shortly.
-            </p>
-          </div>
-
-          {submitted ? (
-            <div className="max-w-md mx-auto bg-card border border-border-color rounded-2xl p-6 text-center space-y-3 shadow-xl">
-              <div className="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center mx-auto shadow-lg shadow-red-600/40">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <p className="text-base font-bold text-foreground">Request Submitted!</p>
-              <p className="text-xs text-muted leading-relaxed">
-                We received your brief and will be in touch with a matched creator shortly.
-              </p>
-            </div>
-          ) : (
-            <form onSubmit={handleRequest} className="max-w-md mx-auto space-y-4 relative">
-              <div className="space-y-1.5 text-left">
-                <label className="text-xs font-semibold text-foreground">Project Title</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Brand identity redesign"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  required
-                  className="w-full px-4 py-3 rounded-xl border border-border-color bg-card text-foreground text-sm placeholder:text-muted focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition-all"
-                />
-              </div>
-
-              <div className="space-y-1.5 text-left">
-                <label className="text-xs font-semibold text-foreground">Requirements &amp; Deliverables</label>
-                <textarea
-                  placeholder="Detail your goals and requirements..."
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  rows={3}
-                  required
-                  className="w-full px-4 py-3 rounded-xl border border-border-color bg-card text-foreground text-sm placeholder:text-muted focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition-all resize-none"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3 text-left">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-foreground">Min Budget (PKR)</label>
-                  <input
-                    type="number"
-                    placeholder="Min"
-                    value={budgetMin}
-                    onChange={(e) => setBudgetMin(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-border-color bg-card text-foreground text-sm placeholder:text-muted focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition-all"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-foreground">Max Budget (PKR)</label>
-                  <input
-                    type="number"
-                    placeholder="Max"
-                    value={budgetMax}
-                    onChange={(e) => setBudgetMax(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-border-color bg-card text-foreground text-sm placeholder:text-muted focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition-all"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-1.5 text-left">
-                <label className="text-xs font-semibold text-foreground">Target Deadline</label>
-                <input
-                  type="date"
-                  value={deadline}
-                  onChange={(e) => setDeadline(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl border border-border-color bg-card text-foreground text-sm focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition-all"
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={submitting}
-                className="w-full py-3 rounded-xl bg-red-600 text-white font-bold text-xs uppercase tracking-wider hover:bg-red-700 transition-all active:scale-95 disabled:opacity-50 shadow-lg shadow-red-600/30 cursor-pointer"
-              >
-                {submitting ? "Submitting..." : "Submit Project Brief"}
-              </button>
-            </form>
-          )}
+    {submitted ? (
+      <div className="max-w-xl mx-auto bg-[#141414] border border-neutral-800 rounded-2xl p-6 text-center space-y-3 shadow-xl">
+        <div className="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center mx-auto shadow-lg shadow-red-600/40">
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+          </svg>
         </div>
-      </section>
+        <p className="text-base font-bold text-foreground">Request Submitted!</p>
+        <p className="text-xs text-muted leading-relaxed">
+          We received your brief and will be in touch with a matched creator shortly.
+        </p>
+      </div>
+    ) : (
+      <form onSubmit={handleRequest} className="w-full space-y-4 relative">
+        {/* Top Row: Project Title & Target Deadline (Side-by-side) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-left">
+          <input
+            type="text"
+            placeholder="Project Title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+            className="w-full px-3 py-4 rounded-lg border border-neutral-800 bg-background text-foreground text-lg placeholder:text-neutral-500 focus:outline-none focus:border-red-600 transition-all"
+          />
+          <input
+            type="date"
+            placeholder="Target Deadline"
+            value={deadline}
+            onChange={(e) => setDeadline(e.target.value)}
+            className="w-full px-4 py-3 rounded-lg border border-neutral-800 bg-background text-foreground text-lg placeholder:text-neutral-500 focus:outline-none focus:border-red-600 transition-all"
+          />
+        </div>
+
+        {/* Budget Row: Min Budget & Max Budget (Side-by-side) */}
+        <div className="grid grid-cols-2 gap-3 text-left">
+          <input
+            type="number"
+            placeholder="Min Budget (PKR)"
+            value={budgetMin}
+            onChange={(e) => setBudgetMin(e.target.value)}
+            className="w-full px-4 py-3 rounded-lg border border-neutral-800 bg-background text-foreground text-lg placeholder:text-neutral-500 focus:outline-none focus:border-red-600 transition-all"
+          />
+          <input
+            type="number"
+            placeholder="Max Budget (PKR)"
+            value={budgetMax}
+            onChange={(e) => setBudgetMax(e.target.value)}
+            className="w-full px-4 py-3 rounded-lg border border-neutral-800 bg-background text-foreground text-lg placeholder:text-neutral-500 focus:outline-none focus:border-red-600 transition-all"
+          />
+        </div>
+
+        {/* Requirements & Deliverables (Taller Textarea matching the Message box style) */}
+        <div className="text-left">
+          <textarea
+            placeholder="Requirements & Deliverables"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            rows={6}
+            required
+            className="w-full px-4 py-3 rounded-lg border border-neutral-800 bg-background text-foreground text-lg placeholder:text-neutral-500 focus:outline-none focus:border-red-600 transition-all resize-none"
+          />
+        </div>
+
+        {/* Submit Button */}
+        <button
+          type="submit"
+          disabled={submitting}
+          className="w-full sm:w-auto px-8 py-3 rounded-sm bg-red-600 text-foreground font-bold text-md   hover:bg-red-700 transition-all active:scale-95 disabled:opacity-50 shadow-lg shadow-red-600/30 cursor-pointer"
+        >
+          {submitting ? "Submitting..." : "Submit Now"}
+        </button>
+      </form>
+    )}
+  </div>
+</section>
     </div>
   );
 }

@@ -37,7 +37,8 @@ export default function PublicVideoPage() {
     if (window.scrollY === 0) touchStartY.current = e.touches[0].clientY;
   };
 
-  const handleTouchMove = (e: React.TouchEvent) => {
+   const handleTouchMove = (e: React.TouchEvent) => {
+    e.preventDefault();
     const distance = e.touches[0].clientY - touchStartY.current;
     if (distance > 0 && window.scrollY === 0) {
       setPullDistance(Math.min(distance, 100));
@@ -146,6 +147,33 @@ export default function PublicVideoPage() {
     document.title = "Explore Videos | Luvenex";
   }, [page, sortMode]);
 
+ 
+  useEffect(() => {
+    const html = document.documentElement;
+    const body = document.body;
+    const prevHtmlOverflow = html.style.overflow;
+    const prevBodyOverflow = body.style.overflow;
+    const prevBodyPosition = body.style.position;
+    const prevBodyWidth = body.style.width;
+    const prevBodyTop = body.style.top;
+    const scrollY = window.scrollY;
+
+    html.style.overflow = "hidden";
+    body.style.overflow = "hidden";
+    body.style.position = "fixed";
+    body.style.top = `-${scrollY}px`;
+    body.style.width = "100%";
+
+    return () => {
+      html.style.overflow = prevHtmlOverflow;
+      body.style.overflow = prevBodyOverflow;
+      body.style.position = prevBodyPosition;
+      body.style.width = prevBodyWidth;
+      body.style.top = prevBodyTop;
+      window.scrollTo(0, scrollY);
+    };
+  }, []);
+
   useEffect(() => {
     videoRef.current?.play().catch(() => {});
   }, [activeIndex, videos]);
@@ -188,6 +216,7 @@ export default function PublicVideoPage() {
   };
 
   const handleWheel = (e: React.WheelEvent) => {
+    e.preventDefault();
     if (isScrollingRef.current) return;
 
     if (e.deltaY > 30) {
@@ -345,7 +374,7 @@ export default function PublicVideoPage() {
   const isOwnVideo = user && user.id === v.postedBy?._id;
 
   return (
-    <div
+         <div
       className="h-screen bg-background flex items-center justify-center overflow-hidden relative"
       onWheel={handleWheel}
       onTouchStart={handleTouchStart}

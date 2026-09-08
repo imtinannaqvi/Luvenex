@@ -8,11 +8,11 @@ import { toast } from "react-toastify";
 
 /* soft card shell — matches dashboard + users list */
 const softCard =
-  "bg-card rounded-3xl border border-border-color shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_28px_-16px_rgba(0,0,0,0.10)]";
+  "bg-card rounded-sm border border-border-color shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_28px_-16px_rgba(0,0,0,0.10)]";
 
 const Spinner = ({ className = "" }: { className?: string }) => (
   <div
-    className={`border-2 border-white border-t-primary rounded-full animate-spin ${className}`}
+    className={`border-2 border-primary/20 border-t-primary rounded-full animate-spin ${className}`}
     role="status"
     aria-label="Loading"
   />
@@ -90,7 +90,7 @@ export default function AdminuserDetailPage() {
   if (loading)
     return (
       <div className="flex flex-col items-center justify-center py-24 gap-3">
-        <Spinner className="w-6 h-6" />
+        <Spinner className="w-6 h-6 " />
       </div>
     );
 
@@ -129,14 +129,14 @@ export default function AdminuserDetailPage() {
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/[0.05] via-transparent to-transparent" />
           <div className="relative flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
             <div className="flex items-center gap-4 min-w-0">
-              <div className="w-14 h-14 rounded-2xl bg-surface text-foreground flex items-center justify-center text-xl font-bold shrink-0">
+              <div className="w-14 h-14 rounded-sm bg-surface text-foreground flex items-center justify-center text-xl font-bold shrink-0">
                 {initial}
               </div>
               <div className="min-w-0">
                 <h1 className="text-xl font-bold text-foreground truncate">{user.name}</h1>
                 <p className="text-sm text-muted truncate">{user.email}</p>
                 <div className="flex flex-wrap items-center gap-2 mt-2">
-                  <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-md bg-surface border border-border-color text-foreground capitalize">
+                  <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-sm bg-surface border border-border-color text-foreground capitalize">
                     {user.role}
                   </span>
                   {statusPill(user.status)}
@@ -153,7 +153,7 @@ export default function AdminuserDetailPage() {
                   <button
                     disabled={actionLoading}
                     onClick={() => updateStatus("active")}
-                    className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-card border border-border-color hover:bg-surface text-foreground transition disabled:opacity-50"
+                    className="text-xs font-semibold px-3 py-1.5 rounded-sm bg-card border border-border-color hover:bg-surface text-foreground transition disabled:opacity-50"
                   >
                     Activate
                   </button>
@@ -162,7 +162,7 @@ export default function AdminuserDetailPage() {
                   <button
                     disabled={actionLoading}
                     onClick={() => updateStatus("suspended")}
-                    className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-card border border-border-color hover:bg-surface text-muted hover:text-foreground transition disabled:opacity-50"
+                    className="text-xs font-semibold px-3 py-1.5 rounded-sm bg-card border border-border-color hover:bg-surface text-muted hover:text-foreground transition disabled:opacity-50"
                   >
                     Suspend
                   </button>
@@ -175,7 +175,7 @@ export default function AdminuserDetailPage() {
                         updateStatus("banned");
                       }
                     }}
-                    className="text-xs font-semibold px-6 py-2 rounded-xl bg-primary text-white hover:bg-primary-dark transition disabled:opacity-50"
+                    className="text-xs font-semibold px-6 py-2 rounded-sm bg-primary text-white hover:bg-primary-dark transition disabled:opacity-50"
                   >
                     Ban
                   </button>

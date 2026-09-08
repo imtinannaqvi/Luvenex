@@ -130,7 +130,7 @@ export default function AdminLayout({
           type="button"
           onClick={() => setMobileOpen(false)}
           title="Close menu"
-          className="md:hidden w-8 h-8 flex items-center justify-center rounded-lg text-white/60 hover:bg-white/10 hover:text-paper transition shrink-0"
+          className="md:hidden w-8 h-8 flex items-center justify-center rounded-sm text-white/60 hover:bg-white/10 hover:text-paper transition shrink-0"
         >
           <FiX size={18} />
         </button>
@@ -149,7 +149,7 @@ export default function AdminLayout({
               href={item.href}
               title={item.label}
               onClick={() => setMobileOpen(false)}
-              className={`flex items-center py-2 rounded-lg transition whitespace-nowrap overflow-hidden ${
+              className={`flex items-center py-2 rounded-sm transition whitespace-nowrap overflow-hidden ${
                 sidebarExpanded ? "px-3 gap-3" : "px-0 justify-center"
               } ${
                 active
@@ -162,7 +162,7 @@ export default function AdminLayout({
                 {item.label}
               </span>
               {sidebarExpanded && count > 0 && (
-                <span className="w-5 h-5 rounded-full bg-white/20 text-[10px] font-bold text-white flex items-center justify-center shrink-0">
+                <span className="w-5 h-5 rounded-sm bg-white/20 text-[10px] font-bold text-white flex items-center justify-center shrink-0">
                   {count > 9 ? "9+" : count}
                 </span>
               )}
@@ -178,7 +178,7 @@ export default function AdminLayout({
           router.push("/login");
         }}
         title="Log out"
-        className={`mt-4 shrink-0 flex items-center border border-white/20 text-white/80 text-sm py-2 rounded-lg hover:bg-white/10 transition ${
+        className={`mt-4 shrink-0 flex items-center border border-white/20 text-white/80 text-sm py-2 rounded-sm hover:bg-white/10 transition ${
           sidebarExpanded ? "px-3 gap-3 justify-center" : "px-0 justify-center"
         }`}
       >

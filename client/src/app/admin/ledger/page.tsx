@@ -181,9 +181,8 @@ export default function AdminUsersPage() {
                         className="sm:w-36 w-full px-5 py-2.5 rounded-md bg-surface text-foreground text-sm font-semibold hover:bg-primary 
                                    transition active:scale-[0.99] disabled:opacity-50 shadow-sm shrink-0 flex items-center justify-center gap-2"
                     >
-                        {loading ? (
-                            <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                        ) : "Query Index"}
+                    
+                         Query Index
                     </button>
                 </div>
             </form>

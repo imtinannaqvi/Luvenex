@@ -201,7 +201,7 @@ export default function VideosPage() {
             value={caption}
             onChange={(e) => setCaption(e.target.value)}
             rows={2}
-            className="w-full px-3.5 py-2.5 rounded-md  border border-line bg-background text-ink text-sm placeholder:text-muted/60 focus:outline-none focus:border-primary transition"
+            className="w-full px-3.5 py-2.5 rounded-md  border border-line bg-background text-foreground text-sm placeholder:text-muted/60 focus:outline-none focus:border-primary transition"
           />
         </div>
 
@@ -248,7 +248,7 @@ export default function VideosPage() {
             {videos.map((v) => (
               <div
                 key={v._id}
-                className="group relative bg-ink rounded-md overflow-hidden border border-line aspect-[9/14]"
+                className="group relative bg-background rounded-md overflow-hidden border border-line aspect-[9/14]"
               >
                 <video
                   src={`${process.env.NEXT_PUBLIC_API_URL}${v.videoUrl}`}

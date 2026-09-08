@@ -2,8 +2,19 @@
 
 import React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
-export default function Page() {
+export default function Footer() {
+  const pathname = usePathname();
+
+  if (
+    pathname.startsWith("/admin") ||
+    pathname.startsWith("/app") ||
+    pathname.startsWith("/videos")
+  ) {
+    return null;
+  }
+
   return (
     <div className="relative w-full sm:min-h-screen bg-background text-foreground flex flex-col sm:justify-between p-6 sm:p-12 overflow-hidden selection:bg-white selection:text-black gap-10 sm:gap-0">
       <div

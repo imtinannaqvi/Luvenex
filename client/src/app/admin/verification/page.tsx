@@ -38,8 +38,8 @@ useEffect(() => {
 
   if (loading) {
     return(
-        <div className="flex items-center justify-center mb-3">
-            <div className="w-8 h-8 border-t-primary border-2 border-primary rounded-full animate-spin"></div>
+        <div className="flex items-center justify-center mb-3 mt-4">
+            <div className="w-6 h-6 border-t-primary border-2 border-primary/20 rounded-full animate-spin"></div>
         </div>
     )
   }

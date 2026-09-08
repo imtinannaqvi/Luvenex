@@ -179,7 +179,7 @@ useEffect(() => {
         <h1 className="text-2xl md:text-3xl font-bold text-foreground italic">Blog</h1>
         <button
           onClick={() => (showEditor ? resetForm() : setShowEditor(true))}
-          className="px-4 py-2 rounded-lg bg-primary text-paper text-sm font-medium hover:bg-primary-dark transition shadow-sm cursor-pointer relative z-20"
+          className="px-4 py-2 rounded-lg bg-primary text-foreground text-sm font-medium hover:bg-primary-dark transition shadow-sm cursor-pointer relative z-20"
         >
           {showEditor ? "Close" : "+ New post"}
         </button>
@@ -389,10 +389,10 @@ useEffect(() => {
       {!showEditor &&
         (loading ? (
           <div className="flex items-center justify-center py-16">
-            <div className="w-6 h-6 border-2 border-line border-t-primary rounded-full animate-spin" />
+            <div className="w-6 h-6 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
           </div>
         ) : (
-          <div className="bg-background border border-line rounded-2xl overflow-hidden shadow-xs">
+          <div className="bg-background border border-line rounded-sm overflow-hidden shadow-xs">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse min-w-[640px] md:min-w-full">
                 <thead>
@@ -420,7 +420,7 @@ useEffect(() => {
                             <img
                               src={`${process.env.NEXT_PUBLIC_API_URL}${p.image}`}
                               alt={p.title}
-                              className="w-12 h-12 object-cover rounded-lg border border-line"
+                              className="w-12 h-12 object-cover rounded-sm border border-line"
                             />
                           ) : (
                             <div className="w-12 h-12 rounded-lg bg-line/20 border border-line flex items-center justify-center text-[10px] text-muted font-medium text-center">
@@ -455,14 +455,14 @@ useEffect(() => {
                           <div className="flex items-center justify-end gap-3 font-semibold text-xs">
                             <button
                               onClick={() => startEdit(p)}
-                              className="text-primary hover:text-foreground cursor-pointer border px-4 py-2 border-primary rounded-sm"
+                              className="text-foreground hover:text-primary cursor-pointer border px-4 py-2 border-border-color rounded-sm"
                             >
                               Edit
                             </button>
                             <button
                               onClick={() => handleDelete(p._id)}
                               disabled={deletingId === p._id}
-                              className="text-red-600 hover:text-foreground disabled:opacity-50 cursor-pointer border px-4 py-2 border-primary rounded-sm"
+                              className="text-foreground hover:text-primary disabled:opacity-50 cursor-pointer border px-4 py-2 border-border-color rounded-sm"
                             >
                               {deletingId === p._id ? "..." : "Delete"}
                             </button>

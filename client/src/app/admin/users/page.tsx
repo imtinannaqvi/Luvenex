@@ -16,7 +16,7 @@ type User = {
 
 /* soft card shell — matches the dashboard */
 const softCard =
-    "bg-card rounded-3xl border border-border-color shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_28px_-16px_rgba(0,0,0,0.10)]";
+    "bg-card rounded-sm border border-border-color shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_28px_-16px_rgba(0,0,0,0.10)]";
 
 export default function AdminUsersPage() {
     const [users, setUsers] = useState<User[]>([]);
@@ -94,7 +94,7 @@ export default function AdminUsersPage() {
             banned: "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-800/60",
         };
         return (
-            <span className={`inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full border capitalize tracking-wide ${styles[status] || "bg-card text-foreground border-border-color"}`}>
+            <span className={`inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-sm border capitalize tracking-wide ${styles[status] || "bg-card text-foreground border-border-color"}`}>
                 <span className={`w-1.5 h-1.5 rounded-full ${
                     status === "active" ? "bg-emerald-500"
                     : status === "pending" ? "bg-amber-500"
@@ -116,7 +116,7 @@ export default function AdminUsersPage() {
                     <button
                         disabled={actionLoadingId === u._id}
                         onClick={() => updateStatus(u._id, "active")}
-                        className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-surface border border-border-color hover:bg-card text-foreground transition disabled:opacity-50 cursor-pointer"
+                        className="text-xs font-semibold px-3 py-1.5 rounded-sm bg-surface border border-border-color hover:bg-card text-foreground transition disabled:opacity-50 cursor-pointer"
                     >
                         Activate
                     </button>
@@ -125,7 +125,7 @@ export default function AdminUsersPage() {
                     <button
                         disabled={actionLoadingId === u._id}
                         onClick={() => setPendingAction({ userId: u._id, status: "suspended", userName: u.name })}
-                        className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-surface border border-border-color hover:bg-card text-zinc-500 hover:text-foreground transition disabled:opacity-50 cursor-pointer"
+                        className="text-xs font-semibold px-3 py-1.5 rounded-sm bg-surface border border-border-color hover:bg-card text-zinc-500 hover:text-foreground transition disabled:opacity-50 cursor-pointer"
                     >
                         Suspend
                     </button>
@@ -134,7 +134,7 @@ export default function AdminUsersPage() {
                     <button
                         disabled={actionLoadingId === u._id}
                         onClick={() => setPendingAction({ userId: u._id, status: "banned", userName: u.name })}
-                        className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-red-600/10 border border-red-600/20 hover:bg-red-600/20 text-red-500 transition disabled:opacity-50 cursor-pointer"
+                        className="text-xs font-semibold px-3 py-1.5 rounded-sm bg-red-600/10 border border-red-600/20 hover:bg-red-600/20 text-red-500 transition disabled:opacity-50 cursor-pointer"
                     >
                         Ban
                     </button>
@@ -147,7 +147,7 @@ export default function AdminUsersPage() {
 
             {/* Toast */}
             {toast && (
-                <div className={`fixed top-6 right-6 z-50 flex items-center gap-3 px-4 py-3.5 rounded-2xl text-sm font-semibold shadow-2xl backdrop-blur-md bg-card text-foreground border border-border-color`}>
+                <div className={`fixed top-6 right-6 z-50 flex items-center gap-3 px-4 py-3.5 rounded-sm text-sm font-semibold shadow-2xl backdrop-blur-md bg-card text-foreground border border-border-color`}>
                     <div className={`w-2 h-2 rounded-full shrink-0 ${toast.type === 'error' ? 'bg-red-500 animate-pulse' : 'bg-emerald-400'}`} />
                     <span>{toast.message}</span>
                 </div>
@@ -166,14 +166,14 @@ export default function AdminUsersPage() {
                     placeholder="Search by name or email…"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className="flex-1 px-4 py-2.5 rounded-2xl border border-border-color text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-red-600/20 focus:border-red-600/40 placeholder:text-zinc-500 transition"
+                    className="flex-1 px-4 py-2.5 rounded-sm border border-border-color text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-red-600/20 focus:border-red-600/40 placeholder:text-zinc-500 transition"
                 />
                 <div className="flex flex-col sm:flex-row gap-2.5 lg:w-auto w-full">
                     <div className="relative flex-1 sm:w-48">
                         <select
                             value={roleFilter}
                             onChange={(e) => setRoleFilter(e.target.value)}
-                            className="w-full px-3.5 py-2.5 rounded-2xl border border-border-color text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-red-600/20 focus:border-red-600/40 transition cursor-pointer appearance-none"
+                            className="w-full px-3.5 py-2.5 rounded-sm border border-border-color text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-red-600/20 focus:border-red-600/40 transition cursor-pointer appearance-none"
                         >
                             <option value="">All roles</option>
                             <option value="brand">Brands</option>
@@ -189,7 +189,7 @@ export default function AdminUsersPage() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="sm:w-32 w-full px-5 py-2.5 rounded-2xl bg-surface text-foreground text-sm font-semibold hover:bg-red-600 hover:text-white transition active:scale-[0.98] disabled:opacity-50 shrink-0 cursor-pointer"
+                        className="sm:w-32 w-full px-5 py-2.5 rounded-sm bg-background text-foreground text-sm font-semibold hover:bg-red-600 hover:text-white transition active:scale-[0.98] disabled:opacity-50 shrink-0 cursor-pointer"
                     >
                         {loading ? "Searching…" : "Search"}
                     </button>

@@ -113,7 +113,8 @@ export default function AdminServicesPage() {
   const addSection = () => {
     setSections((prev) => {
       const next = [...prev, { title: "", description: "" }];
-      setOpenSection(next.length - 1); // open the new one for editing
+      // schedule opening the new section after state commits
+      queueMicrotask(() => setOpenSection(next.length - 1));
       return next;
     });
   };
@@ -165,7 +166,12 @@ export default function AdminServicesPage() {
           ?.description || sections[0]?.description || "<p></p>";
       formData.append("description", derivedDescription);
       formData.append("category", category);
-      formData.append("sections", JSON.stringify(sections));
+      // Keep only sections that have a title or some content, so blank rows
+      // don't block the save — but never silently drop a real one.
+      const cleanSections = sections.filter(
+        (s) => s.title.trim() || s.description.replace(/<[^>]*>/g, "").trim()
+      );
+      formData.append("sections", JSON.stringify(cleanSections));
       if (priceMinor) formData.append("priceMinor", String(Number(priceMinor) * 100));
       if (coverFile) formData.append("cover", coverFile);
       if (iconFile) formData.append("icon", iconFile);
@@ -262,13 +268,9 @@ export default function AdminServicesPage() {
               <div className="flex items-center justify-between mb-3">
                 <div>
                   <label className="block text-sm font-bold text-foreground">
-                    Detail Sections {sections.length > 0 && (
-                      <span className="text-muted font-normal">({sections.length})</span>
-                    )}
+                    Detail Sections 
                   </label>
-                  <p className="text-[11px] text-muted mt-0.5">
-                    Add each section, then click “Done” to collapse it and add the next. All save together when you submit.
-                  </p>
+                 
                 </div>
                 <button
                   type="button"
@@ -517,7 +519,7 @@ export default function AdminServicesPage() {
 
       {loading ? (
         <div className="flex justify-center py-12">
-          <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
+          <div className="w-6 h-6 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
         </div>
       ) : (
         !showForm &&

@@ -123,7 +123,7 @@ export default function AppDashboard() {
           <Link
             href={isBrand ? `/brands/${profile.handle}` : `/creator/${profile.handle}`}
             target="_blank"
-            className="inline-flex items-center gap-1.5 self-start sm:self-auto px-4 py-2 rounded-sm bg-surface border border-border-color text-xs sm:text-sm font-semibold text-foreground hover:border-red-400/60 hover:text-red-500 transition-all duration-200 shrink-0"
+            className="inline-flex items-center gap-1.5 self-start sm:self-auto px-4 py-2 rounded bg-surface border border-border-color text-xs sm:text-sm font-semibold text-foreground hover:border-red-400/60 hover:text-red-500 transition-all duration-200 shrink-0"
           >
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
@@ -133,7 +133,7 @@ export default function AppDashboard() {
         ) : (
           <Link
             href="/app/profile"
-            className="inline-flex items-center gap-1.5 self-start sm:self-auto px-3 py-2 rounded-sm bg-surface border  border-border-color text-xs sm:text-sm font-semibold text-zinc-500 hover:border-red-400/60 hover:text-red-500 transition-all duration-200 shrink-0"
+            className="inline-flex items-center gap-1.5 self-start sm:self-auto px-3 py-2 rounded bg-surface border  border-border-color text-xs sm:text-sm font-semibold text-zinc-500 hover:border-red-400/60 hover:text-red-500 transition-all duration-200 shrink-0"
           >
             Set Profile →
           </Link>
@@ -142,7 +142,7 @@ export default function AppDashboard() {
 
       {/* Stats — breakpoints bumped up one step to allow for the sidebar width */}
       <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-5">
-        <div className="bg-background border border-border-color rounded-sm text-center p-3 sm:p-4">
+        <div className="bg-background border border-border-color rounded text-center p-3 sm:p-4">
           <p className="text-[13px] sm:text-[14px] font-semibold text-foreground">
             Active Deals
           </p>
@@ -154,7 +154,7 @@ export default function AppDashboard() {
           </p>
         </div>
 
-        <div className="bg-background border border-border-color rounded-sm text-center p-3 sm:p-4">
+        <div className="bg-background border border-border-color rounded text-center p-3 sm:p-4">
           <p className="text-[13px] sm:text-[14px] font-semibold text-foreground">
             Wallet Balance
           </p>
@@ -167,7 +167,7 @@ export default function AppDashboard() {
         </div>
 
         {wallet?.escrowMinor > 0 && (
-          <div className="bg-background border border-border-color rounded-sm text-center p-3 sm:p-4">
+          <div className="bg-background border border-border-color rounded text-center p-3 sm:p-4">
             <p className="text-[13px] font-semibold text-red-600">InEscrow</p>
             <div className="text-lg sm:text-2xl font-bold italic text-foreground mt-1.5 break-words">
               {money(wallet.escrowMinor)}
@@ -178,7 +178,7 @@ export default function AppDashboard() {
           </div>
         )}
 
-        <div className="bg-background border border-border-color rounded-sm text-center p-3 sm:p-4 col-span-2 md:col-span-1">
+        <div className="bg-background border border-border-color rounded text-center p-3 sm:p-4 col-span-2 md:col-span-1">
           <p className="text-[13px] font-semibold text-foreground">
             12M {isBrand ? "Spent" : "Earned"}
           </p>
@@ -192,7 +192,7 @@ export default function AppDashboard() {
       </div>
 
       {/* ── Earnings/Spending Chart ── */}
-      <div className="bg-background border border-border-color rounded-sm p-4 sm:p-6 lg:p-8 relative overflow-hidden">
+      <div className="bg-background border border-border-color rounded p-4 sm:p-6 lg:p-8 relative overflow-hidden">
         {/* Header with Live Overview Pill */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 sm:mb-6 relative z-10">
           <div>
@@ -208,7 +208,7 @@ export default function AppDashboard() {
           </div>
 
           {/* Metric Badge */}
-          <div className="self-start sm:self-auto px-3.5 py-1.5 rounded-sm bg-surface border border-border-color flex items-center gap-3">
+          <div className="self-start sm:self-auto px-3.5 py-1.5 rounded bg-surface border border-border-color flex items-center gap-3">
             <div>
               <span className="text-[10px] sm:text-xs font-medium text-zinc-500 block italic">
                 Total {isBrand ? "Spent" : "Earned"}
@@ -285,7 +285,7 @@ export default function AppDashboard() {
                   const isUp = diff >= 0;
 
                   return (
-                    <div className="bg-background border border-border-color rounded-2xl p-3.5 text-xs shadow-xl text-foreground space-y-1.5 min-w-[160px] max-w-[80vw]">
+                    <div className="bg-background border border-border-color rounded p-3.5 text-xs shadow-xl text-foreground space-y-1.5 min-w-[160px] max-w-[80vw]">
                       <div className="flex items-center justify-between border-b border-border-color pb-1.5">
                         <span className="font-bold text-foreground">{label}</span>
                         <span
@@ -353,7 +353,7 @@ export default function AppDashboard() {
       {/* ── Two Column Layout — single column until lg to allow for sidebar ── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6">
         {/* Recent Deals */}
-        <div className="bg-background border border-border-color rounded-sm p-4 sm:p-6 lg:p-8 flex flex-col justify-between">
+        <div className="bg-background border border-border-color rounded p-4 sm:p-6 lg:p-8 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-2">
@@ -392,7 +392,7 @@ export default function AppDashboard() {
                       </p>
                     </div>
                     <span
-                      className={`text-[10px] sm:text-xs font-bold px-2.5 py-1 rounded-sm capitalize border shrink-0 ${getStatusBadge(
+                      className={`text-[10px] sm:text-xs font-bold px-2.5 py-1 rounded capitalize border shrink-0 ${getStatusBadge(
                         d.status
                       )}`}
                     >
@@ -406,7 +406,7 @@ export default function AppDashboard() {
         </div>
 
         {/* Recent Notifications */}
-        <div className="bg-background border border-border-color rounded-sm p-4 sm:p-6 lg:p-8 flex flex-col justify-between">
+        <div className="bg-background border border-border-color rounded p-4 sm:p-6 lg:p-8 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-2">
@@ -414,13 +414,13 @@ export default function AppDashboard() {
                   Recent Activity
                 </h2>
               </div>
-              <span className="text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-sm bg-surface border border-border-color text-zinc-500">
+              <span className="text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded bg-surface border border-border-color text-zinc-500">
                 Latest {notifications.length}
               </span>
             </div>
 
             {notifications.length === 0 ? (
-              <div className="p-8 text-center bg-surface border border-border-color rounded-2xl">
+              <div className="p-8 text-center bg-surface border border-border-color rounded">
                 <p className="text-xs sm:text-sm text-zinc-500">
                   No recent notifications.
                 </p>
@@ -430,7 +430,7 @@ export default function AppDashboard() {
                 {notifications.map((n) => (
                   <div
                     key={n._id}
-                    className="p-3.5 rounded-sm bg-surface border border-border-color hover:border-red-400/60 transition-all duration-200"
+                    className="p-3.5 rounded bg-surface border border-border-color hover:border-red-400/60 transition-all duration-200"
                   >
                     <div className="flex items-center justify-between gap-2">
                       <p className="text-xs sm:text-sm font-bold text-foreground truncate">

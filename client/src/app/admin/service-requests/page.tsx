@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 
 /* soft card shell — matches dashboard + users pages */
 const softCard =
-  "bg-background rounded-3xl border border-primary/20 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_28px_-16px_rgba(0,0,0,0.10)]";
+  "bg-background rounded-sm border border-primary/20 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_28px_-16px_rgba(0,0,0,0.10)]";
 
 const Spinner = ({ className = "" }: { className?: string }) => (
   <div
@@ -121,8 +121,8 @@ useEffect(() => {
       )}
 
       {loading ? (
-        <div className={`${softCard} py-16 px-6 flex items-center justify-center`}>
-          <Spinner className="w-5 h-5" />
+        <div className="flex justify-center py-12">
+          <div className="w-6 h-6 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
         </div>
       ) : requests.length === 0 ? (
         <div className={`${softCard} p-8`}>

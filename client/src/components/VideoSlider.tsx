@@ -92,8 +92,8 @@ const VideoSlider = () => {
           Run your creator  <br /> <span className="text-[#B90808]"> marketing here</span>
         </h2>
 
-        <p className="mt-4 max-w-xl mx-auto text-base sm:text-md text-zinc-400 leading-relaxed">
-          Discover vetted creators, launch campaigns, and close brand deals — all managed
+        <p className="mt-4 max-w-xl mx-auto text-base sm:text-md text-foreground leading-relaxed">
+          Discover vetted creators, launch campaigns, and close brand deals all managed
           securely on one platform, from first message to final payment.
         </p>
       </div>

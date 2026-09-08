@@ -33,7 +33,7 @@ export default function AdminReferralsPage() {
   if (loading) {
     return (
       <div className="min-h-[50vh] flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-line border-t-primary rounded-full animate-spin" />
+        <div className="w-6 h-6 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
       </div>
     );
   }
@@ -80,7 +80,7 @@ export default function AdminReferralsPage() {
       <div className={`${softCard} overflow-hidden`}>
         <div className="px-5 py-4 flex items-center justify-between border-b border-line">
           <h2 className="text-lg font-bold text-foreground">Top Referrers</h2>
-          <span className="text-[11px] font-semibold text-foreground bg-background/[0.04] px-2.5 py-0.5 rounded-full">
+          <span className="text-[11px] font-semibold text-foreground bg-background/[0.04] px-2.5 py-0.5 rounded-sm">
             {topReferrers.length} earning
           </span>
         </div>
@@ -111,7 +111,7 @@ export default function AdminReferralsPage() {
                     </td>
                     <td className="px-5 py-3.5 font-semibold text-foreground">
                       <div className="flex items-center gap-2.5">
-                        <div className="w-7 h-7 rounded-full bg-background text-foreground text-xs font-bold flex items-center justify-center shrink-0">
+                        <div className="w-7 h-7 rounded-sm bg-background text-foreground text-xs font-bold flex items-center justify-center shrink-0">
                           {r.name ? r.name[0].toUpperCase() : "U"}
                         </div>
                         <span>{r.name}</span>
@@ -119,7 +119,7 @@ export default function AdminReferralsPage() {
                     </td>
                     <td className="px-5 py-3.5 capitalize text-muted">{r.role || "—"}</td>
                     <td className="px-5 py-3.5">
-                      <span className="font-mono text-xs bg-background/[0.04] px-2 py-0.5 rounded-md text-foreground">
+                      <span className="font-mono text-xs bg-background/[0.04] px-2 py-0.5 rounded-sm text-foreground">
                         {r.referralCode || "—"}
                       </span>
                     </td>
@@ -138,7 +138,7 @@ export default function AdminReferralsPage() {
       <div className={`${softCard} overflow-hidden`}>
         <div className="px-5 py-4 flex items-center justify-between border-b border-line">
           <h2 className="text-lg font-bold text-foreground">Referral Activity</h2>
-          <span className="text-[11px] font-semibold text-foreground bg-background/[0.04] px-2.5 py-0.5 rounded-full">
+          <span className="text-[11px] font-semibold text-foreground bg-background/[0.04] px-2.5 py-0.5 rounded-sm">
             {allReferrals.length} total
           </span>
         </div>
@@ -165,7 +165,7 @@ export default function AdminReferralsPage() {
                   <tr key={u._id} className="hover:bg-background/[0.015] transition-colors">
                     <td className="px-5 py-3.5 font-semibold text-foreground">
                       <div className="flex items-center gap-2.5">
-                        <div className="w-7 h-7 rounded-full bg-background text-foreground text-xs font-bold flex items-center justify-center shrink-0">
+                        <div className="w-7 h-7 rounded-sm bg-background text-foreground text-xs font-bold flex items-center justify-center shrink-0">
                           {u.name ? u.name[0].toUpperCase() : "U"}
                         </div>
                         <span>{u.name}</span>
