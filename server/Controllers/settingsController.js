@@ -12,7 +12,7 @@ export const getPlatformSettings = async (req, res) => {
 
 /**
  * Rejects a merged settings object that doesn't make sense.
- * Validate the MERGE, not the incoming body — the admin UI now sends partial
+ * Validate the MERGE, not the incoming body — the admin UI sends partial
  * updates, so a request carrying only brandFeePercent can still push the
  * combined commission over 100%.
  */
@@ -36,18 +36,6 @@ const validateSettings = (s) => {
     const modRating = Number(s.reviewModerationMinRating ?? 2);
     if (modRating < 1 || modRating > 5) return "Review moderation rating must be between 1 and 5";
 
-    const lowThreshold = Number(s.lowRatingThreshold ?? 2.5);
-    if (lowThreshold < 1 || lowThreshold > 5) return "Rating threshold must be between 1 and 5";
-
-    const single = Number(s.singleReviewFlagRating ?? 2);
-    if (single < 1 || single > 5) return "Single review flag rating must be between 1 and 5";
-
-    if (s.maintenanceStartAt && s.maintenanceEndAt) {
-        if (new Date(s.maintenanceEndAt) <= new Date(s.maintenanceStartAt)) {
-            return "Maintenance end time must be after the start time";
-        }
-    }
-
     return null;
 };
 
@@ -62,21 +50,13 @@ export const updatePlatformSettings = async (req, res) => {
             'announcementEnabled', 'announcementMessage',
             'reviewModerationEnabled', 'reviewModerationMinRating',
             'inactiveAccountAutoSuspendDays', 'minDealsForVerification',
-            // ── ADDED — these were being sent by the admin UI but silently dropped ──
-            'maintenanceStartAt', 'maintenanceEndAt',
-            'deactivationReasonRequired',
-            'lowRatingFlagEnabled', 'lowRatingThreshold', 'singleReviewFlagRating',
         ];
 
         // Build the proposed state first so it can be validated before anything
         // is written to the document.
         const proposed = {};
         for (const key of allowed) {
-            if (req.body[key] !== undefined) {
-                // Empty datetime-local inputs arrive as "" — store null so the
-                // Date cast doesn't throw and the "is it scheduled" checks work.
-                proposed[key] = req.body[key] === "" ? null : req.body[key];
-            }
+            if (req.body[key] !== undefined) proposed[key] = req.body[key];
         }
 
         const invalid = validateSettings({ ...settings.toObject(), ...proposed });
@@ -108,8 +88,6 @@ export const getPublicSettings = async (req, res) => {
         res.json({
             maintenanceMode: settings.maintenanceMode,
             maintenanceMessage: settings.maintenanceMessage,
-            maintenanceStartAt: settings.maintenanceStartAt,
-            maintenanceEndAt: settings.maintenanceEndAt,
             referralRewardPercent: settings.referralRewardPercent,
 
             // DEPRECATED: kept so existing consumers don't break mid-migration.

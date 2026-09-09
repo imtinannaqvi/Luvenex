@@ -2,47 +2,44 @@ import Announcement from "../models/Announcement.js";
 
 const TYPES = ['info', 'success', 'warning', 'danger'];
 const AUDIENCES = ['all', 'brands', 'influencers'];
-const EDITABLE = [
-    'title', 'description', 'type', 'audience',
-    'startAt', 'expiresAt', 'isDismissible',
-    'ctaLabel', 'ctaUrl', 'isActive',
-];
 
 const validate = (body, { partial = false } = {}) => {
     if (!partial || body.title !== undefined) {
         if (!body.title || !String(body.title).trim()) return 'Title is required';
     }
+    if (!partial || body.message !== undefined) {
+        if (!body.message || !String(body.message).trim()) return 'Message is required';
+    }
     if (body.type !== undefined && !TYPES.includes(body.type)) {
         return 'Invalid announcement type';
     }
-    if (body.audience !== undefined) {
-        if (!Array.isArray(body.audience) || body.audience.length === 0) {
-            return 'Pick at least one audience';
-        }
-        if (body.audience.some((a) => !AUDIENCES.includes(a))) {
-            return 'Invalid audience';
-        }
-    }
-    if (body.ctaUrl && !body.ctaLabel) {
-        return 'Give the button a label, or remove the link';
-    }
-    if (body.startAt && body.expiresAt) {
-        if (new Date(body.expiresAt) <= new Date(body.startAt)) {
-            return 'Expiry must be after the start date';
-        }
+    if (body.audience !== undefined && !AUDIENCES.includes(body.audience)) {
+        return 'Invalid audience';
     }
     return null;
 };
 
 const pick = (body) => {
     const out = {};
-    for (const key of EDITABLE) {
+    for (const key of ['title', 'message', 'type', 'audience', 'isActive']) {
         if (body[key] !== undefined) out[key] = body[key];
     }
-    // Empty datetime-local inputs arrive as "" — store null so the date
-    // filters in activeAnnouncements behave.
-    if (out.startAt === '') out.startAt = null;
-    if (out.expiresAt === '') out.expiresAt = null;
+
+    if (body.expiresAt !== undefined) {
+        if (!body.expiresAt) {
+            out.expiresAt = null;
+        } else {
+            // The form sends a date with no time ("2026-09-15"). Push it to the
+            // end of that day so an announcement expiring "today" stays up all
+            // day instead of vanishing at midnight.
+            const d = new Date(body.expiresAt);
+            if (!Number.isNaN(d.getTime())) {
+                d.setHours(23, 59, 59, 999);
+                out.expiresAt = d;
+            }
+        }
+    }
+
     return out;
 };
 
@@ -110,8 +107,9 @@ export const activeAnnouncements = async (req, res) => {
     try {
         const now = new Date();
 
-        // Map your User.role values onto the audience vocabulary.
-        // CHECK THIS against your actual role strings.
+        // Only brands and influencers are a banner audience. Logged-out
+        // visitors and admins get nothing.
+        // CHECK these role strings against your User model's role enum.
         const role = req.user?.role;
         const audienceKey =
             role === 'brand' ? 'brands'
@@ -122,13 +120,10 @@ export const activeAnnouncements = async (req, res) => {
 
         const announcements = await Announcement.find({
             isActive: true,
-            $and: [
-                { $or: [{ startAt: null }, { startAt: { $lte: now } }] },
-                { $or: [{ expiresAt: null }, { expiresAt: { $gt: now } }] },
-            ],
             audience: { $in: ['all', audienceKey] },
+            $or: [{ expiresAt: null }, { expiresAt: { $gt: now } }],
         })
-            .select('title description type isDismissible ctaLabel ctaUrl updatedAt')
+            .select('title message type updatedAt')
             .sort({ createdAt: -1 })
             .lean();
 

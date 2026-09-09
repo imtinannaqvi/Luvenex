@@ -42,6 +42,8 @@ const platformSettingsSchema = new mongoose.Schema({
   },
   minDealsForVerification: { type: Number, default: 10 },
 
+  // No admin UI for these two right now — the Platform settings page was
+  // removed. They are still read elsewhere in the app, so leave them here.
   kycRequired: {
     type: Boolean,
     default: true
@@ -54,16 +56,14 @@ const platformSettingsSchema = new mongoose.Schema({
     type: String,
     default: "We'll be back soon."
   },
+
   complaintAutoFlagThreshold: {
     type: Number,
     default: 3
   },
 
-  // ── Announcement banner ──
-  // DEPRECATED: replaced by the Announcement collection, which supports
-  // multiple banners with audience targeting and expiry dates.
-  // Remove these two once scripts/migrateSettings.js has run AND you have
-  // updated every consumer of getPublicSettings.
+  // DEPRECATED: replaced by the Announcement collection. Remove once nothing
+  // reads them through getPublicSettings.
   announcementEnabled: {
     type: Boolean,
     default: false
@@ -90,25 +90,6 @@ const platformSettingsSchema = new mongoose.Schema({
   reviewModerationEnabled: { type: Boolean, default: false },
   reviewModerationMinRating: { type: Number, default: 2 },
   inactiveAccountAutoSuspendDays: { type: Number, default: 0 },
-
-  // ── ADDED ──
-  // The admin UI has been writing to these since it was built, but they were
-  // never declared here, so Mongoose silently dropped them on save.
-
-  // Scheduled maintenance window. Null on both means the maintenanceMode
-  // toggle is controlled manually.
-  maintenanceStartAt: { type: Date, default: null },
-  maintenanceEndAt: { type: Date, default: null },
-
-  // Force users to pick a reason before deactivating their account.
-  deactivationReasonRequired: { type: Boolean, default: false },
-
-  // Flag creators whose *average* rating falls to or below the threshold.
-  lowRatingFlagEnabled: { type: Boolean, default: false },
-  lowRatingThreshold: { type: Number, default: 2.5, min: 1, max: 5 },
-
-  // Flag any *single* review at or below this rating, regardless of average.
-  singleReviewFlagRating: { type: Number, default: 2, min: 1, max: 5 },
 }, { timestamps: true });
 
 platformSettingsSchema.statics.getSettings = async function () {

@@ -6,33 +6,35 @@ import { apiFetch } from "@/lib/api";
 import { getToken } from "@/lib/auth";
 import { FiVolume2, FiPlus, FiEdit2, FiTrash2, FiX } from "react-icons/fi";
 
-const TYPES = ["info", "success", "warning", "danger"] as const;
-const AUDIENCES = ["all", "brands", "influencers"] as const;
+const TYPES = [
+  { value: "info", label: "Info" },
+  { value: "success", label: "Success" },
+  { value: "warning", label: "Warning" },
+  { value: "danger", label: "Danger" },
+] as const;
+
+const AUDIENCES = [
+  { value: "all", label: "All" },
+  { value: "brands", label: "Brands" },
+  { value: "influencers", label: "Influencers" },
+] as const;
 
 type Announcement = {
   _id?: string;
   title: string;
-  description: string;
-  type: (typeof TYPES)[number];
-  audience: string[];
-  startAt: string | null;
+  message: string;
+  type: string;
+  audience: string;
   expiresAt: string | null;
-  isDismissible: boolean;
-  ctaLabel: string;
-  ctaUrl: string;
   isActive: boolean;
 };
 
 const EMPTY: Announcement = {
   title: "",
-  description: "",
+  message: "",
   type: "info",
-  audience: ["all"],
-  startAt: null,
+  audience: "all",
   expiresAt: null,
-  isDismissible: true,
-  ctaLabel: "",
-  ctaUrl: "",
   isActive: true,
 };
 
@@ -45,36 +47,17 @@ const TYPE_STYLES: Record<string, string> = {
 
 // Status is derived, never stored — otherwise it goes stale the moment a date passes.
 function statusOf(a: Announcement) {
-  const now = Date.now();
-  if (!a.isActive) return { label: "Draft", cls: "bg-surface text-muted border-line" };
-  if (a.expiresAt && new Date(a.expiresAt).getTime() < now)
+  if (!a.isActive) return { label: "Inactive", cls: "bg-surface text-muted border-line" };
+  if (a.expiresAt && new Date(a.expiresAt).getTime() < Date.now())
     return { label: "Expired", cls: "bg-surface text-muted border-line" };
-  if (a.startAt && new Date(a.startAt).getTime() > now)
-    return { label: "Scheduled", cls: "bg-amber-50 text-amber-700 border-amber-200" };
   return { label: "Live", cls: "bg-green-50 text-green-700 border-green-200" };
 }
 
-const toLocalInput = (v: string | null) => (v ? v.slice(0, 16) : "");
+// <input type="date"> wants YYYY-MM-DD; the API returns a full ISO timestamp.
+const toDateInput = (v: string | null) => (v ? v.slice(0, 10) : "");
 
-function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
-  return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={checked}
-      onClick={() => onChange(!checked)}
-      className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-200 ${
-        checked ? "bg-primary" : "bg-line"
-      }`}
-    >
-      <span
-        className={`inline-block h-[18px] w-[18px] transform rounded-full bg-white shadow transition-transform duration-200 ${
-          checked ? "translate-x-6" : "translate-x-1"
-        }`}
-      />
-    </button>
-  );
-}
+const labelFor = (list: readonly { value: string; label: string }[], value: string) =>
+  list.find((o) => o.value === value)?.label ?? value;
 
 export default function AnnouncementsPage() {
   const [items, setItems] = useState<Announcement[]>([]);
@@ -95,21 +78,10 @@ export default function AnnouncementsPage() {
   const setField = (key: keyof Announcement, value: any) =>
     setDraft((p) => (p ? { ...p, [key]: value } : p));
 
-  const toggleAudience = (aud: string) => {
-    if (!draft) return;
-    if (aud === "all") return setField("audience", ["all"]);
-    const without = draft.audience.filter((a) => a !== "all");
-    const next = without.includes(aud)
-      ? without.filter((a) => a !== aud)
-      : [...without, aud];
-    setField("audience", next.length ? next : ["all"]);
-  };
-
   const handleSave = async () => {
     if (!draft) return;
     if (!draft.title.trim()) return toast.error("Give the announcement a title.");
-    if (draft.startAt && draft.expiresAt && draft.expiresAt <= draft.startAt)
-      return toast.error("The expiry date has to be after the start date.");
+    if (!draft.message.trim()) return toast.error("Add a message.");
 
     setSaving(true);
     try {
@@ -117,7 +89,14 @@ export default function AnnouncementsPage() {
       await apiFetch(isEdit ? `/api/announcements/${draft._id}` : "/api/announcements", {
         method: isEdit ? "PATCH" : "POST",
         token: getToken()!,
-        body: draft,
+        body: {
+          title: draft.title,
+          message: draft.message,
+          type: draft.type,
+          audience: draft.audience,
+          expiresAt: draft.expiresAt,
+          isActive: draft.isActive,
+        },
       });
       toast.success(isEdit ? "Announcement updated" : "Announcement created");
       setDraft(null);
@@ -130,7 +109,7 @@ export default function AnnouncementsPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Delete this announcement? Visitors will stop seeing it right away.")) return;
+    if (!confirm("Delete this announcement? Users will stop seeing it right away.")) return;
     try {
       await apiFetch(`/api/announcements/${id}`, { method: "DELETE", token: getToken()! });
       toast.success("Announcement deleted");
@@ -149,7 +128,7 @@ export default function AnnouncementsPage() {
         <div>
           <h1 className="text-2xl font-bold text-foreground italic">Announcements</h1>
           <p className="text-sm text-muted mt-1">
-            Banners shown across the site, targeted by audience and date.
+            Banners shown to brands and influencers across the site.
           </p>
         </div>
         <button
@@ -173,7 +152,7 @@ export default function AnnouncementsPage() {
             </div>
             <p className="text-sm font-semibold text-foreground">No announcements yet</p>
             <p className="text-xs text-muted mt-1">
-              Create one to show a banner to brands, creators, or everyone.
+              Create one to show a banner to brands, influencers, or both.
             </p>
           </div>
         ) : (
@@ -188,7 +167,7 @@ export default function AnnouncementsPage() {
                       <span
                         className={`text-[10px] font-semibold px-2 py-0.5 rounded-sm border ${TYPE_STYLES[a.type]}`}
                       >
-                        {a.type}
+                        {labelFor(TYPES, a.type)}
                       </span>
                       <span
                         className={`text-[10px] font-semibold px-2 py-0.5 rounded-sm border ${status.cls}`}
@@ -196,9 +175,9 @@ export default function AnnouncementsPage() {
                         {status.label}
                       </span>
                     </div>
-                    <p className="text-xs text-muted mt-1 line-clamp-1">{a.description}</p>
+                    <p className="text-xs text-muted mt-1 line-clamp-1">{a.message}</p>
                     <p className="text-[11px] text-muted mt-1.5">
-                      {a.audience.join(", ")}
+                      {labelFor(AUDIENCES, a.audience)}
                       {a.expiresAt
                         ? ` · expires ${new Date(a.expiresAt).toLocaleDateString()}`
                         : " · no expiry"}
@@ -230,166 +209,98 @@ export default function AnnouncementsPage() {
       {draft && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40">
           <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto bg-background border border-line rounded-xl shadow-lg">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-line bg-surface/40 sticky top-0">
-              <h2 className="text-lg font-bold italic text-foreground">
-                {draft._id ? "Edit announcement" : "New announcement"}
+            <div className="flex items-center justify-between px-6 py-5">
+              <h2 className="text-xl font-bold text-foreground">
+                {draft._id ? "Edit Announcement" : "New Announcement"}
               </h2>
               <button
                 onClick={() => setDraft(null)}
                 className="w-8 h-8 rounded-sm text-muted hover:text-foreground hover:bg-surface flex items-center justify-center transition"
+                aria-label="Close"
               >
-                <FiX size={16} />
+                <FiX size={18} />
               </button>
             </div>
 
-            <div className="p-6 space-y-4">
+            <div className="px-6 pb-2 space-y-4">
+              <input
+                type="text"
+                placeholder="Title *"
+                value={draft.title}
+                onChange={(e) => setField("title", e.target.value)}
+                className={inputCls}
+              />
+
+              <textarea
+                rows={4}
+                placeholder="Message *"
+                value={draft.message}
+                onChange={(e) => setField("message", e.target.value)}
+                className={inputCls}
+              />
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-foreground mb-1.5">
+                    Type
+                  </label>
+                  <select
+                    value={draft.type}
+                    onChange={(e) => setField("type", e.target.value)}
+                    className={inputCls}
+                  >
+                    {TYPES.map((t) => (
+                      <option key={t.value} value={t.value}>
+                        {t.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-foreground mb-1.5">
+                    Audience
+                  </label>
+                  <select
+                    value={draft.audience}
+                    onChange={(e) => setField("audience", e.target.value)}
+                    className={inputCls}
+                  >
+                    {AUDIENCES.map((a) => (
+                      <option key={a.value} value={a.value}>
+                        {a.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
               <div>
-                <label className="block text-xs font-semibold text-foreground mb-1.5">Title</label>
+                <label className="block text-xs font-semibold text-foreground mb-1.5">
+                  Expires At (optional)
+                </label>
                 <input
-                  type="text"
-                  value={draft.title}
-                  onChange={(e) => setField("title", e.target.value)}
+                  type="date"
+                  value={toDateInput(draft.expiresAt)}
+                  onChange={(e) => setField("expiresAt", e.target.value || null)}
                   className={inputCls}
                 />
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-foreground mb-1.5">
-                  Description
-                </label>
-                <textarea
-                  rows={3}
-                  value={draft.description}
-                  onChange={(e) => setField("description", e.target.value)}
-                  className={inputCls}
+              <label className="flex items-center gap-2.5 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={draft.isActive}
+                  onChange={(e) => setField("isActive", e.target.checked)}
+                  className="w-4 h-4 accent-primary"
                 />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-foreground mb-1.5">Type</label>
-                <div className="flex flex-wrap gap-2">
-                  {TYPES.map((t) => (
-                    <button
-                      key={t}
-                      type="button"
-                      onClick={() => setField("type", t)}
-                      className={`px-3 py-1.5 rounded-sm text-xs font-semibold border transition ${
-                        draft.type === t
-                          ? TYPE_STYLES[t]
-                          : "border-line text-muted hover:text-foreground"
-                      }`}
-                    >
-                      {t}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-foreground mb-1.5">
-                  Show to
-                </label>
-                <p className="text-[11px] text-muted mb-2">
-                  &quot;All&quot; covers both brands and influencers. Admins never see banners.
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {AUDIENCES.map((aud) => (
-                    <button
-                      key={aud}
-                      type="button"
-                      onClick={() => toggleAudience(aud)}
-                      className={`px-3 py-1.5 rounded-sm text-xs font-semibold border transition ${
-                        draft.audience.includes(aud)
-                          ? "bg-primary/10 text-primary border-primary/20"
-                          : "border-line text-muted hover:text-foreground"
-                      }`}
-                    >
-                      {aud}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-foreground mb-1.5">
-                    Starts at
-                  </label>
-                  <input
-                    type="datetime-local"
-                    value={toLocalInput(draft.startAt)}
-                    onChange={(e) => setField("startAt", e.target.value || null)}
-                    className={inputCls}
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-foreground mb-1.5">
-                    Expires at
-                  </label>
-                  <input
-                    type="datetime-local"
-                    value={toLocalInput(draft.expiresAt)}
-                    onChange={(e) => setField("expiresAt", e.target.value || null)}
-                    className={inputCls}
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-foreground mb-1.5">
-                    Button label
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Optional"
-                    value={draft.ctaLabel}
-                    onChange={(e) => setField("ctaLabel", e.target.value)}
-                    className={inputCls}
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-foreground mb-1.5">
-                    Button link
-                  </label>
-                  <input
-                    type="url"
-                    placeholder="Optional"
-                    value={draft.ctaUrl}
-                    onChange={(e) => setField("ctaUrl", e.target.value)}
-                    className={inputCls}
-                  />
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between gap-4 p-4 rounded-sm border border-line bg-surface/30">
-                <div className="min-w-0">
-                  <p className="text-sm font-semibold text-foreground">Let users dismiss it</p>
-                  <p className="text-xs text-muted mt-0.5">
-                    Adds a close button. Turn off for critical notices.
-                  </p>
-                </div>
-                <Toggle
-                  checked={draft.isDismissible}
-                  onChange={(v) => setField("isDismissible", v)}
-                />
-              </div>
-
-              <div className="flex items-center justify-between gap-4 p-4 rounded-sm border border-line bg-surface/30">
-                <div className="min-w-0">
-                  <p className="text-sm font-semibold text-foreground">Active</p>
-                  <p className="text-xs text-muted mt-0.5">
-                    Turn off to keep it as a draft without deleting it.
-                  </p>
-                </div>
-                <Toggle checked={draft.isActive} onChange={(v) => setField("isActive", v)} />
-              </div>
+                <span className="text-sm text-foreground">Active (visible to users)</span>
+              </label>
             </div>
 
-            <div className="px-6 py-4 border-t border-line bg-surface/30 flex justify-end gap-2 sticky bottom-0">
+            <div className="px-6 py-5 flex justify-end gap-2">
               <button
                 onClick={() => setDraft(null)}
-                className="px-5 py-2.5 rounded-xl border border-line text-sm font-semibold text-muted hover:text-foreground transition"
+                className="px-5 py-2.5 rounded-xl border border-line text-sm font-semibold text-foreground hover:bg-surface transition"
               >
                 Cancel
               </button>
@@ -398,7 +309,7 @@ export default function AnnouncementsPage() {
                 disabled={saving}
                 className="px-6 py-2.5 rounded-xl bg-primary text-foreground text-sm font-semibold hover:bg-primary-dark transition disabled:opacity-50 shadow-sm"
               >
-                {saving ? "Saving..." : draft._id ? "Save changes" : "Create announcement"}
+                {saving ? "Saving..." : draft._id ? "Save" : "Create"}
               </button>
             </div>
           </div>

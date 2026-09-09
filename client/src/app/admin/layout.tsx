@@ -58,8 +58,6 @@ const NAV_ITEMS: NavItem[] = [
     label: "Settings",
     icon: FiSettings,
     children: [
-      { href: "/admin/settings", label: "General" },
-      { href: "/admin/settings/platform", label: "Platform" },
       { href: "/admin/settings/branding", label: "Branding" },
       { href: "/admin/settings/announcements", label: "Announcements" },
       { href: "/admin/settings/support", label: "Support" },
@@ -172,7 +170,7 @@ export default function AdminLayout({
         </button>
       </div>
 
-      <nav className="flex flex-col gap-1 text-sm flex-1 overflow-y-auto overflow-x-hidden pr-1">
+      <nav className="flex flex-col gap-1 text-sm flex-1 overflow-y-auto overflow-x-hidden pr-1 pb-2">
         {NAV_ITEMS.map((item) => {
           const Icon = item.icon;
           const countKey = countKeyMap[item.href];
@@ -182,9 +180,8 @@ export default function AdminLayout({
           if (item.children) {
             const inSection = pathname.startsWith(item.href);
             const groupOpen = openGroups.includes(item.href);
+            const exactActive = pathname === item.href;
 
-            // Collapsed rail has no room for a submenu, so the icon just
-            // navigates to the group's index page instead of expanding.
             if (!sidebarExpanded) {
               return (
                 <Link
@@ -205,42 +202,53 @@ export default function AdminLayout({
 
             return (
               <div key={item.href}>
-                <button
-                  type="button"
-                  onClick={() => toggleGroup(item.href)}
-                  aria-expanded={groupOpen}
-                  className={`w-full flex items-center gap-3 px-3 py-2 rounded-sm transition whitespace-nowrap overflow-hidden ${
-                    inSection && !groupOpen
+                <div
+                  className={`w-full flex items-center rounded-sm transition overflow-hidden ${
+                    exactActive
                       ? "bg-primary text-paper font-medium"
+                      : inSection
+                      ? "text-paper"
                       : "text-white/70 hover:bg-white/10 hover:text-paper"
                   }`}
                 >
-                  <Icon size={18} className="shrink-0" aria-hidden="true" />
-                  <span className="flex-1 text-left">{item.label}</span>
-                  <FiChevronDown
-                    size={14}
-                    className={`shrink-0 transition-transform duration-200 ${
-                      groupOpen ? "rotate-180" : ""
-                    }`}
-                  />
-                </button>
+                  <Link
+                    href={item.href}
+                    onClick={() => setMobileOpen(false)}
+                    className="flex-1 flex items-center gap-3 px-3 py-2"
+                  >
+                    <Icon size={18} className="shrink-0" aria-hidden="true" />
+                    <span className="text-left">{item.label}</span>
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      toggleGroup(item.href);
+                    }}
+                    aria-expanded={groupOpen}
+                    className="px-2.5 py-2 hover:bg-white/10 transition"
+                    title={groupOpen ? "Collapse submenu" : "Expand submenu"}
+                  >
+                    <FiChevronDown
+                      size={14}
+                      className={`shrink-0 transition-transform duration-200 ${
+                        groupOpen ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+                </div>
 
                 {groupOpen && (
-                  <div className="mt-1 ml-[26px] pl-3 border-l border-white/15 flex flex-col gap-0.5">
+                  <div className="mt-1 mb-2 ml-[26px] pl-3 border-l border-white/20 flex flex-col gap-1">
                     {item.children.map((child) => {
-                      // Exact match on the index route, prefix match on the rest,
-                      // or "General" would stay lit on every sub-page.
-                      const childActive =
-                        child.href === item.href
-                          ? pathname === item.href
-                          : pathname.startsWith(child.href);
+                      const childActive = pathname === child.href;
 
                       return (
                         <Link
                           key={child.href}
                           href={child.href}
                           onClick={() => setMobileOpen(false)}
-                          className={`px-3 py-1.5 rounded-sm transition whitespace-nowrap ${
+                          className={`px-3 py-1.5 text-xs rounded-sm transition whitespace-nowrap ${
                             childActive
                               ? "bg-primary text-paper font-medium"
                               : "text-white/60 hover:bg-white/10 hover:text-paper"
@@ -287,6 +295,8 @@ export default function AdminLayout({
         })}
       </nav>
 
+      <div className="mt-3 border-t border-white/10 shrink-0" />
+
       <button
         onClick={() => {
           setMobileOpen(false);
@@ -294,7 +304,7 @@ export default function AdminLayout({
           router.push("/login");
         }}
         title="Log out"
-        className={`mt-4 shrink-0 flex items-center border border-white/20 text-white/80 text-sm py-2 rounded-sm hover:bg-white/10 transition ${
+        className={`mt-4 pt-2 shrink-0 flex items-center border border-white/20 text-white/80 text-sm py-2 rounded-sm hover:bg-white/10 transition ${
           sidebarExpanded ? "px-3 gap-3 justify-center" : "px-0 justify-center"
         }`}
       >
@@ -308,7 +318,7 @@ export default function AdminLayout({
     <div className="flex min-h-screen">
       <aside
         className={`hidden md:flex bg-ink text-paper flex-col h-screen sticky top-0 py-6 shrink-0 transition-all duration-300 ease-in-out ${
-          isOpen ? "w-56 px-5" : "w-20 px-3"
+          isOpen ? "w-64 px-5" : "w-20 px-3"
         }`}
       >
         {SidebarInner}
@@ -321,7 +331,7 @@ export default function AdminLayout({
         }`}
       />
       <aside
-        className={`md:hidden fixed inset-y-0 left-0 z-50 w-56 bg-ink text-paper flex flex-col py-6 px-5 overflow-hidden transition-transform duration-300 ease-in-out ${
+        className={`md:hidden fixed inset-y-0 left-0 z-50 w-64 bg-ink text-paper flex flex-col py-6 px-5 overflow-hidden transition-transform duration-300 ease-in-out ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >

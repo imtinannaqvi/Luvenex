@@ -246,8 +246,8 @@ const brandingImageFilter = (req, file, cb) => {
   }
 };
 
-// .fields() rather than .single() — the branding form posts up to four
-// different images in one request.
+// .fields() rather than .single() — the branding form posts a logo and a
+// favicon in the same request.
 export const uploadBranding = multer({
   storage: brandingStorage,
   fileFilter: brandingImageFilter,
@@ -257,9 +257,7 @@ export const uploadBranding = multer({
   },
 }).fields([
   { name: 'logo', maxCount: 1 },
-  { name: 'logoDark', maxCount: 1 },
   { name: 'favicon', maxCount: 1 },
-  { name: 'ogImage', maxCount: 1 },
 ]);
 
 /**
