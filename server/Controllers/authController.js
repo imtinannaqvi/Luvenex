@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import User from '../models/User.js';
 import Otp from '../models/Otp.js';
+import PlatformSettings from '../models/PlatformSettings.js';
 import { signAccess, signRefresh, verifyToken } from '../lib/jwt.js';
 import { generateReferralCode, generateHandle } from '../lib/referral.js';
 
