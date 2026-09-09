@@ -215,6 +215,27 @@ export default function PublicVideoPage() {
     }
   };
 
+  // Keyboard navigation for Up and Down arrow keys
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (["INPUT", "TEXTAREA"].includes((e.target as HTMLElement)?.tagName)) {
+        return;
+      }
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        goNext();
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        goPrev();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [activeIndex, videos, pagination, page]);
+
   const handleWheel = (e: React.WheelEvent) => {
     e.preventDefault();
     if (isScrollingRef.current) return;

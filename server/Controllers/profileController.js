@@ -95,9 +95,9 @@ export const searchInfluencers = async (req, res) => {
     if (req.query.niche) filter.niches = req.query.niche;
     if (req.query.minFollowers) filter.followersCount = { $gte: Number(req.query.minFollowers) };
     if (req.query.minRating) filter.avgRating = { $gte: Number(req.query.minRating) };
-    if (req.query.q) {
+       if (req.query.q) {
       const regex = new RegExp(req.query.q, 'i');
-      filter.$or = [{ bio: regex }, { handle: regex }];
+      filter.$or = [{ bio: regex }, { handle: regex }, { niches: regex }];
     }
 
     // ✅ exclude users who've hidden themselves from search

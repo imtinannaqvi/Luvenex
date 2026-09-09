@@ -5,20 +5,8 @@ import dynamic from "next/dynamic";
 import { toast } from "react-toastify";
 import { apiFetch } from "@/lib/api";
 import { getToken } from "@/lib/auth";
-import {
-  FiInfo,
-  FiImage,
-  FiX,
-  FiPercent,
-  FiDollarSign,
-  FiClock,
-  FiSettings,
-  FiTool,
-  FiUserX,
-  FiStar,
-  FiShield,
-  FiVolume2,
-} from "react-icons/fi";
+import { minorToMajor, majorToMinor } from "@/lib/money";
+import { FiInfo, FiImage, FiX, FiPercent, FiDollarSign, FiClock } from "react-icons/fi";
 import "react-quill-new/dist/quill.snow.css";
 
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
@@ -39,10 +27,6 @@ const SECTIONS = [
   { key: "commission", label: "Commission Split", icon: FiPercent },
   { key: "financial", label: "Financial Limits", icon: FiDollarSign },
   { key: "timing", label: "Timing & Moderation", icon: FiClock },
-  { key: "behavior", label: "Platform Behavior", icon: FiSettings },
-  { key: "maintenance", label: "Scheduled Maintenance", icon: FiTool },
-  { key: "deactivation", label: "Account Deactivation", icon: FiUserX },
-  { key: "reviews", label: "Review & Rating Flags", icon: FiStar },
   { key: "about", label: "About Us", icon: FiInfo },
 ] as const;
 
@@ -70,28 +54,6 @@ function SectionHeader({
   );
 }
 
-/* Styled toggle switch — replaces plain checkboxes for a more polished feel */
-function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
-  return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={checked}
-      onClick={() => onChange(!checked)}
-      className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-200 ${
-        checked ? "bg-primary" : "bg-line"
-      }`}
-    >
-      <span
-        className={`inline-block h-4.5 w-4.5 h-[18px] w-[18px] transform rounded-full bg-white shadow transition-transform duration-200 ${
-          checked ? "translate-x-6" : "translate-x-1"
-        }`}
-      />
-    </button>
-  );
-}
-
-/* Per-section save button — same handleSave call, but rendered inside each panel */
 function SaveButton({ onClick, saving }: { onClick: () => void; saving: boolean }) {
   return (
     <div className="px-6 py-4 border-t border-line bg-surface/30 flex justify-end">
@@ -105,9 +67,6 @@ function SaveButton({ onClick, saving }: { onClick: () => void; saving: boolean 
     </div>
   );
 }
-
-const pkr = (minor: any) =>
-  minor === undefined || minor === null || isNaN(minor) ? "" : minor / 100;
 
 export default function AdminSettingsPage() {
   const [settings, setSettings] = useState<any>(null);
@@ -128,29 +87,42 @@ export default function AdminSettingsPage() {
     ])
       .then(([settingsData, aboutData]) => {
         setSettings(settingsData.settings);
-        setAboutTitle(aboutData.page.title || "");
-        setAboutContent(aboutData.page.content || "");
-        if (aboutData.page.heroImage)
+        setAboutTitle(aboutData.page?.title || "");
+        setAboutContent(aboutData.page?.content || "");
+        if (aboutData.page?.heroImage)
           setAboutHeroPreview(`${process.env.NEXT_PUBLIC_API_URL}${aboutData.page.heroImage}`);
       })
       .catch((err) => toast.error(err.message))
       .finally(() => setLoading(false));
   }, []);
 
-  const update = (key: string, value: any) => {
+  const update = (key: string, value: any) =>
     setSettings((prev: any) => ({ ...prev, [key]: value }));
-  };
 
+  // Only sends the keys this page owns, so it can't clobber the Platform page.
   const handleSave = async () => {
     setSaving(true);
     try {
+      const body = {
+        brandFeePercent: settings.brandFeePercent,
+        influencerFeePercent: settings.influencerFeePercent,
+        referralRewardPercent: settings.referralRewardPercent,
+        minWithdrawalMinor: settings.minWithdrawalMinor,
+        minDealPriceMinor: settings.minDealPriceMinor,
+        maxDealPriceMinor: settings.maxDealPriceMinor,
+        autoReleaseDays: settings.autoReleaseDays,
+        complaintAutoFlagThreshold: settings.complaintAutoFlagThreshold,
+        reviewModerationEnabled: settings.reviewModerationEnabled,
+        reviewModerationMinRating: settings.reviewModerationMinRating,
+        inactiveAccountAutoSuspendDays: settings.inactiveAccountAutoSuspendDays,
+      };
       const data = await apiFetch("/api/settings", {
         method: "PATCH",
         token: getToken()!,
-        body: settings,
+        body,
       });
       setSettings(data.settings);
-      toast.success("Settings updated successfully");
+      toast.success("Settings updated");
     } catch (err: any) {
       toast.error(err.message);
     } finally {
@@ -193,14 +165,16 @@ export default function AdminSettingsPage() {
   const inputCls =
     "w-full px-3.5 py-2.5 rounded-xl border border-line text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition";
 
+  const totalCommission =
+    (settings.brandFeePercent ?? 0) + (settings.influencerFeePercent ?? 0);
+
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-foreground italic">Platform Settings</h1>
-        <p className="text-sm text-muted mt-1">Configure fees, thresholds, and platform behavior.</p>
+        <h1 className="text-2xl font-bold text-foreground italic">General Settings</h1>
+        <p className="text-sm text-muted mt-1">Fees, limits, timing rules, and your About page.</p>
       </div>
 
-      {/* ── Horizontal tab row ── */}
       <div className="flex flex-wrap items-center gap-2 mb-6 p-1.5 bg-surface border border-line rounded-sm overflow-x-auto">
         {SECTIONS.map((s) => {
           const Icon = s.icon;
@@ -222,9 +196,7 @@ export default function AdminSettingsPage() {
         })}
       </div>
 
-      {/* ── Active section's content ── */}
       <div className="bg-background border border-line rounded-sm overflow-hidden">
-        {/* Commission Split */}
         {activeSection === "commission" && (
           <>
             <SectionHeader
@@ -235,7 +207,9 @@ export default function AdminSettingsPage() {
             <div className="p-6 space-y-4">
               <div className="flex gap-4">
                 <div className="flex-1">
-                  <label className="block text-xs font-semibold text-foreground mb-1.5">Brand fee (%)</label>
+                  <label className="block text-xs font-semibold text-foreground mb-1.5">
+                    Brand fee (%)
+                  </label>
                   <input
                     type="number"
                     value={settings.brandFeePercent ?? ""}
@@ -244,7 +218,9 @@ export default function AdminSettingsPage() {
                   />
                 </div>
                 <div className="flex-1">
-                  <label className="block text-xs font-semibold text-foreground mb-1.5">Influencer fee (%)</label>
+                  <label className="block text-xs font-semibold text-foreground mb-1.5">
+                    Influencer fee (%)
+                  </label>
                   <input
                     type="number"
                     value={settings.influencerFeePercent ?? ""}
@@ -253,9 +229,21 @@ export default function AdminSettingsPage() {
                   />
                 </div>
               </div>
-              <div className="flex items-center gap-2 px-4 py-2.5 rounded-sm bg-primary/5 border border-primary/10">
-                <span className="text-xs font-semibold text-primary">
-                  Total commission: {(settings.brandFeePercent ?? 0) + (settings.influencerFeePercent ?? 0)}%
+              <div
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-sm border ${
+                  totalCommission > 100
+                    ? "bg-red-50 border-red-200"
+                    : "bg-primary/5 border-primary/10"
+                }`}
+              >
+                <span
+                  className={`text-xs font-semibold ${
+                    totalCommission > 100 ? "text-red-600" : "text-primary"
+                  }`}
+                >
+                  {totalCommission > 100
+                    ? `Total commission is ${totalCommission}% — reduce it to 100% or less before saving.`
+                    : `Total commission: ${totalCommission}%`}
                 </span>
               </div>
             </div>
@@ -263,7 +251,6 @@ export default function AdminSettingsPage() {
           </>
         )}
 
-        {/* Financial Limits */}
         {activeSection === "financial" && (
           <>
             <SectionHeader
@@ -273,7 +260,9 @@ export default function AdminSettingsPage() {
             />
             <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-foreground mb-1.5">Referral reward (%)</label>
+                <label className="block text-xs font-semibold text-foreground mb-1.5">
+                  Referral reward (%)
+                </label>
                 <input
                   type="number"
                   value={settings.referralRewardPercent ?? ""}
@@ -282,29 +271,35 @@ export default function AdminSettingsPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-foreground mb-1.5">Min withdrawal (PKR)</label>
+                <label className="block text-xs font-semibold text-foreground mb-1.5">
+                  Min withdrawal (PKR)
+                </label>
                 <input
                   type="number"
-                  value={pkr(settings.minWithdrawalMinor)}
-                  onChange={(e) => update("minWithdrawalMinor", Number(e.target.value) * 100)}
+                  value={minorToMajor(settings.minWithdrawalMinor)}
+                  onChange={(e) => update("minWithdrawalMinor", majorToMinor(e.target.value))}
                   className={inputCls}
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-foreground mb-1.5">Min deal price (PKR)</label>
+                <label className="block text-xs font-semibold text-foreground mb-1.5">
+                  Min deal price (PKR)
+                </label>
                 <input
                   type="number"
-                  value={pkr(settings.minDealPriceMinor)}
-                  onChange={(e) => update("minDealPriceMinor", Number(e.target.value) * 100)}
+                  value={minorToMajor(settings.minDealPriceMinor)}
+                  onChange={(e) => update("minDealPriceMinor", majorToMinor(e.target.value))}
                   className={inputCls}
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-foreground mb-1.5">Max deal price (0 = no limit)</label>
+                <label className="block text-xs font-semibold text-foreground mb-1.5">
+                  Max deal price (0 = no limit)
+                </label>
                 <input
                   type="number"
-                  value={pkr(settings.maxDealPriceMinor)}
-                  onChange={(e) => update("maxDealPriceMinor", Number(e.target.value) * 100)}
+                  value={minorToMajor(settings.maxDealPriceMinor)}
+                  onChange={(e) => update("maxDealPriceMinor", majorToMinor(e.target.value))}
                   className={inputCls}
                 />
               </div>
@@ -313,7 +308,6 @@ export default function AdminSettingsPage() {
           </>
         )}
 
-        {/* Timing & Moderation */}
         {activeSection === "timing" && (
           <>
             <SectionHeader
@@ -324,7 +318,9 @@ export default function AdminSettingsPage() {
             <div className="p-6 space-y-4">
               <div className="flex gap-4">
                 <div className="flex-1">
-                  <label className="block text-xs font-semibold text-foreground mb-1.5">Auto-release (days)</label>
+                  <label className="block text-xs font-semibold text-foreground mb-1.5">
+                    Auto-release (days)
+                  </label>
                   <input
                     type="number"
                     value={settings.autoReleaseDays ?? ""}
@@ -333,7 +329,9 @@ export default function AdminSettingsPage() {
                   />
                 </div>
                 <div className="flex-1">
-                  <label className="block text-xs font-semibold text-foreground mb-1.5">Complaint flag threshold</label>
+                  <label className="block text-xs font-semibold text-foreground mb-1.5">
+                    Complaint flag threshold
+                  </label>
                   <input
                     type="number"
                     value={settings.complaintAutoFlagThreshold ?? ""}
@@ -351,7 +349,9 @@ export default function AdminSettingsPage() {
                     onChange={(e) => update("reviewModerationEnabled", e.target.checked)}
                     className="w-4 h-4"
                   />
-                  <span className="font-medium text-foreground">Require approval for low-rated reviews</span>
+                  <span className="font-medium text-foreground">
+                    Require approval for low-rated reviews
+                  </span>
                 </label>
                 {settings.reviewModerationEnabled && (
                   <input
@@ -373,7 +373,9 @@ export default function AdminSettingsPage() {
                 <input
                   type="number"
                   value={settings.inactiveAccountAutoSuspendDays ?? ""}
-                  onChange={(e) => update("inactiveAccountAutoSuspendDays", Number(e.target.value))}
+                  onChange={(e) =>
+                    update("inactiveAccountAutoSuspendDays", Number(e.target.value))
+                  }
                   className={inputCls}
                 />
               </div>
@@ -382,232 +384,6 @@ export default function AdminSettingsPage() {
           </>
         )}
 
-        {/* Platform Behavior — redesigned with toggle switches + card rows */}
-        {activeSection === "behavior" && (
-          <>
-            <SectionHeader
-              title="Platform Behavior"
-              subtitle="Global toggles affecting the entire site"
-              icon={<FiSettings size={17} />}
-            />
-            <div className="p-6 space-y-3">
-              <div className="flex items-center justify-between gap-4 p-4 rounded-sm border border-line bg-surface/30">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-9 h-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                    <FiShield size={16} />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold text-foreground">Require KYC for withdrawals</p>
-                    <p className="text-xs text-muted mt-0.5">Users must verify identity before cashing out.</p>
-                  </div>
-                </div>
-                <Toggle
-                  checked={settings.kycRequired ?? false}
-                  onChange={(v) => update("kycRequired", v)}
-                />
-              </div>
-
-              <div className="p-4 rounded-sm border border-line bg-surface/30 space-y-3">
-                <div className="flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-9 h-9 rounded-sm bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                      <FiVolume2 size={16} />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-sm font-semibold text-foreground">Show announcement banner</p>
-                      <p className="text-xs text-muted mt-0.5">Displays a site-wide message to every visitor.</p>
-                    </div>
-                  </div>
-                  <Toggle
-                    checked={settings.announcementEnabled ?? false}
-                    onChange={(v) => update("announcementEnabled", v)}
-                  />
-                </div>
-                {settings.announcementEnabled && (
-                  <input
-                    type="text"
-                    placeholder="Banner message shown site-wide"
-                    value={settings.announcementMessage ?? ""}
-                    onChange={(e) => update("announcementMessage", e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-line text-sm bg-background"
-                  />
-                )}
-              </div>
-            </div>
-            <SaveButton onClick={handleSave} saving={saving} />
-          </>
-        )}
-
-        {/* Scheduled Maintenance */}
-        {activeSection === "maintenance" && (
-          <>
-            <SectionHeader
-              title="Scheduled Maintenance"
-              subtitle="Take the site offline on a schedule with a custom message"
-              icon={<FiTool size={17} />}
-            />
-            <div className="p-6 space-y-4">
-              <label className="flex items-center justify-between cursor-pointer">
-                <span className="text-sm font-medium text-foreground">Maintenance mode</span>
-                <input
-                  type="checkbox"
-                  checked={settings.maintenanceMode ?? false}
-                  onChange={(e) => update("maintenanceMode", e.target.checked)}
-                  className="w-4 h-4"
-                />
-              </label>
-
-              <div>
-                <label className="block text-xs font-semibold text-foreground mb-1.5">Message shown to visitors</label>
-                <input
-                  type="text"
-                  placeholder="We'll be back shortly — performing scheduled maintenance."
-                  value={settings.maintenanceMessage ?? ""}
-                  onChange={(e) => update("maintenanceMessage", e.target.value)}
-                  className={inputCls}
-                />
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-foreground mb-1.5">Starts at</label>
-                  <input
-                    type="datetime-local"
-                    value={settings.maintenanceStartAt ? settings.maintenanceStartAt.slice(0, 16) : ""}
-                    onChange={(e) => update("maintenanceStartAt", e.target.value || null)}
-                    className={inputCls}
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-foreground mb-1.5">Ends at</label>
-                  <input
-                    type="datetime-local"
-                    value={settings.maintenanceEndAt ? settings.maintenanceEndAt.slice(0, 16) : ""}
-                    onChange={(e) => update("maintenanceEndAt", e.target.value || null)}
-                    className={inputCls}
-                  />
-                </div>
-              </div>
-              <p className="text-[11px] text-muted">
-                Leave the dates empty to control maintenance manually with the toggle above.
-              </p>
-            </div>
-            <SaveButton onClick={handleSave} saving={saving} />
-          </>
-        )}
-
-        {/* Account Deactivation */}
-        {activeSection === "deactivation" && (
-          <>
-            <SectionHeader
-              title="Account Deactivation"
-              subtitle="Track who deactivates and why"
-              icon={<FiUserX size={17} />}
-            />
-            <div className="p-6 space-y-4">
-              <label className="flex items-center justify-between cursor-pointer">
-                <span>
-                  <span className="block text-sm font-medium text-foreground">Require a reason on deactivation</span>
-                  <span className="block text-[11px] text-muted">
-                    Users must pick a reason before their account is deactivated.
-                  </span>
-                </span>
-                <input
-                  type="checkbox"
-                  checked={settings.deactivationReasonRequired ?? false}
-                  onChange={(e) => update("deactivationReasonRequired", e.target.checked)}
-                  className="w-4 h-4"
-                />
-              </label>
-              <div className="px-4 py-2.5 rounded-sm bg-primary/5 border border-primary/10">
-                <p className="text-[11px] text-muted">
-                  Deactivations are recorded with the user, timestamp, and reason. The full list will appear on the
-                  deactivation log page.
-                </p>
-              </div>
-            </div>
-            <SaveButton onClick={handleSave} saving={saving} />
-          </>
-        )}
-
-        {/* Review & Rating Flags — redesigned with card layout + live preview */}
-        {activeSection === "reviews" && (
-          <>
-            <SectionHeader
-              title="Review & Rating Flags"
-              subtitle="Automatically flag low ratings for admin attention"
-              icon={<FiStar size={17} />}
-            />
-            <div className="p-6 space-y-4">
-              <div className="p-4 rounded-xl border border-line bg-surface/30 space-y-3">
-                <div className="flex items-center justify-between gap-4">
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold text-foreground">Flag creators with low average rating</p>
-                    <p className="text-xs text-muted mt-0.5">
-                      Surfaces creators whose overall rating drops below the threshold.
-                    </p>
-                  </div>
-                  <Toggle
-                    checked={settings.lowRatingFlagEnabled ?? false}
-                    onChange={(v) => update("lowRatingFlagEnabled", v)}
-                  />
-                </div>
-
-                {settings.lowRatingFlagEnabled && (
-                  <div className="pt-3 border-t border-line/60">
-                    <label className="block text-xs font-semibold text-foreground mb-2">
-                      Average rating threshold
-                    </label>
-                    <div className="flex items-center gap-3">
-                      <input
-                        type="range"
-                        min="1"
-                        max="5"
-                        step="0.1"
-                        value={settings.lowRatingThreshold ?? 2.5}
-                        onChange={(e) => update("lowRatingThreshold", Number(e.target.value))}
-                        className="flex-1 accent-primary"
-                      />
-                      <span className="shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-sm bg-primary/10 text-primary text-sm font-bold min-w-[64px] justify-center">
-                        <FiStar size={13} />
-                        {(settings.lowRatingThreshold ?? 2.5).toFixed(1)}
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-muted mt-2">
-                      Creators averaging at or below this rating get flagged for admin review.
-                    </p>
-                  </div>
-                )}
-              </div>
-
-              <div className="p-4 rounded-sm border border-line bg-surface/30 space-y-3">
-                <div>
-                  <p className="text-sm font-semibold text-foreground">Flag any single low review</p>
-                  <p className="text-xs text-muted mt-0.5">
-                    A single review at or below this rating gets flagged immediately, regardless of average.
-                  </p>
-                </div>
-                <div className="flex items-center gap-3">
-                  <input
-                    type="range"
-                    min="1"
-                    max="5"
-                    value={settings.singleReviewFlagRating ?? 2}
-                    onChange={(e) => update("singleReviewFlagRating", Number(e.target.value))}
-                    className="flex-1 accent-primary"
-                  />
-                  <span className="shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-sm bg-primary/10 text-primary text-sm font-bold min-w-[64px] justify-center">
-                    <FiStar size={13} />
-                    {settings.singleReviewFlagRating ?? 2}
-                  </span>
-                </div>
-              </div>
-            </div>
-            <SaveButton onClick={handleSave} saving={saving} />
-          </>
-        )}
-
-        {/* About Us */}
         {activeSection === "about" && (
           <>
             <SectionHeader
@@ -616,21 +392,21 @@ export default function AdminSettingsPage() {
               icon={<FiInfo size={17} />}
             />
             <div className="p-6 space-y-5">
-              <div>
-                <input
-                  type="text"
-                  placeholder="Page title"
-                  value={aboutTitle}
-                  onChange={(e) => setAboutTitle(e.target.value)}
-                  className="w-full text-lg font-bold px-0 py-1 border-0 border-b border-line focus:outline-none focus:border-primary bg-transparent"
-                />
-              </div>
+              <input
+                type="text"
+                placeholder="Page title"
+                value={aboutTitle}
+                onChange={(e) => setAboutTitle(e.target.value)}
+                className="w-full text-lg font-bold px-0 py-1 border-0 border-b border-line focus:outline-none focus:border-primary bg-transparent"
+              />
 
               <div>
-                <label className="block text-sm font-semibold text-foreground mb-1.5">Hero Image</label>
+                <label className="block text-sm font-semibold text-foreground mb-1.5">
+                  Hero image
+                </label>
                 {aboutHeroPreview ? (
                   <div className="relative w-full h-40 rounded-xl overflow-hidden border border-line group">
-                    <img src={aboutHeroPreview} className="w-full h-full object-cover" />
+                    <img src={aboutHeroPreview} className="w-full h-full object-cover" alt="" />
                     <label className="absolute inset-0 bg-black/0 group-hover:bg-background/40 transition flex items-center justify-center cursor-pointer">
                       <span className="opacity-0 group-hover:opacity-100 text-foreground text-xs font-semibold transition">
                         Change image

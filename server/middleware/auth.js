@@ -31,3 +31,25 @@ export const requireAdmin = (req,res,next) => {
   }
   next();
 }
+/**
+ * Like `protect`, but never rejects. Sets req.user when a valid token is
+ * present and moves on quietly when it isn't.
+ *
+ * Used by GET /api/announcements/active so the route can tell whether the
+ * visitor is a brand or an influencer without 401-ing logged-out visitors.
+ */
+export const optionalAuth = async (req, res, next) => {
+  try {
+    const header = req.headers.authorization || '';
+    const token = header.startsWith('Bearer ') ? header.slice(7) : null;
+    if (!token) return next();
+
+    const decoded = verifyToken(token, process.env.JWT_ACCESS_SECRET);
+    req.user = await User.findById(decoded.id).select('-passwordHash');
+
+    next();
+  } catch {
+    // Expired or forged token just means "no audience match".
+    next();
+  }
+};

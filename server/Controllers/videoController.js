@@ -51,14 +51,12 @@ export const getVideoFeed = async (req, res) => {
     const skip = (page - 1) * limit;
 
     const filter = {};
-    if (req.query.category) filter.category = req.query.category;
+    if (req.query.category) filter.category = new RegExp(req.query.category, 'i');
     if (req.query.postedBy) filter.postedBy = req.query.postedBy;
 
-    // sort logic — "trending" ranks by engagement, "latest" (default) by newest
     let sortStage = { createdAt: -1 };
 
     if (req.query.sort === 'trending') {
-      // trending: videos from the last 7 days, ranked by likes+views combined
       const sevenDaysAgo = new Date();
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
       filter.createdAt = { $gte: sevenDaysAgo };
@@ -67,7 +65,6 @@ export const getVideoFeed = async (req, res) => {
     let videosQuery = Video.find(filter).populate("postedBy", "name role");
 
     if (req.query.sort === 'trending') {
-      // can't easily sort by array length in a simple .sort(), so use aggregation instead
       const videos = await Video.aggregate([
         { $match: filter },
         {
@@ -95,7 +92,6 @@ export const getVideoFeed = async (req, res) => {
       });
     }
 
-    // default: latest (newest-first)
     const [videos, total] = await Promise.all([
       videosQuery.sort(sortStage).limit(limit).skip(skip),
       Video.countDocuments(filter),

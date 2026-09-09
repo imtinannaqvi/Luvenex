@@ -41,6 +41,9 @@ import settingRouter from './routes/settingsRoutes.js'
 import { runInactiveAccountSweep } from './Controllers/authController.js';
 import aboutRouter from './routes/aboutRoutes.js'
 import multer from 'multer';
+import brandingRouter from './routes/brandingRoutes.js'
+import announcementRouter from './routes/announcementRoutes.js'
+import supportRouter from './routes/supportRoutes.js'
 
 connectDB();
 
@@ -120,6 +123,10 @@ app.use('/api/contact', ContactRouter)
 app.use('/api/verification', VerificationRouter);
 app.use('/api/settings', settingRouter)
 app.use('/api/about', aboutRouter);
+app.use('/api/about', aboutRouter);
+app.use('/api/branding', brandingRouter);
+app.use('/api/announcements', announcementRouter);
+app.use('/api/support', supportRouter);
 
 // ↓ error handler
 app.use((err, req, res, next) => {

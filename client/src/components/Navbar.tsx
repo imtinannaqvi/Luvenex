@@ -11,6 +11,7 @@ const navLinks = [
   { href: "/about", label: "About Us" },
   { href: "/services", label: "Services" },
   { href: "/contact", label: "Contact Us" },
+  { href: "/explore", label: "Explore" },
 ];
 
 const Navbar = () => {

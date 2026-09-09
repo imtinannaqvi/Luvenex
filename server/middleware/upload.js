@@ -217,3 +217,61 @@ export const uploadAboutImage = multer({
     fileSize: 10 * 1024 * 1024,  // 10MB hero image
   },
 });
+
+const brandingDir = 'uploads/branding';
+if (!fs.existsSync(brandingDir)) fs.mkdirSync(brandingDir, { recursive: true });
+
+const brandingStorage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, brandingDir),
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    cb(null, `${file.fieldname}-${Date.now()}-${Math.round(Math.random() * 1e6)}${ext}`);
+  },
+});
+
+// Favicons are often .ico or .svg, which imageOnlyFilter rejects.
+const brandingImageFilter = (req, file, cb) => {
+  const allowed = [
+    'image/jpeg',
+    'image/png',
+    'image/webp',
+    'image/svg+xml',
+    'image/x-icon',
+    'image/vnd.microsoft.icon',
+  ];
+  if (allowed.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(new Error('Only image files (jpg, png, webp, svg, ico) are allowed for branding'));
+  }
+};
+
+// .fields() rather than .single() — the branding form posts up to four
+// different images in one request.
+export const uploadBranding = multer({
+  storage: brandingStorage,
+  fileFilter: brandingImageFilter,
+  limits: {
+    ...defaultLimits,
+    fileSize: 5 * 1024 * 1024, // 5MB per image
+  },
+}).fields([
+  { name: 'logo', maxCount: 1 },
+  { name: 'logoDark', maxCount: 1 },
+  { name: 'favicon', maxCount: 1 },
+  { name: 'ogImage', maxCount: 1 },
+]);
+
+/**
+ * Deletes a replaced upload so the uploads folder doesn't grow forever.
+ * Takes the stored path ("/uploads/branding/logo-123.png") and resolves it
+ * against the process working directory, matching how the dirs above are
+ * declared (relative, not __dirname-based).
+ *
+ * Never throws — a file that's already gone isn't worth a 500.
+ */
+export const removeUpload = (relPath) => {
+  if (!relPath || !relPath.startsWith('/uploads/')) return;
+  const abs = path.join(process.cwd(), relPath);
+  fs.unlink(abs, () => {});
+};

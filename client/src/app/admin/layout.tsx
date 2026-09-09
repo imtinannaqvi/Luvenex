@@ -22,11 +22,19 @@ import {
   FiPower,
   FiMenu,
   FiX,
+  FiChevronDown,
 } from "react-icons/fi";
 import { getToken, getUser, clearSession } from "@/lib/auth";
 import { apiFetch } from "@/lib/api";
 
-const NAV_ITEMS = [
+type NavItem = {
+  href: string;
+  label: string;
+  icon: any;
+  children?: { href: string; label: string }[];
+};
+
+const NAV_ITEMS: NavItem[] = [
   { href: "/admin", label: "Dashboard", icon: FiGrid },
   { href: "/admin/users", label: "Users", icon: FiUsers },
   { href: "/admin/deals", label: "Deals", icon: FiBriefcase },
@@ -45,7 +53,18 @@ const NAV_ITEMS = [
     icon: FiCheckCircle,
   },
   { href: "/admin/referrals", label: "Referrals", icon: FiGift },
-  { href: "/admin/settings", label: "Settings", icon: FiSettings },
+  {
+    href: "/admin/settings",
+    label: "Settings",
+    icon: FiSettings,
+    children: [
+      { href: "/admin/settings", label: "General" },
+      { href: "/admin/settings/platform", label: "Platform" },
+      { href: "/admin/settings/branding", label: "Branding" },
+      { href: "/admin/settings/announcements", label: "Announcements" },
+      { href: "/admin/settings/support", label: "Support" },
+    ],
+  },
 ];
 
 const countKeyMap: Record<string, string> = {
@@ -66,6 +85,7 @@ export default function AdminLayout({
   const [isOpen, setIsOpen] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [pendingCounts, setPendingCounts] = useState<Record<string, number>>({});
+  const [openGroups, setOpenGroups] = useState<string[]>([]);
 
   useEffect(() => {
     const token = getToken();
@@ -77,6 +97,17 @@ export default function AdminLayout({
 
   useEffect(() => {
     setMobileOpen(false);
+  }, [pathname]);
+
+  // Keep the group containing the current page expanded, including after a refresh.
+  useEffect(() => {
+    NAV_ITEMS.forEach((item) => {
+      if (item.children && pathname.startsWith(item.href)) {
+        setOpenGroups((prev) =>
+          prev.includes(item.href) ? prev : [...prev, item.href]
+        );
+      }
+    });
   }, [pathname]);
 
   useEffect(() => {
@@ -102,6 +133,11 @@ export default function AdminLayout({
 
   const sidebarExpanded = mobileOpen || isOpen;
 
+  const toggleGroup = (href: string) =>
+    setOpenGroups((prev) =>
+      prev.includes(href) ? prev.filter((h) => h !== href) : [...prev, href]
+    );
+
   const SidebarInner = (
     <>
       <div
@@ -114,7 +150,7 @@ export default function AdminLayout({
             sidebarExpanded ? "opacity-100" : "opacity-0 w-0"
           }`}
         >
-           Admin
+          Admin
         </h2>
 
         <button
@@ -139,9 +175,89 @@ export default function AdminLayout({
       <nav className="flex flex-col gap-1 text-sm flex-1 overflow-y-auto overflow-x-hidden pr-1">
         {NAV_ITEMS.map((item) => {
           const Icon = item.icon;
-          const active = pathname === item.href;
           const countKey = countKeyMap[item.href];
           const count = countKey ? pendingCounts[countKey] || 0 : 0;
+
+          /* ── Group with children (Settings) ── */
+          if (item.children) {
+            const inSection = pathname.startsWith(item.href);
+            const groupOpen = openGroups.includes(item.href);
+
+            // Collapsed rail has no room for a submenu, so the icon just
+            // navigates to the group's index page instead of expanding.
+            if (!sidebarExpanded) {
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  title={item.label}
+                  className={`flex items-center py-2 px-0 justify-center rounded-sm transition ${
+                    inSection
+                      ? "bg-primary text-paper font-medium"
+                      : "text-white/70 hover:bg-white/10 hover:text-paper"
+                  }`}
+                >
+                  <Icon size={18} className="shrink-0" aria-hidden="true" />
+                  <span className="sr-only">{item.label}</span>
+                </Link>
+              );
+            }
+
+            return (
+              <div key={item.href}>
+                <button
+                  type="button"
+                  onClick={() => toggleGroup(item.href)}
+                  aria-expanded={groupOpen}
+                  className={`w-full flex items-center gap-3 px-3 py-2 rounded-sm transition whitespace-nowrap overflow-hidden ${
+                    inSection && !groupOpen
+                      ? "bg-primary text-paper font-medium"
+                      : "text-white/70 hover:bg-white/10 hover:text-paper"
+                  }`}
+                >
+                  <Icon size={18} className="shrink-0" aria-hidden="true" />
+                  <span className="flex-1 text-left">{item.label}</span>
+                  <FiChevronDown
+                    size={14}
+                    className={`shrink-0 transition-transform duration-200 ${
+                      groupOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+
+                {groupOpen && (
+                  <div className="mt-1 ml-[26px] pl-3 border-l border-white/15 flex flex-col gap-0.5">
+                    {item.children.map((child) => {
+                      // Exact match on the index route, prefix match on the rest,
+                      // or "General" would stay lit on every sub-page.
+                      const childActive =
+                        child.href === item.href
+                          ? pathname === item.href
+                          : pathname.startsWith(child.href);
+
+                      return (
+                        <Link
+                          key={child.href}
+                          href={child.href}
+                          onClick={() => setMobileOpen(false)}
+                          className={`px-3 py-1.5 rounded-sm transition whitespace-nowrap ${
+                            childActive
+                              ? "bg-primary text-paper font-medium"
+                              : "text-white/60 hover:bg-white/10 hover:text-paper"
+                          }`}
+                        >
+                          {child.label}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          }
+
+          /* ── Plain link ── */
+          const active = pathname === item.href;
 
           return (
             <Link
