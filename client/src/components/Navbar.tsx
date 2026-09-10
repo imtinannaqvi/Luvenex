@@ -6,6 +6,11 @@ import { usePathname, useRouter } from "next/navigation";
 import { useContactPanel } from "./ContactPanel";
 import { getToken } from "@/lib/auth";
 
+const API = process.env.NEXT_PUBLIC_API_URL;
+
+// Shown until the uploaded logo loads, and kept as the fallback if none is set.
+const FALLBACK_LOGO = "/file_0000000089d482118329077f6e1cff4c.png";
+
 const navLinks = [
   { href: "/discover", label: "Discover " },
   { href: "/about", label: "About Us" },
@@ -22,6 +27,7 @@ const Navbar = () => {
   const [mounted, setMounted] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
+  const [logo, setLogo] = useState<string | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -37,7 +43,17 @@ const Navbar = () => {
     };
   }, [pathname]);
 
-   const handleLogout = () => {
+  // Logo comes from Settings → Branding. Falls back to the bundled image.
+  useEffect(() => {
+    fetch(`${API}/api/branding`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data?.branding?.logo) setLogo(`${API}${data.branding.logo}`);
+      })
+      .catch(() => {});
+  }, []);
+
+  const handleLogout = () => {
     setLoggingOut(true);
     setTimeout(() => {
       localStorage.removeItem("luvenex_token");
@@ -52,15 +68,22 @@ const Navbar = () => {
 
   if (pathname.startsWith("/admin") || pathname.startsWith("/app")) return null;
 
+  const usingUploadedLogo = Boolean(logo);
+
   return (
     <header className="w-full bg-background text-foreground z-30 relative border-b border-border-color transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-4">
         {/* Logo */}
-         <Link href="/" className="">
+        <Link href="/" className="">
           <img
-            src="/file_0000000089d482118329077f6e1cff4c.png"
+            src={logo || FALLBACK_LOGO}
             alt="Luvenex"
-            className="h-7 sm:h-9 w-auto select-none dark:invert-0 invert transition-all"
+            // The bundled logo is a single-colour mark that needs inverting in
+            // light mode. An uploaded logo is used exactly as supplied.
+            className={`h-7 sm:h-9 w-auto select-none transition-all ${
+              usingUploadedLogo ? "" : "dark:invert-0 invert"
+            }`}
+            onError={() => setLogo(null)}
           />
         </Link>
 

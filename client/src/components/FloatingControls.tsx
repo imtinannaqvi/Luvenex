@@ -25,8 +25,8 @@ export default function FloatingControls() {
   };
 
   return (
-    <div className="fixed right-4 sm:right-6 bottom-6 z-40 flex flex-col items-center gap-3">
-      {/* Theme toggle */}
+<div className="fixed right-4 sm:right-6 bottom-28 z-40 flex flex-col items-center gap-3">
+            {/* Theme toggle */}
       <button
         onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
         aria-label="Toggle theme"

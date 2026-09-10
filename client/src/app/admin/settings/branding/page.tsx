@@ -19,13 +19,13 @@ const FIELDS: {
     key: "logo",
     label: "Logo",
     hint: "SVG or transparent PNG, around 240×64. Shown in the site header.",
-    boxHeight: "h-32",
+    boxHeight: "h-28",
   },
   {
     key: "favicon",
     label: "Favicon",
     hint: "Square PNG or ICO, 32×32 or larger. Shown in the browser tab.",
-    boxHeight: "h-32",
+    boxHeight: "h-28",
   },
 ];
 
@@ -131,39 +131,39 @@ export default function BrandingPage() {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-foreground italic">Branding</h1>
-        <p className="text-sm text-muted mt-1">Your logo and favicon.</p>
+      <div className="mb-5">
+        <h1 className="text-lg font-semibold text-foreground">Branding</h1>
+        <p className="text-xs text-muted mt-0.5">Your logo and favicon.</p>
       </div>
 
-      <div className="bg-background border border-line rounded-sm overflow-hidden max-w-2xl">
-        <div className="flex items-center gap-3 px-6 py-5 border-b border-line bg-surface/40">
-          <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white shrink-0">
-            <FiDroplet size={17} />
+      <div className="bg-background border border-line rounded-sm overflow-hidden max-w-xl">
+        <div className="flex items-center gap-3 px-5 py-4 border-b border-line bg-surface/40">
+          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white shrink-0">
+            <FiDroplet size={15} />
           </div>
           <div className="min-w-0">
-            <h2 className="text-lg font-bold italic text-foreground">Images</h2>
-            <p className="text-xs text-muted mt-0.5">Shown across the public site</p>
+            <h2 className="text-sm font-semibold text-foreground">Images</h2>
+            <p className="text-[11px] text-muted">Shown across the public site</p>
           </div>
         </div>
 
-        <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <div className="p-5 flex flex-col gap-5">
           {FIELDS.map((f) => (
-            <div key={f.key}>
-              <label className="block text-sm font-semibold text-foreground mb-1.5">
+            <div key={f.key} className="flex flex-col">
+              <label className="block text-xs font-medium text-foreground mb-1.5">
                 {f.label}
               </label>
               {previews[f.key] ? (
                 <div
-                  className={`relative w-full ${f.boxHeight} rounded-xl overflow-hidden border border-line group bg-surface/40`}
+                  className={`relative w-full ${f.boxHeight} rounded-lg overflow-hidden border border-line group bg-surface/40`}
                 >
                   <img
                     src={previews[f.key]!}
-                    className="w-full h-full object-contain p-4"
+                    className="w-full h-full object-contain p-3"
                     alt=""
                   />
                   <label className="absolute inset-0 group-hover:bg-background/40 transition flex items-center justify-center cursor-pointer">
-                    <span className="opacity-0 group-hover:opacity-100 text-foreground text-xs font-semibold transition">
+                    <span className="opacity-0 group-hover:opacity-100 text-foreground text-xs font-medium transition">
                       Change image
                     </span>
                     <input
@@ -176,17 +176,17 @@ export default function BrandingPage() {
                   <button
                     type="button"
                     onClick={() => clearFile(f.key)}
-                    className="absolute top-2 right-2 w-6 h-6 rounded-sm bg-background/60 hover:bg-background/80 text-foreground flex items-center justify-center transition"
+                    className="absolute top-2 right-2 w-5 h-5 rounded-sm bg-background/60 hover:bg-background/80 text-foreground flex items-center justify-center transition"
                     aria-label={`Remove ${f.label}`}
                   >
-                    <FiX size={13} />
+                    <FiX size={12} />
                   </button>
                 </div>
               ) : (
                 <label
-                  className={`flex flex-col items-center justify-center gap-1.5 w-full ${f.boxHeight} border-2 border-dashed border-line hover:border-primary hover:bg-primary/5 rounded-sm cursor-pointer transition`}
+                  className={`flex flex-col items-center justify-center gap-1.5 w-full ${f.boxHeight} border border-dashed border-line hover:border-primary hover:bg-primary/5 rounded-sm cursor-pointer transition`}
                 >
-                  <FiImage size={18} className="text-foreground" />
+                  <FiImage size={16} className="text-foreground" />
                   <p className="text-xs text-foreground">Click to upload</p>
                   <input
                     type="file"
@@ -196,16 +196,16 @@ export default function BrandingPage() {
                   />
                 </label>
               )}
-              <p className="text-[11px] text-muted mt-1.5">{f.hint}</p>
+              <p className="text-[11px] text-muted mt-1">{f.hint}</p>
             </div>
           ))}
         </div>
 
-        <div className="px-6 py-4 border-t border-line bg-surface/30 flex justify-end">
+        <div className="px-5 py-3.5 border-t border-line bg-surface/30 flex justify-end">
           <button
             onClick={handleSave}
             disabled={saving}
-            className="px-6 py-2.5 rounded-xl bg-primary text-foreground text-sm font-semibold hover:bg-primary-dark transition disabled:opacity-50 shadow-sm"
+            className="px-4 py-2 rounded-lg bg-primary text-foreground text-xs font-semibold hover:bg-primary-dark transition disabled:opacity-50 shadow-sm"
           >
             {saving ? "Saving..." : "Save changes"}
           </button>

@@ -27,6 +27,8 @@ import {
  
   useNotifications,
 } from "@/context/Notificationscontext";
+import AnnouncementBanner from "@/components/AnnouncementBanner";
+import SupportWidget from "@/components/SupportWidget";
 
 export default function UserAppLayout({
   children,
@@ -244,7 +246,7 @@ function AppShell({
                     : "opacity-0 max-w-0"
                 }`}
               >
-                Wallet & Payouts
+                Wallet &amp; Payouts
               </span>
               {sidebarExpanded && (
                 <svg
@@ -352,6 +354,9 @@ function AppShell({
         transition: "grid-template-columns 300ms ease-in-out",
       }}
     >
+      {/* Floating WhatsApp button — fixed, so its spot in the tree doesn't matter */}
+      <SupportWidget />
+
       {/* ── Desktop sidebar (in the grid, md+) ── */}
       <aside className="hidden md:flex bg-ink text-paper flex-col h-full py-6 overflow-hidden">
         {SidebarInner}
@@ -401,6 +406,9 @@ function AppShell({
               : "flex-1 p-4 sm:p-6 lg:p-8"
           }
         >
+          {/* Skipped on full-bleed pages (Messages) — that layout fills the
+              height exactly and a banner would push the composer off-screen. */}
+          {!isFullBleedPage && <AnnouncementBanner />}
           {children}
         </div>
       </main>

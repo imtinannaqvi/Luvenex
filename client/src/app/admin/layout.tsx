@@ -58,7 +58,6 @@ const NAV_ITEMS: NavItem[] = [
     label: "Settings",
     icon: FiSettings,
     children: [
-      { href: "/admin/settings/platform", label: "Platform" },
       { href: "/admin/settings/branding", label: "Branding" },
       { href: "/admin/settings/announcements", label: "Announcements" },
       { href: "/admin/settings/support", label: "Support" },
@@ -172,7 +171,7 @@ export default function AdminLayout({
       </div>
 
       {/* Increased vertical gap between items from gap-1 to gap-2 */}
-      <nav className="flex flex-col gap-2 text-sm flex-1 overflow-y-auto overflow-x-hidden pr-1 pb-2">
+      <nav className="flex flex-col gap-2 text-sm flex-1 space-y-4 overflow-y-auto overflow-x-hidden pr-1 pb-2">
         {NAV_ITEMS.map((item) => {
           const Icon = item.icon;
           const countKey = countKeyMap[item.href];
@@ -190,7 +189,7 @@ export default function AdminLayout({
                   key={item.href}
                   href={item.href}
                   title={item.label}
-                  className={`flex items-center py-2.5 px-0 justify-center rounded-sm transition ${
+                  className={`flex items-center py-3.5 px-0 justify-center rounded-sm transition ${
                     inSection
                       ? "bg-primary text-paper font-medium"
                       : "text-white/70 hover:bg-white/10 hover:text-paper"
@@ -216,7 +215,7 @@ export default function AdminLayout({
                   <Link
                     href={item.href}
                     onClick={() => setMobileOpen(false)}
-                    className="flex-1 flex items-center gap-3 px-3 py-2.5"
+                    className="flex-1 flex items-center gap-3 px-3 py-3.5"
                   >
                     <Icon size={18} className="shrink-0" aria-hidden="true" />
                     <span className="text-left">{item.label}</span>
@@ -275,7 +274,7 @@ export default function AdminLayout({
               href={item.href}
               title={item.label}
               onClick={() => setMobileOpen(false)}
-              className={`flex items-center py-2.5 rounded-sm transition whitespace-nowrap overflow-hidden ${
+              className={`flex items-center py-4.5 rounded-sm transition whitespace-nowrap overflow-hidden ${
                 sidebarExpanded ? "px-3 gap-3" : "px-0 justify-center"
               } ${
                 active
@@ -319,7 +318,7 @@ export default function AdminLayout({
   return (
     <div className="flex min-h-screen">
       <aside
-        className={`hidden md:flex bg-ink text-paper flex-col h-screen sticky top-0 py-6 shrink-0 transition-all duration-300 ease-in-out ${
+        className={`hidden md:flex bg-ink text-paper flex-col h-screen  sticky top-0 py-6 shrink-0 transition-all duration-300 ease-in-out ${
           isOpen ? "w-64 px-5" : "w-20 px-3"
         }`}
       >
