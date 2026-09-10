@@ -4,6 +4,7 @@ const CATEGORIES = ['payment', 'deal', 'account', 'technical', 'other'];
 const PRIORITIES = ['low', 'medium', 'high'];
 const STATUSES = ['open', 'in_progress', 'resolved', 'closed'];
 
+/* ── User side ─────────────────────────────────────────────── */
 
 export const createTicket = async (req, res) => {
     try {
@@ -22,6 +23,7 @@ export const createTicket = async (req, res) => {
             return res.status(400).json({ error: { message: 'Invalid priority' } });
         }
 
+        // Stop someone spamming the queue with identical open tickets.
         const openCount = await SupportTicket.countDocuments({
             createdBy: req.user._id,
             status: { $in: ['open', 'in_progress'] },
@@ -58,6 +60,7 @@ export const getMyTickets = async (req, res) => {
     }
 };
 
+/* ── Shared: one ticket, owner or admin only ───────────────── */
 
 export const getTicket = async (req, res) => {
     try {
@@ -107,6 +110,7 @@ export const addMessage = async (req, res) => {
             body: body.trim(),
         });
 
+        // An admin replying moves it along; a user replying puts it back in the queue.
         if (isAdmin) {
             ticket.awaitingAdminReply = false;
             if (ticket.status === 'open') ticket.status = 'in_progress';
@@ -124,6 +128,7 @@ export const addMessage = async (req, res) => {
     }
 };
 
+/* ── Admin side ────────────────────────────────────────────── */
 
 export const getAllTickets = async (req, res) => {
     try {
@@ -133,6 +138,16 @@ export const getAllTickets = async (req, res) => {
         }
         if (req.query.category && CATEGORIES.includes(req.query.category)) {
             filter.category = req.query.category;
+        }
+        if (['brand', 'influencer'].includes(req.query.role)) {
+            filter.createdByRole = req.query.role;
+        }
+
+        // Free-text search across the ticket number, title and description.
+        const q = req.query.q?.trim();
+        if (q) {
+            const rx = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+            filter.$or = [{ ticketNumber: rx }, { title: rx }, { description: rx }];
         }
 
         const tickets = await SupportTicket.find(filter)
@@ -147,7 +162,7 @@ export const getAllTickets = async (req, res) => {
             closed: await SupportTicket.countDocuments({ status: 'closed' }),
         };
 
-        res.json({ tickets, counts });
+        res.json({ tickets, counts, total: tickets.length });
     } catch (error) {
         res.status(500).json({ error: { message: error.message } });
     }

@@ -14,6 +14,14 @@ const CATEGORIES = [
   { value: "other", label: "Something else" },
 ] as const;
 
+const CATEGORY_LABELS: Record<string, string> = {
+  payment: "Payments",
+  deal: "Deals",
+  account: "Account",
+  technical: "Technical",
+  other: "Other",
+};
+
 const STATUS_STYLES: Record<string, string> = {
   open: "bg-blue-50 text-blue-700 border-blue-200",
   in_progress: "bg-amber-50 text-amber-700 border-amber-200",
@@ -155,33 +163,108 @@ export default function SupportPage() {
             </p>
           </div>
         ) : (
-          <div className="divide-y divide-border-color">
-            {tickets.map((t) => (
-              <button
-                key={t._id}
-                onClick={() => openTicket(t._id)}
-                className="w-full text-left px-5 py-4 hover:bg-surface transition flex items-start gap-4"
-              >
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-[11px] font-mono text-foreground/40">
+          <>
+            {/* ── Table, md and up ── */}
+            <table className="hidden md:table w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b border-border-color bg-surface/40">
+                  <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-foreground/45 w-[110px]">
+                    Ticket
+                  </th>
+                  <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-foreground/45">
+                    Issue
+                  </th>
+                  <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-foreground/45 w-[120px]">
+                    Category
+                  </th>
+                  <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-foreground/45 w-[120px]">
+                    Status
+                  </th>
+                  <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-foreground/45 w-[90px] text-center">
+                    Replies
+                  </th>
+                  <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-foreground/45 w-[120px] text-right">
+                    Updated
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border-color">
+                {tickets.map((t) => (
+                  <tr
+                    key={t._id}
+                    onClick={() => openTicket(t._id)}
+                    className="group cursor-pointer hover:bg-surface/60 transition-colors"
+                  >
+                    <td className="px-5 py-4 align-top">
+                      <span className="text-xs font-mono text-foreground/45 group-hover:text-primary transition-colors">
+                        {ticketRef(t._id)}
+                      </span>
+                    </td>
+                    <td className="px-5 py-4 align-top max-w-0">
+                      <p className="text-sm font-semibold text-foreground truncate">{t.title}</p>
+                      <p className="text-xs text-foreground/50 mt-0.5 truncate">{t.description}</p>
+                    </td>
+                    <td className="px-5 py-4 align-top">
+                      <span className="text-xs text-foreground/60">
+                        {CATEGORY_LABELS[t.category] || "Other"}
+                      </span>
+                    </td>
+                    <td className="px-5 py-4 align-top">
+                      <span
+                        className={`inline-block text-[10px] font-semibold px-2 py-0.5 rounded-sm border whitespace-nowrap ${STATUS_STYLES[t.status]}`}
+                      >
+                        {STATUS_LABELS[t.status]}
+                      </span>
+                    </td>
+                    <td className="px-5 py-4 align-top text-center">
+                      <span
+                        className={`inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 rounded-sm text-[11px] font-bold ${
+                          t.messages?.length
+                            ? "bg-primary/10 text-primary"
+                            : "text-foreground/30"
+                        }`}
+                      >
+                        {t.messages?.length || 0}
+                      </span>
+                    </td>
+                    <td className="px-5 py-4 align-top text-right">
+                      <span className="text-[11px] text-foreground/45 whitespace-nowrap">
+                        {timeAgo(t.updatedAt)}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            {/* ── Stacked cards, below md ── */}
+            <div className="md:hidden divide-y divide-border-color">
+              {tickets.map((t) => (
+                <button
+                  key={t._id}
+                  onClick={() => openTicket(t._id)}
+                  className="w-full text-left px-4 py-3.5 hover:bg-surface transition"
+                >
+                  <div className="flex items-center justify-between gap-2 mb-1">
+                    <span className="text-[11px] font-mono text-foreground/45">
                       {ticketRef(t._id)}
                     </span>
-                    <p className="text-sm font-semibold text-foreground truncate">{t.title}</p>
                     <span
-                      className={`text-[10px] font-semibold px-2 py-0.5 rounded-sm border ${STATUS_STYLES[t.status]}`}
+                      className={`text-[10px] font-semibold px-2 py-0.5 rounded-sm border shrink-0 ${STATUS_STYLES[t.status]}`}
                     >
                       {STATUS_LABELS[t.status]}
                     </span>
                   </div>
-                  <p className="text-xs text-foreground/60 mt-1 line-clamp-1">{t.description}</p>
+                  <p className="text-sm font-semibold text-foreground truncate">{t.title}</p>
+                  <p className="text-xs text-foreground/50 mt-0.5 line-clamp-1">{t.description}</p>
                   <p className="text-[11px] text-foreground/40 mt-1.5">
-                    {t.messages?.length || 0} replies · updated {timeAgo(t.updatedAt)}
+                    {CATEGORY_LABELS[t.category] || "Other"} · {t.messages?.length || 0} replies ·{" "}
+                    {timeAgo(t.updatedAt)}
                   </p>
-                </div>
-              </button>
-            ))}
-          </div>
+                </button>
+              ))}
+            </div>
+          </>
         )}
       </div>
 
