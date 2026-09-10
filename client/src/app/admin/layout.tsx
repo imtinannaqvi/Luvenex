@@ -58,6 +58,7 @@ const NAV_ITEMS: NavItem[] = [
     label: "Settings",
     icon: FiSettings,
     children: [
+      { href: "/admin/settings/platform", label: "Platform" },
       { href: "/admin/settings/branding", label: "Branding" },
       { href: "/admin/settings/announcements", label: "Announcements" },
       { href: "/admin/settings/support", label: "Support" },
@@ -170,7 +171,8 @@ export default function AdminLayout({
         </button>
       </div>
 
-      <nav className="flex flex-col gap-1 text-sm flex-1 overflow-y-auto overflow-x-hidden pr-1 pb-2">
+      {/* Increased vertical gap between items from gap-1 to gap-2 */}
+      <nav className="flex flex-col gap-2 text-sm flex-1 overflow-y-auto overflow-x-hidden pr-1 pb-2">
         {NAV_ITEMS.map((item) => {
           const Icon = item.icon;
           const countKey = countKeyMap[item.href];
@@ -188,7 +190,7 @@ export default function AdminLayout({
                   key={item.href}
                   href={item.href}
                   title={item.label}
-                  className={`flex items-center py-2 px-0 justify-center rounded-sm transition ${
+                  className={`flex items-center py-2.5 px-0 justify-center rounded-sm transition ${
                     inSection
                       ? "bg-primary text-paper font-medium"
                       : "text-white/70 hover:bg-white/10 hover:text-paper"
@@ -201,7 +203,7 @@ export default function AdminLayout({
             }
 
             return (
-              <div key={item.href}>
+              <div key={item.href} className="flex flex-col">
                 <div
                   className={`w-full flex items-center rounded-sm transition overflow-hidden ${
                     exactActive
@@ -214,7 +216,7 @@ export default function AdminLayout({
                   <Link
                     href={item.href}
                     onClick={() => setMobileOpen(false)}
-                    className="flex-1 flex items-center gap-3 px-3 py-2"
+                    className="flex-1 flex items-center gap-3 px-3 py-2.5"
                   >
                     <Icon size={18} className="shrink-0" aria-hidden="true" />
                     <span className="text-left">{item.label}</span>
@@ -226,7 +228,7 @@ export default function AdminLayout({
                       toggleGroup(item.href);
                     }}
                     aria-expanded={groupOpen}
-                    className="px-2.5 py-2 hover:bg-white/10 transition"
+                    className="px-2.5 py-2.5 hover:bg-white/10 transition"
                     title={groupOpen ? "Collapse submenu" : "Expand submenu"}
                   >
                     <FiChevronDown
@@ -239,7 +241,7 @@ export default function AdminLayout({
                 </div>
 
                 {groupOpen && (
-                  <div className="mt-1 mb-2 ml-[26px] pl-3 border-l border-white/20 flex flex-col gap-1">
+                  <div className="mt-1.5 mb-1 ml-[26px] pl-3 border-l border-white/20 flex flex-col gap-1.5">
                     {item.children.map((child) => {
                       const childActive = pathname === child.href;
 
@@ -248,7 +250,7 @@ export default function AdminLayout({
                           key={child.href}
                           href={child.href}
                           onClick={() => setMobileOpen(false)}
-                          className={`px-3 py-1.5 text-xs rounded-sm transition whitespace-nowrap ${
+                          className={`px-3 py-2 text-xs rounded-sm transition whitespace-nowrap ${
                             childActive
                               ? "bg-primary text-paper font-medium"
                               : "text-white/60 hover:bg-white/10 hover:text-paper"
@@ -273,7 +275,7 @@ export default function AdminLayout({
               href={item.href}
               title={item.label}
               onClick={() => setMobileOpen(false)}
-              className={`flex items-center py-2 rounded-sm transition whitespace-nowrap overflow-hidden ${
+              className={`flex items-center py-2.5 rounded-sm transition whitespace-nowrap overflow-hidden ${
                 sidebarExpanded ? "px-3 gap-3" : "px-0 justify-center"
               } ${
                 active
