@@ -76,7 +76,7 @@ function SignupForm() {
         <div className="absolute -top-16 -left-16 w-44 h-44 bg-primary/50 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -bottom-16 -right-16 w-44 h-44 bg-primary/50 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="relative z-10 w-full bg-ink/40 rounded-2xl shadow-2xl p-8 backdrop-blur-xl">
+        <div className="relative z-10 w-full bg-ink/40 rounded-sm shadow-2xl p-8 backdrop-blur-xl">
           <div className="flex justify-center mb-4">
             <img src="/luvenex-logo-black.png" alt="Luvenex" className="h-12 w-auto" />
           </div>
@@ -90,14 +90,14 @@ function SignupForm() {
             <button
               type="button"
               onClick={() => setRole("brand")}
-              className={`group relative rounded-2xl p-5 text-center border transition-all duration-300 backdrop-blur-sm ${
+              className={`group relative rounded-sm p-5 text-center border transition-all duration-300 backdrop-blur-sm ${
                 role === "brand"
                   ? "bg-primary/90 border-primary shadow-[0_0_25px_rgba(185,8,8,0.4)] scale-[1.02]"
                   : "bg-white/5 border-white/5 hover:border-white/10 hover:bg-white/10"
               }`}
             >
               {role === "brand" && (
-                <span className="absolute top-3 right-3 w-4 h-4 rounded-full bg-background flex items-center justify-center animate-in fade-in zoom-in-75 duration-200">
+                <span className="absolute top-3 right-3 w-3 h-3 rounded-md bg-background flex items-center justify-center animate-in fade-in zoom-in-75 duration-200">
                   <svg className="w-2.5 h-2.5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={4}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                   </svg>
@@ -175,7 +175,7 @@ function SignupForm() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
-                className="w-full px-3.5 py-2.5 rounded-xl border border-line text-sm bg-background
+                className="w-full px-3.5 py-2.5 rounded-sm border border-line text-sm bg-background
                            focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
               />
             </div>
@@ -189,7 +189,7 @@ function SignupForm() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-3.5 py-2.5 rounded-xl border border-line text-sm bg-background
+                className="w-full px-3.5 py-2.5 rounded-sm border border-line text-sm bg-background
                            focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
               />
             </div>
@@ -205,14 +205,14 @@ function SignupForm() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   minLength={6}
-                  className="w-full px-3.5 py-2.5 pr-11 rounded-xl border border-line text-sm bg-background
+                  className="w-full px-3.5 py-2.5 pr-11 rounded-sm border border-line text-sm bg-background
                              focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((v) => !v)}
                   aria-label={showPassword ? "Hide password" : "Show password"}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-foreground transition"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground hover:text-foreground transition"
                 >
                   {showPassword ? <FiEyeOff size={17} /> : <FiEye size={17} />}
                 </button>
@@ -230,14 +230,14 @@ function SignupForm() {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
                   minLength={6}
-                  className="w-full px-3.5 py-2.5 pr-11 rounded-xl border border-line text-sm bg-background
+                  className="w-full px-3.5 py-2.5 pr-11 rounded-sm border border-line text-sm bg-background
                              focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirm((v) => !v)}
                   aria-label={showConfirm ? "Hide password" : "Show password"}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-foreground transition"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground hover:text-foreground transition"
                 >
                   {showConfirm ? <FiEyeOff size={17} /> : <FiEye size={17} />}
                 </button>
@@ -265,7 +265,7 @@ function SignupForm() {
               <button
                 type="submit"
                 disabled={loading}
-                className="px-16 py-3.5 rounded-xl mt-2 bg-primary/40 text-foreground font-semibold text-sm
+                className="px-16 py-3.5 rounded-sm mt-2 bg-primary/40 text-foreground font-semibold text-sm
                            hover:bg-primary-dark transition disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {loading ? "Creating account..." : "Sign up"}
@@ -274,7 +274,7 @@ function SignupForm() {
 
             <p className="text-center text-sm text-foreground italic">
               Already have an account?{" "}
-              <a href="/login" className="text-white font-medium hover:underline">
+              <a href="/login" className="text-foreground font-medium hover:underline">
                 Log in
               </a>
             </p>

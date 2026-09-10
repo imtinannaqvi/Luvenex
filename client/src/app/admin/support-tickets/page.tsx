@@ -162,15 +162,13 @@ export default function AdminSupportTicketsPage() {
   };
 
   const selectCls =
-    "px-3.5 py-2.5 rounded-xl border border-line bg-background text-sm text-foreground focus:outline-none focus:border-primary cursor-pointer";
+    "px-3.5 py-2.5 rounded-sm border border-line bg-background text-sm text-foreground focus:outline-none focus:border-primary cursor-pointer";
 
   return (
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-foreground italic">Support Tickets</h1>
-        <p className="text-sm text-muted mt-1">
-          {loading ? "Loading..." : `${tickets.length} ticket${tickets.length === 1 ? "" : "s"}`}
-        </p>
+       
       </div>
 
       {/* ── Filters ── */}
@@ -204,13 +202,13 @@ export default function AdminSupportTicketsPage() {
             onKeyDown={(e) => {
               if (e.key === "Enter") setQuery(search.trim());
             }}
-            className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-line bg-background text-sm text-foreground placeholder:text-muted focus:outline-none focus:border-primary"
+            className="w-full pl-10 pr-3.5 py-2.5 rounded-sm border border-line bg-background text-sm text-foreground placeholder:text-muted focus:outline-none focus:border-primary"
           />
         </div>
 
         <button
           onClick={() => setQuery(search.trim())}
-          className="px-5 py-2.5 rounded-xl bg-primary text-white text-sm font-semibold hover:opacity-90 transition"
+          className="px-5 py-2.5 rounded-sm bg-primary text-white text-sm font-semibold hover:opacity-90 transition"
         >
           Search
         </button>
@@ -223,7 +221,7 @@ export default function AdminSupportTicketsPage() {
               setSearch("");
               setQuery("");
             }}
-            className="text-xs font-semibold text-muted hover:text-foreground transition"
+            className="text-xs font-semibold text-foreground hover:text-foreground transition"
           >
             Clear
           </button>
@@ -231,7 +229,7 @@ export default function AdminSupportTicketsPage() {
       </div>
 
       {/* ── Table ── */}
-      <div className="bg-background border border-line rounded-xl overflow-hidden">
+      <div className="bg-background border border-line rounded-sm overflow-hidden">
         {loading ? (
           <div className="py-20 flex items-center justify-center">
             <div className="w-6 h-6 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
@@ -272,13 +270,8 @@ export default function AdminSupportTicketsPage() {
                   <tr key={t._id} className="hover:bg-surface/50 transition-colors">
                     <td className="pl-5 pr-3 py-4">
                       <div className="flex items-center gap-2">
-                        {/* Solid dot = user replied last, nobody has answered */}
-                        <span
-                          className={`w-1.5 h-1.5 rounded-full shrink-0 ${
-                            t.awaitingAdminReply ? "bg-primary" : "bg-transparent"
-                          }`}
-                        />
-                        <span className="text-xs font-mono text-primary">
+                     
+                        <span className="text-sm font-mono text-primary">
                           {t.ticketNumber || "—"}
                         </span>
                       </div>
@@ -378,19 +371,19 @@ export default function AdminSupportTicketsPage() {
                 <p className="text-lg font-bold font-mono text-foreground">
                   {active.ticketNumber}
                 </p>
-                <p className="text-sm text-muted mt-0.5 truncate">{active.title}</p>
+                <p className="text-sm text-foreground mt-0.5 truncate">{active.title}</p>
               </div>
               <div className="flex items-center gap-1 shrink-0">
                 <button
                   onClick={() => removeTicket(active._id)}
-                  className="w-8 h-8 rounded-lg text-muted hover:text-primary hover:bg-primary/10 flex items-center justify-center transition"
+                  className="w-8 h-8 rounded-lg text-foreground hover:text-primary hover:bg-primary/10 flex items-center justify-center transition"
                   aria-label="Delete ticket"
                 >
                   <FiTrash2 size={15} />
                 </button>
                 <button
                   onClick={() => setActive(null)}
-                  className="w-8 h-8 rounded-lg text-muted hover:text-foreground hover:bg-surface flex items-center justify-center transition"
+                  className="w-8 h-8 rounded-lg text-foreground hover:text-foreground hover:bg-surface flex items-center justify-center transition"
                   aria-label="Close"
                 >
                   <FiX size={18} />
@@ -410,7 +403,7 @@ export default function AdminSupportTicketsPage() {
               >
                 {active.priority}
               </span>
-              <span className="text-xs text-muted ml-1 truncate">
+              <span className="text-md text-foreground ml-1 truncate">
                 From:{" "}
                 <span className="text-foreground/80 font-medium">{active.createdBy?.name}</span> (
                 {active.createdByRole}) · {active.createdBy?.email}
@@ -428,8 +421,8 @@ export default function AdminSupportTicketsPage() {
                     onClick={() => !isCurrent && patchTicket({ status: s })}
                     className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold border transition disabled:opacity-50 ${
                       isCurrent
-                        ? "bg-primary text-white border-primary"
-                        : "border-line text-muted hover:text-foreground hover:border-foreground/25"
+                        ? "bg-primary text-foreground border-primary"
+                        : "border-line text-foreground hover:text-foreground hover:border-foreground/25"
                     }`}
                   >
                     {STATUS_LABELS[s]}
@@ -441,7 +434,7 @@ export default function AdminSupportTicketsPage() {
                 value={active.priority}
                 disabled={updating}
                 onChange={(e) => patchTicket({ priority: e.target.value })}
-                className="ml-auto px-2.5 py-1.5 rounded-lg border border-line bg-background text-xs font-semibold text-foreground focus:outline-none focus:border-primary cursor-pointer disabled:opacity-50"
+                className="ml-auto px-2.5 py-1.5 rounded-sm border border-line bg-background text-xs font-semibold text-foreground focus:outline-none focus:border-primary cursor-pointer disabled:opacity-50"
               >
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
@@ -451,8 +444,8 @@ export default function AdminSupportTicketsPage() {
 
             {/* Thread */}
             <div className="flex-1 overflow-y-auto px-6 py-5 space-y-4 min-h-0 bg-surface/20">
-              <div className="rounded-xl border border-line bg-background px-4 py-3">
-                <p className="text-xs text-muted mb-1">
+              <div className="rounded-sm border border-line bg-background px-4 py-3">
+                <p className="text-md text-foreground mb-1">
                   <span className="font-semibold text-foreground/80">
                     {active.createdBy?.name}
                   </span>{" "}
@@ -474,7 +467,7 @@ export default function AdminSupportTicketsPage() {
                         : "mr-8 bg-background border-line"
                     }`}
                   >
-                    <p className="text-xs text-muted mb-1">
+                    <p className="text-xs text-foreground mb-1">
                       <span
                         className={`font-semibold ${
                           fromAdmin ? "text-primary" : "text-foreground/80"
@@ -495,7 +488,7 @@ export default function AdminSupportTicketsPage() {
             {/* Composer */}
             <div className="px-6 py-4 border-t border-line shrink-0">
               {active.status === "closed" ? (
-                <p className="text-xs text-muted text-center py-2">
+                <p className="text-xs text-foreground text-center py-2">
                   This ticket is closed. Reopen it above to reply.
                 </p>
               ) : (
@@ -516,7 +509,7 @@ export default function AdminSupportTicketsPage() {
                   <button
                     onClick={sendReply}
                     disabled={sending || !reply.trim()}
-                    className="shrink-0 w-12 h-12 rounded-xl bg-primary text-white flex items-center justify-center hover:opacity-90 active:scale-95 transition disabled:opacity-30 disabled:active:scale-100"
+                    className="shrink-0 w-12 h-12 rounded-xl bg-primary text-foreground flex items-center justify-center hover:opacity-90 active:scale-95 transition disabled:opacity-30 disabled:active:scale-100"
                     aria-label="Send reply"
                   >
                     <FiSend size={17} />

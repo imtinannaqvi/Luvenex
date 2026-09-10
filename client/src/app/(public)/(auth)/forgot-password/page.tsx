@@ -34,7 +34,7 @@ export default function ForgotPasswordPage() {
                 <div className="absolute -top-16 -left-16 w-44 h-44 bg-primary/50 rounded-full blur-3xl pointer-events-none" />
                 <div className="absolute -bottom-16 -right-16 w-44 h-44 bg-primary/50 rounded-full blur-3xl pointer-events-none" />
 
-                <div className="relative z-10 w-full bg-ink/40 rounded-2xl shadow-2xl p-8 backdrop-blur-xl">
+                <div className="relative z-10 w-full bg-ink/40 rounded-sm shadow-2xl p-8 backdrop-blur-xl">
                     <div className="flex justify-center mb-4">
                         <img
                             src="/luvenex-logo-black.png"
@@ -58,20 +58,20 @@ export default function ForgotPasswordPage() {
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
                                         required
-                                        className="w-full px-3.5 py-2.5 rounded-xl border border-border-color text-sm text-foreground bg-background
+                                        className="w-full px-3.5 py-2.5 rounded-sm border border-border-color text-sm text-foreground bg-background
                                                    focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
                                     />
                                 </div>
 
                                 {error && (
-                                    <p className="text-sm text-white bg-primary/40 rounded-lg px-3 py-2">{error}</p>
+                                    <p className="text-sm text-foreground bg-primary/40 rounded-lg px-3 py-2">{error}</p>
                                 )}
 
                                 <div className="flex justify-center">
                                     <button
                                         type="submit"
                                         disabled={loading}
-                                        className="px-16 py-3.5 rounded-xl bg-primary/40 text-paper font-semibold text-sm
+                                        className="px-16 py-3.5 rounded-sm bg-primary/40 text-foreground font-semibold text-sm
                                                    hover:bg-primary-dark transition disabled:opacity-60 disabled:cursor-not-allowed"
                                     >
                                         {loading ? "Sending..." : "Send reset code"}
@@ -95,7 +95,7 @@ export default function ForgotPasswordPage() {
                             </p>
                             <button
                                 onClick={() => router.push(`/reset-password?email=${encodeURIComponent(email)}`)}
-                                className="px-16 py-3.5 rounded-xl bg-primary/40 text-paper font-semibold text-sm
+                                className="px-16 py-3.5 rounded-xl bg-primary/40 text-foreground font-semibold text-sm
                                            hover:bg-primary-dark transition"
                             >
                                 Enter reset code

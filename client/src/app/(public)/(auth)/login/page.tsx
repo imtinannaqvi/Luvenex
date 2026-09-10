@@ -54,7 +54,7 @@ export default function LoginPage() {
                                 placeholder='Email'
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
-                                className="w-full px-3.5 py-2.5 rounded-xl border border-line text-sm placeholder:text-foreground bg-background
+                                className="w-full px-3.5 py-2.5 rounded-sm border border-line text-sm placeholder:text-foreground bg-background
                            focus:outline-none focus:ring-2 focus:ring-primary/30  focus:border-primary"
                             />
                         </div>
@@ -68,14 +68,14 @@ export default function LoginPage() {
                                     placeholder='password'
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
-                                    className="w-full px-3.5 py-2.5 pr-11 rounded-xl border border-line placeholder:text-foreground text-sm bg-background
+                                    className="w-full px-3.5 py-2.5 pr-11 rounded-sm border border-line placeholder:text-foreground text-sm bg-background
                            focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword((v) => !v)}
                                     aria-label={showPassword ? "Hide password" : "Show password"}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-foreground transition"
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground hover:text-foreground transition"
                                 >
                                     {showPassword ? <FiEyeOff size={17} /> : <FiEye size={17} />}
                                 </button>
@@ -88,7 +88,7 @@ export default function LoginPage() {
                            <button
     type="submit"
     disabled={loading}
-    className="px-16 py-3.5 rounded-xl bg-surface text-foreground font-semibold text-sm
+    className="px-16 py-3.5 rounded-sm bg-surface text-foreground font-semibold text-sm
                hover:bg-primary-dark hover:text-white transition disabled:opacity-60 disabled:cursor-not-allowed"
 >
     Log in
