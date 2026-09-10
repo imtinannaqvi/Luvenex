@@ -23,6 +23,7 @@ import {
   FiMenu,
   FiX,
   FiChevronDown,
+  FiLifeBuoy,
 } from "react-icons/fi";
 import { getToken, getUser, clearSession } from "@/lib/auth";
 import { apiFetch } from "@/lib/api";
@@ -63,6 +64,7 @@ const NAV_ITEMS: NavItem[] = [
       { href: "/admin/settings/support", label: "Support" },
     ],
   },
+  { href: "/admin/support-tickets", label: "Support Tickets", icon: FiLifeBuoy },
 ];
 
 const countKeyMap: Record<string, string> = {
@@ -171,7 +173,7 @@ export default function AdminLayout({
       </div>
 
       {/* Increased vertical gap between items from gap-1 to gap-2 */}
-      <nav className="flex flex-col gap-2 text-sm flex-1 space-y-4 overflow-y-auto overflow-x-hidden pr-1 pb-2">
+      <nav className="flex flex-col gap-2 text-sm flex-1 space-y-2 overflow-y-auto overflow-x-hidden pr-1 pb-2">
         {NAV_ITEMS.map((item) => {
           const Icon = item.icon;
           const countKey = countKeyMap[item.href];
@@ -189,7 +191,7 @@ export default function AdminLayout({
                   key={item.href}
                   href={item.href}
                   title={item.label}
-                  className={`flex items-center py-3.5 px-0 justify-center rounded-sm transition ${
+                  className={`flex items-center py-2.5 px-0 justify-center rounded-sm transition ${
                     inSection
                       ? "bg-primary text-paper font-medium"
                       : "text-white/70 hover:bg-white/10 hover:text-paper"
@@ -215,7 +217,7 @@ export default function AdminLayout({
                   <Link
                     href={item.href}
                     onClick={() => setMobileOpen(false)}
-                    className="flex-1 flex items-center gap-3 px-3 py-3.5"
+                    className="flex-1 flex items-center gap-3 px-3 py-2.5"
                   >
                     <Icon size={18} className="shrink-0" aria-hidden="true" />
                     <span className="text-left">{item.label}</span>
@@ -240,7 +242,7 @@ export default function AdminLayout({
                 </div>
 
                 {groupOpen && (
-                  <div className="mt-1.5 mb-1 ml-[26px] pl-3 border-l border-white/20 flex flex-col gap-1.5">
+                  <div className="mt-1.5 mb-1 ml-[26px] pl-3 flex flex-col gap-1.5">
                     {item.children.map((child) => {
                       const childActive = pathname === child.href;
 
@@ -249,7 +251,7 @@ export default function AdminLayout({
                           key={child.href}
                           href={child.href}
                           onClick={() => setMobileOpen(false)}
-                          className={`px-3 py-2 text-xs rounded-sm transition whitespace-nowrap ${
+                          className={`px-3 py-2 text-xs  transition whitespace-nowrap ${
                             childActive
                               ? "bg-primary text-paper font-medium"
                               : "text-white/60 hover:bg-white/10 hover:text-paper"

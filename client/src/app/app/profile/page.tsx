@@ -376,7 +376,7 @@ export default function ProfilePage() {
             <p className="text-sm md:text-base text-foreground font-medium">
               {u?.email || "user@example.com"}
             </p>
-            <p className="text-xs md:text-sm text-muted font-medium">
+            <p className="text-xs md:text-sm text-foreground font-medium">
               {isInfluencer ? `@${handle || "no-handle"}` : (industry || "Account Overview")}
             </p>
           </div>
@@ -395,7 +395,7 @@ export default function ProfilePage() {
                   setAvatarFile(null);
                   if (avatarInputRef.current) avatarInputRef.current.value = "";
                 }}
-                className="px-3 py-1.5 text-xs sm:text-sm font-medium text-muted hover:text-foreground transition"
+                className="px-3 py-1.5 text-xs sm:text-sm font-medium text-foreground hover:text-foreground transition"
               >
                 Cancel
               </button>
@@ -403,7 +403,7 @@ export default function ProfilePage() {
                 type="button"
                 onClick={() => handleAvatarUpload()}
                 disabled={uploadingAvatar}
-                className="px-4 py-1.5 rounded-sm bg-primary text-white text-xs sm:text-sm font-semibold hover:opacity-90 transition shadow-sm disabled:opacity-50"
+                className="px-4 py-1.5 rounded-sm bg-primary text-foreground text-xs sm:text-sm font-semibold hover:opacity-90 transition shadow-sm disabled:opacity-50"
               >
                 {uploadingAvatar ? "Uploading…" : "Save Avatar"}
               </button>
@@ -423,7 +423,7 @@ export default function ProfilePage() {
                 className={`w-full sm:flex-1 flex justify-center sm:justify-start items-center gap-2 py-2.5 px-3 rounded-md text-xs sm:text-sm font-semibold transition-all duration-200 ${
                   isActive
                     ? "bg-surface text-foreground shadow-sm"
-                    : "text-muted hover:text-foreground hover:bg-surface/50"
+                    : "text-foreground hover:text-foreground hover:bg-surface/50"
                 }`}
               >
                 <Icon size={15} className={isActive ? "text-foreground" : "text-muted"} />
@@ -433,8 +433,7 @@ export default function ProfilePage() {
           })}
         </div>
 
-        {/* ── Verification Badge Card ── */}
-   {/* ── Verification Badge Card (influencer only) ── */}
+    
 {isInfluencer && (
   <div className="bg-card border border-border-color rounded-2xl p-5 mt-6">
     <h2 className="text-sm font-bold text-foreground mb-2">Verification Badge</h2>
@@ -442,7 +441,7 @@ export default function ProfilePage() {
             <p className="text-xs text-green-500 font-medium">✓ Your profile is verified.</p>
           ) : completedDealsCount < MIN_DEALS_REQUIRED ? (
             <div>
-              <p className="text-xs text-muted">
+              <p className="text-xs text-foreground">
                 Complete {MIN_DEALS_REQUIRED - completedDealsCount} more deal{MIN_DEALS_REQUIRED - completedDealsCount !== 1 ? "s" : ""} to unlock verification eligibility.
               </p>
               <div className="w-full h-1.5 bg-surface rounded-full mt-2 overflow-hidden border border-border-color">
@@ -451,7 +450,7 @@ export default function ProfilePage() {
                   style={{ width: `${Math.min((completedDealsCount / MIN_DEALS_REQUIRED) * 100, 100)}%` }}
                 />
               </div>
-              <p className="text-[11px] text-muted mt-1">{completedDealsCount} / {MIN_DEALS_REQUIRED} completed deals</p>
+              <p className="text-[11px] text-foreground mt-1">{completedDealsCount} / {MIN_DEALS_REQUIRED} completed deals</p>
             </div>
           ) : !showVerifyForm ? (
             <button
@@ -468,13 +467,13 @@ export default function ProfilePage() {
                 value={verificationReason}
                 onChange={(e) => setVerificationReason(e.target.value)}
                 rows={3}
-                className="w-full px-3 py-2 rounded-lg bg-surface border border-border-color text-sm text-foreground placeholder-muted focus:outline-none focus:border-primary"
+                className="w-full px-3 py-2 rounded-lg bg-surface border border-border-color text-sm text-foreground placeholder-foreground focus:outline-none focus:border-primary"
               />
               <div className="flex gap-2">
                 <button
                   type="button"
                   onClick={() => setShowVerifyForm(false)}
-                  className="px-4 py-2 rounded-lg text-xs text-muted hover:text-foreground"
+                  className="px-4 py-2 rounded-lg text-xs text-foreground hover:text-foreground"
                 >
                   Cancel
                 </button>
@@ -482,7 +481,7 @@ export default function ProfilePage() {
                   type="button"
                   onClick={requestVerification}
                   disabled={submittingVerification}
-                  className="px-4 py-2 rounded-lg bg-primary text-white text-xs font-semibold disabled:opacity-50"
+                  className="px-4 py-2 rounded-lg bg-primary text-foreground text-xs font-semibold disabled:opacity-50"
                 >
                   {submittingVerification ? "Submitting..." : "Submit request"}
                 </button>
@@ -494,13 +493,12 @@ export default function ProfilePage() {
 
         <div className="bg-card border border-border-color rounded-sm p-6 sm:p-8 md:p-10 shadow-sm">
           
-          {/* TAB: Personal Info (Edit Profile) */}
           {activeTab === "edit" && (
             <form ref={formRef} onSubmit={handleSave} className="space-y-6">
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <h2 className="text-base md:text-lg font-semibold text-foreground">Personal Information</h2>
-                  <p className="text-sm text-muted mt-0.5">
+                  <p className="text-sm text-foreground mt-0.5">
                     Update your personal details and contact information
                   </p>
                 </div>
@@ -525,21 +523,21 @@ export default function ProfilePage() {
                     onChange={(e) => setHandle(e.target.value)}
                     disabled={!isEditing}
                     placeholder="e.g. johndoe"
-                    className="w-full px-4 py-3 rounded-sm bg-surface border border-border-color text-sm text-foreground placeholder-muted focus:outline-none focus:border-primary transition-all disabled:cursor-not-allowed"
+                    className="w-full px-4 py-3 rounded-sm bg-surface border border-border-color text-sm text-foreground placeholder-foreground focus:outline-none focus:border-primary transition-all disabled:cursor-not-allowed"
                   />
                 </div>
 
                 <div>
                   <label className="block text-xs font-semibold text-foreground mb-1.5">Email Address</label>
                   <div className="relative">
-                    <FiMail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted" />
+                    <FiMail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-foreground" />
                     <input
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       disabled={!isEditing}
                       placeholder="you@example.com"
-                      className="w-full pl-11 pr-4 py-3 rounded-sm bg-surface border border-border-color text-sm text-foreground placeholder-muted focus:outline-none focus:border-primary transition-all disabled:cursor-not-allowed"
+                      className="w-full pl-11 pr-4 py-3 rounded-sm bg-surface border border-border-color text-sm text-foreground placeholder-foreground focus:outline-none focus:border-primary transition-all disabled:cursor-not-allowed"
                     />
                   </div>
                 </div>
@@ -555,7 +553,7 @@ export default function ProfilePage() {
                       placeholder="fashion, lifestyle, tech"
                       className="w-full px-4 py-3 rounded-sm bg-surface border border-border-color text-sm text-foreground placeholder-muted focus:outline-none focus:border-primary transition-all disabled:cursor-not-allowed"
                     />
-                    <p className="text-[11px] text-muted mt-1">Separate multiple niches with commas.</p>
+                    <p className="text-[11px] text-foreground mt-1">Separate multiple niches with commas.</p>
                   </div>
                 ) : (
                   <>
@@ -584,7 +582,7 @@ export default function ProfilePage() {
                     <div>
                       <label className="block text-xs font-semibold text-foreground mb-1.5">Website</label>
                       <div className="relative">
-                        <FiGlobe size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted" />
+                        <FiGlobe size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-foreground" />
                         <input
                           type="text"
                           value={website}
@@ -705,7 +703,7 @@ export default function ProfilePage() {
             <div className="space-y-6">
               <div>
                 <h2 className="text-base md:text-lg font-semibold text-foreground">Social Accounts</h2>
-                <p className="text-xs sm:text-sm text-muted mt-0.5">
+                <p className="text-xs sm:text-sm text-foreground mt-0.5">
                   Connect your social media presence to your profile
                 </p>
               </div>
@@ -725,7 +723,7 @@ export default function ProfilePage() {
                           </div>
                           <div className="text-xs sm:text-sm min-w-0">
                             <span className="font-semibold text-foreground capitalize">{acc.platform}</span>
-                            <span className="text-muted font-medium"> · @{acc.handle}</span>
+                            <span className="text-foreground font-medium"> · @{acc.handle}</span>
                             {acc.followersCount > 0 && (
                               <span className="text-muted font-medium block sm:inline">
                                 {" "}
@@ -740,7 +738,7 @@ export default function ProfilePage() {
                               href={acc.url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-muted hover:text-foreground p-2 rounded-sm transition-colors"
+                              className="text-foreground hover:text-foreground p-2 rounded-sm transition-colors"
                               title="Open profile"
                             >
                               <FiArrowUpRight size={16} />
@@ -760,7 +758,7 @@ export default function ProfilePage() {
                   })}
                 </div>
               ) : (
-                <p className="text-xs text-muted">No social accounts connected yet.</p>
+                <p className="text-xs text-foreground">No social accounts connected yet.</p>
               )}
 
               {/* Add Social Account Form */}
@@ -828,7 +826,7 @@ export default function ProfilePage() {
             <div className="space-y-6">
               <div>
                 <h2 className="text-base md:text-lg font-semibold text-foreground">Security & Privacy</h2>
-                <p className="text-xs sm:text-sm text-muted mt-0.5">Manage your account privacy and security settings</p>
+                <p className="text-xs sm:text-sm text-foreground mt-0.5">Manage your account privacy and security settings</p>
               </div>
 
               {/* Privacy Settings */}
@@ -837,7 +835,7 @@ export default function ProfilePage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-xs sm:text-sm text-foreground font-medium">Hide profile from search results</p>
-                    <p className="text-[11px] text-muted">Other users won't be able to find your profile via search</p>
+                    <p className="text-[11px] text-foreground">Other users won't be able to find your profile via search</p>
                   </div>
                   <input
                     type="checkbox"
@@ -860,7 +858,7 @@ export default function ProfilePage() {
                 <h3 className="text-sm font-semibold text-red-500 flex items-center gap-2">
                   <FiAlertTriangle size={16} /> Deactivate Account
                 </h3>
-                <p className="text-xs text-muted">Once deactivated, your account and associated data can no longer be accessed.</p>
+                <p className="text-xs text-foreground">Once deactivated, your account and associated data can no longer be accessed.</p>
                 {!showDeactivate ? (
                   <button
                     type="button"

@@ -6,7 +6,7 @@ import { getToken } from "@/lib/auth";
 
 /* soft, borderless card — matches the rest of admin */
 const softCard =
-  "bg-background rounded-3xl shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_28px_-16px_rgba(0,0,0,0.10)]";
+  "bg-background rounded-sm shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_28px_-16px_rgba(0,0,0,0.10)]";
 
 export default function AdminReferralsPage() {
   const [topReferrers, setTopReferrers] = useState<any[]>([]);

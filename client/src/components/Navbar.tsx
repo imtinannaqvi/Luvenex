@@ -66,8 +66,7 @@ const Navbar = () => {
     }, 700);
   };
 
-  if (pathname.startsWith("/admin") || pathname.startsWith("/app")) return null;
-
+  if (pathname.startsWith("/admin") || pathname.startsWith("/app") || pathname.startsWith("/videos")) return null;
   const usingUploadedLogo = Boolean(logo);
 
   return (

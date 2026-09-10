@@ -249,7 +249,7 @@ export default function SupportPage() {
                   type="color"
                   value={primaryColor}
                   onChange={(e) => setPrimaryColor(e.target.value)}
-                  className="w-16 h-11 rounded-xl border border-line cursor-pointer bg-transparent shrink-0"
+                  className="w-16 h-11 rounded-sm border border-line cursor-pointer bg-transparent shrink-0"
                 />
                 <input
                   type="text"
@@ -335,14 +335,16 @@ export default function SupportPage() {
             </div>
           </Card>
 
-          <button
+         <div className="flex justify-center">
+             <button
             onClick={handleSave}
             disabled={saving}
-            className="w-full flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary-dark transition disabled:opacity-50 shadow-sm"
+            className=" flex items-center justify-center gap-2 px-6 py-3.5 rounded-sm bg-primary text-white text-sm font-semibold hover:bg-primary-dark transition disabled:opacity-50 shadow-sm"
           >
             <FiSave size={16} />
             {saving ? "Saving..." : "Save Settings"}
           </button>
+         </div>
         </div>
 
         {/* ── Live preview ── */}

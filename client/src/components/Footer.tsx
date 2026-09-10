@@ -1,11 +1,27 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+const API = process.env.NEXT_PUBLIC_API_URL;
+
+// Shown until the uploaded logo loads, and kept as the fallback if none is set.
+const FALLBACK_LOGO = "/file_0000000089d482118329077f6e1cff4c.png";
+
 export default function Footer() {
   const pathname = usePathname();
+  const [logo, setLogo] = useState<string | null>(null);
+
+  // Logo comes from Settings → Branding. Falls back to the bundled image.
+  useEffect(() => {
+    fetch(`${API}/api/branding`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data?.branding?.logo) setLogo(`${API}${data.branding.logo}`);
+      })
+      .catch(() => {});
+  }, []);
 
   if (
     pathname.startsWith("/admin") ||
@@ -14,6 +30,8 @@ export default function Footer() {
   ) {
     return null;
   }
+
+  const usingUploadedLogo = Boolean(logo);
 
   return (
     <div className="relative w-full sm:min-h-screen bg-background text-foreground flex flex-col sm:justify-between p-6 sm:p-12 overflow-hidden selection:bg-white selection:text-black gap-10 sm:gap-0">
@@ -82,7 +100,7 @@ export default function Footer() {
 
       {/* Main Content Area */}
       <main className="relative z-10 w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 py-4 sm:py-12">
-                <nav className="flex flex-col space-y-3 sm:space-y-6 text-center md:text-left text-sm italic font-semibold  text-foreground/70">
+        <nav className="flex flex-col space-y-3 sm:space-y-6 text-center md:text-left text-sm italic font-semibold  text-foreground/70">
           <Link href="/about" className="hover:text-foreground transition-colors">ABOUT US</Link>
           <Link href="/how-it-works" className="hover:text-foreground transition-colors">HOW IT WORKS</Link>
           <Link href="/discover" className="hover:text-foreground transition-colors">DISCOVER CREATORS</Link>
@@ -92,19 +110,24 @@ export default function Footer() {
         {/* Center Brand Title & Info */}
         <div className="flex flex-col items-center justify-center text-center space-y-4 my-8 md:my-0 max-w-lg">
           <Link href="/" className="">
-  <img
-    src="/file_0000000089d482118329077f6e1cff4c.png"
-    alt="Luvenex"
-    className="h-10 sm:h-14 w-auto select-none dark:invert-0 invert transition-all"
-  />
-</Link>
-         <p className="text-xs sm:text-lg text-foreground font-light leading-relaxed max-w-md">
-  Where Brands & Influencers Connect, Collaborate, & Close Deals.
-  The all-in-one ecosystem for high-impact creator partnerships—featuring direct campaign discovery, smart negotiations, real-time performance analytics, and guaranteed secure escrow payouts.
-</p>
+            <img
+              src={logo || FALLBACK_LOGO}
+              alt="Luvenex"
+              // The bundled logo is a single-colour mark that needs inverting in
+              // light mode. An uploaded logo is used exactly as supplied.
+              className={`h-10 sm:h-14 w-auto select-none transition-all ${
+                usingUploadedLogo ? "" : "dark:invert-0 invert"
+              }`}
+              onError={() => setLogo(null)}
+            />
+          </Link>
+          <p className="text-xs sm:text-lg text-foreground font-light leading-relaxed max-w-md">
+            Where Brands &amp; Influencers Connect, Collaborate, &amp; Close Deals.
+            The all-in-one ecosystem for high-impact creator partnerships—featuring direct campaign discovery, smart negotiations, real-time performance analytics, and guaranteed secure escrow payouts.
+          </p>
         </div>
 
-               <nav className="flex flex-col space-y-3 sm:space-y-6 text-center md:text-right text-sm font-semibold italic text-foreground/70">
+        <nav className="flex flex-col space-y-3 sm:space-y-6 text-center md:text-right text-sm font-semibold italic text-foreground/70">
           <Link href="/services" className="hover:text-foreground transition-colors">SERVICES</Link>
           <Link href="/blog" className="hover:text-foreground transition-colors">BLOG</Link>
           <Link href="/videos" className="hover:text-foreground transition-colors">VIDEOS</Link>

@@ -43,12 +43,12 @@ function SectionHeader({
 }) {
   return (
     <div className="flex items-center gap-3 px-6 py-5 border-b border-line bg-surface/40">
-      <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white shrink-0">
+      <div className="w-10 h-10 rounded-sm bg-primary flex items-center justify-center text-white shrink-0">
         {icon}
       </div>
       <div className="min-w-0">
         <h2 className="text-lg font-bold italic text-foreground">{title}</h2>
-        <p className="text-xs text-muted mt-0.5">{subtitle}</p>
+        <p className="text-xs text-foreground mt-0.5">{subtitle}</p>
       </div>
     </div>
   );
@@ -172,7 +172,7 @@ export default function AdminSettingsPage() {
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-foreground italic">General Settings</h1>
-        <p className="text-sm text-muted mt-1">Fees, limits, timing rules, and your About page.</p>
+        <p className="text-sm text-foreground mt-1">Fees, limits, timing rules, and your About page.</p>
       </div>
 
       <div className="flex flex-wrap items-center gap-2 mb-6 p-1.5 bg-surface border border-line rounded-sm overflow-x-auto">
@@ -186,7 +186,7 @@ export default function AdminSettingsPage() {
               className={`flex items-center gap-1.5 px-3.5 py-2 text-sm font-semibold rounded-sm transition whitespace-nowrap shrink-0 ${
                 isActive
                   ? "bg-background text-foreground shadow-sm border border-line"
-                  : "text-muted hover:text-foreground"
+                  : "text-foreground hover:text-muted"
               }`}
             >
               <Icon size={13} />

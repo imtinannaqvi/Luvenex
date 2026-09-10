@@ -44,15 +44,13 @@ import multer from 'multer';
 import brandingRouter from './routes/brandingRoutes.js'
 import announcementRouter from './routes/announcementRoutes.js'
 import supportRouter from './routes/supportRoutes.js'
+import Supportticketroutes from './routes/Supportticketroutes.js'
 
 connectDB();
 
 const app = express();
 
-// ── CORS ──────────────────────────────────────────────────────────
-// Allow the deployed frontend, plus any localhost dev port (Next.js
-// bounces between 3000/3001/3002... when a port is taken). Set
-// CLIENT_URL in .env to your Amplify URL (no trailing slash).
+
 const allowedOrigins = [
   process.env.CLIENT_URL,
   "https://main.d11kkkdatmlmv7.amplifyapp.com",
@@ -127,8 +125,9 @@ app.use('/api/about', aboutRouter);
 app.use('/api/branding', brandingRouter);
 app.use('/api/announcements', announcementRouter);
 app.use('/api/support', supportRouter);
+app.use('/api/support-tickets', Supportticketroutes);
 
-// ↓ error handler
+
 app.use((err, req, res, next) => {
   console.error('ERROR:', err);
   if (err instanceof multer.MulterError) {

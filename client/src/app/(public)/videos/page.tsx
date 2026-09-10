@@ -1,13 +1,586 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState, useEffect, useRef } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { apiFetch } from "@/lib/api";
 import { getUser, getToken } from "@/lib/auth";
 import { toast } from "react-toastify";
 
-export default function PublicVideoPage() {
+const API = process.env.NEXT_PUBLIC_API_URL;
+
+/* ────────────────────────────────────────────────────────────
+   Shared bits used by both the feed view and the detail view
+   ──────────────────────────────────────────────────────────── */
+
+const timeAgo = (iso: string) => {
+  if (!iso) return "";
+  const secs = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
+  if (secs < 60) return "now";
+  const mins = Math.floor(secs / 60);
+  if (mins < 60) return `${mins}m`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h`;
+  const days = Math.floor(hrs / 24);
+  if (days < 7) return `${days}d`;
+  return `${Math.floor(days / 7)}w`;
+};
+
+const profileHrefFor = (v: any) =>
+  v?.postedByRole === "brand"
+    ? `/brands/${v?.postedBy?.handle}`
+    : `/creator/${v?.postedBy?.handle}`;
+
+function Avatar({ name, size = "w-8 h-8" }: { name?: string; size?: string }) {
+  return (
+    <div
+      className={`${size} rounded-full bg-primary/20 border border-foreground/15 flex items-center justify-center text-foreground font-bold text-xs shrink-0`}
+    >
+      {name?.[0]?.toUpperCase() || "?"}
+    </div>
+  );
+}
+
+/* ────────────────────────────────────────────────────────────
+   Detail view — Instagram-style split. Desktop: video left,
+   content panel right. Mobile: video on top, panel below.
+   ──────────────────────────────────────────────────────────── */
+
+function VideoDetail({ videoId }: { videoId: string }) {
+  const router = useRouter();
+  const user = getUser();
+
+  const [video, setVideo] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [comments, setComments] = useState<any[]>([]);
+  const [commentText, setCommentText] = useState("");
+  const [replyingTo, setReplyingTo] = useState<any>(null);
+  const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
+  const [editCommentText, setEditCommentText] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followLoading, setFollowLoading] = useState(false);
+  const [showShareMenu, setShowShareMenu] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
+
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+
+    Promise.all([
+      apiFetch(`/api/videos/${videoId}`),
+      apiFetch(`/api/videos/${videoId}/comments`),
+    ])
+      .then(([vData, cData]) => {
+        if (cancelled) return;
+        setVideo(vData.video);
+        setComments(cData.comments || []);
+      })
+      .catch((err: any) => toast.error(err.message || "Failed to load video"))
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [videoId]);
+
+  useEffect(() => {
+    document.title = "Video | Luvenex";
+  }, []);
+
+  useEffect(() => {
+    const poster = video?.postedBy;
+    if (!user || !poster) return setIsFollowing(false);
+    apiFetch(`/api/follow/${poster._id}/status`, { token: getToken()! })
+      .then((d: any) => setIsFollowing(d.isFollowing))
+      .catch(() => setIsFollowing(false));
+  }, [video]);
+
+  const requireLogin = () => router.push("/login");
+
+  const reloadComments = () =>
+    apiFetch(`/api/videos/${videoId}/comments`)
+      .then((d: any) => setComments(d.comments || []))
+      .catch(() => {});
+
+  const submitComment = async () => {
+    if (!user) return requireLogin();
+    if (!commentText.trim()) return;
+    setSubmitting(true);
+    try {
+      await apiFetch(`/api/videos/${videoId}/comments`, {
+        method: "POST",
+        token: getToken()!,
+        body: { body: commentText, parentCommentId: replyingTo?._id || undefined },
+      });
+      setCommentText("");
+      setReplyingTo(null);
+      setVideo((p: any) => ({ ...p, commentCount: (p.commentCount || 0) + 1 }));
+      reloadComments();
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const saveEdit = async (commentId: string) => {
+    try {
+      await apiFetch(`/api/videos/comments/${commentId}`, {
+        method: "PATCH",
+        token: getToken()!,
+        body: { body: editCommentText },
+      });
+      setEditingCommentId(null);
+      reloadComments();
+    } catch (err: any) {
+      toast.error(err.message);
+    }
+  };
+
+  const removeComment = async (commentId: string) => {
+    if (!confirm("Delete this comment?")) return;
+    try {
+      await apiFetch(`/api/videos/comments/${commentId}`, {
+        method: "DELETE",
+        token: getToken()!,
+      });
+      reloadComments();
+    } catch (err: any) {
+      toast.error(err.message);
+    }
+  };
+
+  const toggleLike = async () => {
+    if (!user) return requireLogin();
+    try {
+      const data = await apiFetch(`/api/videos/${videoId}/like`, {
+        method: "POST",
+        token: getToken()!,
+      });
+      setVideo((p: any) => ({
+        ...p,
+        likes: data.liked
+          ? [...(p.likes || []), user.id]
+          : (p.likes || []).filter((id: string) => id !== user.id),
+      }));
+    } catch (err: any) {
+      toast.error(err.message);
+    }
+  };
+
+  const toggleSave = async () => {
+    if (!user) return requireLogin();
+    try {
+      const data = await apiFetch(`/api/videos/${videoId}/save`, {
+        method: "POST",
+        token: getToken()!,
+      });
+      setVideo((p: any) => ({
+        ...p,
+        savedBy: data.saved
+          ? [...(p.savedBy || []), user.id]
+          : (p.savedBy || []).filter((id: string) => id !== user.id),
+      }));
+    } catch (err: any) {
+      toast.error(err.message);
+    }
+  };
+
+  const toggleFollow = async () => {
+    if (!user) return requireLogin();
+    const poster = video?.postedBy;
+    if (!poster) return;
+    setFollowLoading(true);
+    try {
+      await apiFetch(`/api/follow/${poster._id}`, {
+        method: isFollowing ? "DELETE" : "POST",
+        token: getToken()!,
+      });
+      setIsFollowing((f) => !f);
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setFollowLoading(false);
+    }
+  };
+
+  const shareUrl = () =>
+    typeof window === "undefined" ? "" : `${window.location.origin}/videos?v=${videoId}`;
+
+  const copyLink = async () => {
+    await navigator.clipboard.writeText(shareUrl());
+    toast.success("Link copied to clipboard");
+    setShowShareMenu(false);
+  };
+
+  const shareToWhatsApp = () => {
+    const text = encodeURIComponent(`Check this out on Luvenex: ${shareUrl()}`);
+    window.open(`https://wa.me/?text=${text}`, "_blank");
+    setShowShareMenu(false);
+  };
+
+  const handleDownload = async () => {
+    try {
+      const res = await fetch(`${API}${video.videoUrl}`);
+      const blob = await res.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = `luvenex-video-${videoId}.mp4`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+    } catch {
+      toast.error("Failed to download video");
+    }
+    setShowShareMenu(false);
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!video) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background text-center px-6">
+        <div>
+          <p className="text-sm font-semibold text-foreground">Video not found</p>
+          <Link href="/explore" className="text-xs text-primary hover:underline mt-2 inline-block">
+            Back to Explore
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const isLiked = user && video.likes?.includes(user.id);
+  const isSaved = user && video.savedBy?.includes(user.id);
+  const isOwnVideo = user && user.id === video.postedBy?._id;
+  const topLevel = comments.filter((c) => !c.parentCommentId);
+  const repliesOf = (id: string) => comments.filter((r) => r.parentCommentId === id);
+
+  return (
+    <div className="min-h-screen bg-background text-foreground">
+      {/* Back bar */}
+      <div className="max-w-6xl mx-auto px-4 pt-4 pb-3">
+        <button
+          onClick={() => router.back()}
+          className="flex items-center gap-1.5 text-xs font-semibold text-foreground/60 hover:text-foreground transition"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+          </svg>
+          Back
+        </button>
+      </div>
+
+      {/* Split: video left, panel right. Stacks on mobile. */}
+      <div className="max-w-6xl mx-auto px-4 pb-10">
+        <div className="flex flex-col md:flex-row border border-border-color rounded-xl overflow-hidden bg-card md:h-[calc(100vh-8rem)]">
+          {/* ── Video ── */}
+          <div className="relative bg-black flex items-center justify-center md:flex-1 md:min-w-0">
+            <video
+              ref={videoRef}
+              src={`${API}${video.videoUrl}`}
+              className="w-full h-full max-h-[60vh] md:max-h-none object-contain"
+              controls
+              autoPlay
+              playsInline
+              muted={isMuted}
+            />
+            <button
+              onClick={() => setIsMuted((m) => !m)}
+              aria-label={isMuted ? "Unmute" : "Mute"}
+              className="absolute top-3 right-3 w-9 h-9 rounded-full bg-black/50 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/70 transition"
+            >
+              {isMuted ? (
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 14l2 2m0 0l2 2m-2-2l2-2m-2 2l-2 2M9 9l4-4v14l-4-4H5a1 1 0 01-1-1v-4a1 1 0 011-1h4z" />
+                </svg>
+              ) : (
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.536 8.464a5 5 0 010 7.072M18.364 5.636a9 9 0 010 12.728M9 9l4-4v14l-4-4H5a1 1 0 01-1-1v-4a1 1 0 011-1h4z" />
+                </svg>
+              )}
+            </button>
+          </div>
+
+          {/* ── Content panel ── */}
+          <div className="flex flex-col md:w-[400px] md:shrink-0 md:border-l border-border-color min-h-0">
+            {/* Poster header */}
+            <div className="flex items-center gap-2.5 px-4 py-3 border-b border-border-color shrink-0">
+              <Link href={profileHrefFor(video)}>
+                <Avatar name={video.postedBy?.name} />
+              </Link>
+              <Link href={profileHrefFor(video)} className="min-w-0 flex-1">
+                <p className="text-sm font-semibold truncate hover:text-primary transition">
+                  {video.postedBy?.name}
+                </p>
+                {video.category && (
+                  <p className="text-[11px] text-foreground/50 truncate">{video.category}</p>
+                )}
+              </Link>
+              {!isOwnVideo && (
+                <button
+                  onClick={toggleFollow}
+                  disabled={followLoading}
+                  className={`shrink-0 text-xs font-semibold px-3 py-1.5 rounded-lg transition disabled:opacity-50 ${
+                    isFollowing
+                      ? "border border-border-color text-foreground/70 hover:text-foreground"
+                      : "bg-primary text-white hover:opacity-90"
+                  }`}
+                >
+                  {isFollowing ? "Following" : "Follow"}
+                </button>
+              )}
+            </div>
+
+            {/* Caption + comments — the scrolling region */}
+            <div className="flex-1 overflow-y-auto px-4 py-3 space-y-4 min-h-0 max-h-[45vh] md:max-h-none">
+              {video.caption && (
+                <div className="flex gap-2.5">
+                  <Avatar name={video.postedBy?.name} />
+                  <div className="min-w-0">
+                    <p className="text-sm leading-relaxed">
+                      <span className="font-semibold mr-1.5">{video.postedBy?.name}</span>
+                      <span className="text-foreground/80 whitespace-pre-line">{video.caption}</span>
+                    </p>
+                    <p className="text-[11px] text-foreground/40 mt-1">{timeAgo(video.createdAt)}</p>
+                  </div>
+                </div>
+              )}
+
+              {topLevel.length === 0 ? (
+                <p className="text-xs text-foreground/50 text-center py-8">
+                  No comments yet — be the first.
+                </p>
+              ) : (
+                topLevel.map((c) => (
+                  <div key={c._id} className="flex gap-2.5">
+                    <Avatar name={c.userId?.name} />
+                    <div className="min-w-0 flex-1">
+                      {editingCommentId === c._id ? (
+                        <div className="space-y-1.5">
+                          <textarea
+                            value={editCommentText}
+                            onChange={(e) => setEditCommentText(e.target.value)}
+                            rows={2}
+                            className="w-full px-2.5 py-1.5 rounded-lg bg-surface text-xs border border-border-color focus:outline-none focus:border-primary"
+                          />
+                          <div className="flex gap-3">
+                            <button
+                              onClick={() => saveEdit(c._id)}
+                              className="text-[11px] text-primary font-semibold"
+                            >
+                              Save
+                            </button>
+                            <button
+                              onClick={() => setEditingCommentId(null)}
+                              className="text-[11px] text-foreground/50"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          <p className="text-sm leading-relaxed">
+                            <span className="font-semibold mr-1.5">{c.userId?.name}</span>
+                            <span className="text-foreground/80">{c.body}</span>
+                          </p>
+                          <div className="flex items-center gap-3 mt-1 text-[11px] text-foreground/40">
+                            <span>{timeAgo(c.createdAt)}</span>
+                            <button
+                              onClick={() => {
+                                setReplyingTo(c);
+                                setCommentText("");
+                              }}
+                              className="font-semibold hover:text-foreground transition"
+                            >
+                              Reply
+                            </button>
+                            {user?.id === c.userId?._id && (
+                              <>
+                                <button
+                                  onClick={() => {
+                                    setEditingCommentId(c._id);
+                                    setEditCommentText(c.body);
+                                  }}
+                                  className="hover:text-foreground transition"
+                                >
+                                  Edit
+                                </button>
+                                <button
+                                  onClick={() => removeComment(c._id)}
+                                  className="hover:text-primary transition"
+                                >
+                                  Delete
+                                </button>
+                              </>
+                            )}
+                          </div>
+                        </>
+                      )}
+
+                      {repliesOf(c._id).length > 0 && (
+                        <div className="mt-2.5 space-y-2.5 pl-3 border-l border-border-color">
+                          {repliesOf(c._id).map((r) => (
+                            <div key={r._id} className="flex gap-2">
+                              <Avatar name={r.userId?.name} size="w-6 h-6" />
+                              <div className="min-w-0">
+                                <p className="text-xs leading-relaxed">
+                                  <span className="font-semibold mr-1.5">{r.userId?.name}</span>
+                                  <span className="text-foreground/75">{r.body}</span>
+                                </p>
+                                <div className="flex items-center gap-3 mt-0.5 text-[10px] text-foreground/40">
+                                  <span>{timeAgo(r.createdAt)}</span>
+                                  {user?.id === r.userId?._id && (
+                                    <button
+                                      onClick={() => removeComment(r._id)}
+                                      className="hover:text-primary transition"
+                                    >
+                                      Delete
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* Action bar */}
+            <div className="px-4 py-3 border-t border-border-color shrink-0">
+              <div className="flex items-center gap-4">
+                <button onClick={toggleLike} aria-label="Like" className="transition hover:opacity-70">
+                  <svg
+                    className={`w-6 h-6 ${isLiked ? "text-primary" : "text-foreground"}`}
+                    fill={isLiked ? "currentColor" : "none"}
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.684a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                  </svg>
+                </button>
+
+                <span className="text-xs text-foreground/50">{video.commentCount || 0} comments</span>
+
+                <div className="relative ml-auto flex items-center gap-4">
+                  <button
+                    onClick={() => setShowShareMenu((s) => !s)}
+                    aria-label="Share"
+                    className="transition hover:opacity-70"
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342a4 4 0 100-2.684m0 2.684a4 4 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a4 4 0 105.367-5.933 4 4 0 00-5.367 5.933zm0 9.316a4 4 0 105.368 5.933 4 4 0 00-5.368-5.933z" />
+                    </svg>
+                  </button>
+
+                  <button onClick={toggleSave} aria-label="Save" className="transition hover:opacity-70">
+                    <svg
+                      className={`w-6 h-6 ${isSaved ? "text-primary" : "text-foreground"}`}
+                      fill={isSaved ? "currentColor" : "none"}
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                    </svg>
+                  </button>
+
+                  {showShareMenu && (
+                    <div className="absolute right-0 bottom-9 bg-background border border-border-color rounded-xl p-1.5 flex flex-col gap-0.5 shadow-xl min-w-[150px] z-20">
+                      <button
+                        onClick={shareToWhatsApp}
+                        className="px-3 py-2 rounded-lg hover:bg-surface transition text-left text-xs font-medium"
+                      >
+                        WhatsApp
+                      </button>
+                      <button
+                        onClick={copyLink}
+                        className="px-3 py-2 rounded-lg hover:bg-surface transition text-left text-xs font-medium"
+                      >
+                        Copy link
+                      </button>
+                      {video.allowDownload && (
+                        <button
+                          onClick={handleDownload}
+                          className="px-3 py-2 rounded-lg hover:bg-surface transition text-left text-xs font-medium"
+                        >
+                          Download
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <p className="text-sm font-semibold mt-2">{video.likes?.length || 0} likes</p>
+              <p className="text-[11px] text-foreground/40 mt-0.5">{timeAgo(video.createdAt)}</p>
+            </div>
+
+            {/* Comment box */}
+            <div className="border-t border-border-color shrink-0">
+              {replyingTo && (
+                <div className="flex items-center justify-between px-4 py-1.5 bg-surface text-[11px] text-foreground/60">
+                  <span className="truncate">Replying to {replyingTo.userId?.name}</span>
+                  <button
+                    onClick={() => setReplyingTo(null)}
+                    className="shrink-0 ml-2 hover:text-foreground transition"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              )}
+              <div className="flex items-center gap-2 px-4 py-2.5">
+                <input
+                  type="text"
+                  placeholder={replyingTo ? "Write a reply..." : "Add a comment..."}
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      submitComment();
+                    }
+                  }}
+                  className="flex-1 bg-transparent text-sm placeholder:text-foreground/40 focus:outline-none"
+                />
+                <button
+                  onClick={submitComment}
+                  disabled={submitting || !commentText.trim()}
+                  className="text-sm font-semibold text-primary disabled:opacity-40 shrink-0"
+                >
+                  Post
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ────────────────────────────────────────────────────────────
+   Feed view — unchanged full-screen vertical scroller
+   ──────────────────────────────────────────────────────────── */
+
+function VideoFeed() {
   const router = useRouter();
   const [videos, setVideos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -19,7 +592,7 @@ export default function PublicVideoPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [showShareMenu, setShowShareMenu] = useState(false);
   const isScrollingRef = useRef(false);
-  const [sortMode, setSortMode] = useState<"latest" | "trending">("latest");
+  const [sortMode] = useState<"latest" | "trending">("latest");
   const [showComments, setShowComments] = useState(false);
   const [comments, setComments] = useState<any[]>([]);
   const [commentText, setCommentText] = useState("");
@@ -37,7 +610,7 @@ export default function PublicVideoPage() {
     if (window.scrollY === 0) touchStartY.current = e.touches[0].clientY;
   };
 
-   const handleTouchMove = (e: React.TouchEvent) => {
+  const handleTouchMove = (e: React.TouchEvent) => {
     e.preventDefault();
     const distance = e.touches[0].clientY - touchStartY.current;
     if (distance > 0 && window.scrollY === 0) {
@@ -147,7 +720,6 @@ export default function PublicVideoPage() {
     document.title = "Explore Videos | Luvenex";
   }, [page, sortMode]);
 
- 
   useEffect(() => {
     const html = document.documentElement;
     const body = document.body;
@@ -215,7 +787,6 @@ export default function PublicVideoPage() {
     }
   };
 
-  // Keyboard navigation for Up and Down arrow keys
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (["INPUT", "TEXTAREA"].includes((e.target as HTMLElement)?.tagName)) {
@@ -350,7 +921,7 @@ export default function PublicVideoPage() {
 
   const handleDownload = async (video: any) => {
     try {
-      const url = `${process.env.NEXT_PUBLIC_API_URL}${video.videoUrl}`;
+      const url = `${API}${video.videoUrl}`;
       const response = await fetch(url);
       const blob = await response.blob();
       const blobUrl = window.URL.createObjectURL(blob);
@@ -390,19 +961,17 @@ export default function PublicVideoPage() {
   }
 
   const v = videos[activeIndex];
-  const profileHref =
-    v.postedByRole === "brand" ? `/brands/${v.postedBy?.handle}` : `/creator/${v.postedBy?.handle}`;
+  const profileHref = profileHrefFor(v);
   const isOwnVideo = user && user.id === v.postedBy?._id;
 
   return (
-         <div
+    <div
       className="h-screen bg-background flex items-center justify-center overflow-hidden relative"
       onWheel={handleWheel}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      {/* pull-to-refresh indicator */}
       {(pullDistance > 0 || isRefreshing) && (
         <div
           className="absolute top-0 left-1/2 -translate-x-1/2 z-30 flex items-center justify-center transition-all"
@@ -416,12 +985,11 @@ export default function PublicVideoPage() {
         </div>
       )}
 
-      {/* the single active video, centered, portrait-framed */}
       <div className="relative h-full max-h-screen w-full max-w-[420px] mt-4 flex items-center justify-center">
         <video
           key={v._id}
           ref={videoRef}
-          src={`${process.env.NEXT_PUBLIC_API_URL}${v.videoUrl}`}
+          src={`${API}${v.videoUrl}`}
           className="w-full h-full object-cover"
           loop={false}
           controls
@@ -445,7 +1013,6 @@ export default function PublicVideoPage() {
           )}
         </button>
 
-        {/* caption, bottom-left over the video */}
         <div className="absolute bottom-8 left-0 right-16 p-4 bg-gradient-to-t from-background to-transparent">
           <Link href={profileHref} className="flex items-center gap-2 mb-2 w-fit">
             <span className="text-sm font-bold text-foreground drop-shadow hover:text-primary transition">
@@ -465,7 +1032,6 @@ export default function PublicVideoPage() {
               </div>
             </Link>
 
-            {/* follow badge — overlaps the bottom-right corner of the avatar */}
             {!isOwnVideo && (
               <button
                 onClick={toggleFollow}
@@ -480,7 +1046,6 @@ export default function PublicVideoPage() {
             )}
           </div>
 
-          {/* like */}
           <button onClick={() => toggleLike(v._id)} className="flex flex-col items-center gap-1 text-foreground">
             <div
               className={`w-11 h-11 rounded-full backdrop-blur-md flex items-center justify-center transition ${
@@ -504,7 +1069,6 @@ export default function PublicVideoPage() {
             <span className="text-[10px] font-semibold drop-shadow">{v.likes?.length || 0}</span>
           </button>
 
-          {/* comments */}
           <button onClick={() => openComments(v._id)} className="flex flex-col items-center gap-1 text-foreground">
             <div className="w-11 h-11 rounded-full bg-background hover:bg-surface flex items-center justify-center transition">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -519,7 +1083,6 @@ export default function PublicVideoPage() {
             <span className="text-[10px] font-semibold drop-shadow">{v.commentCount || 0}</span>
           </button>
 
-          {/* save */}
           <button onClick={() => toggleSave(v._id)} className="flex flex-col items-center gap-1 text-foreground">
             <div
               className={`w-11 h-11 rounded-full backdrop-blur-md flex items-center justify-center transition ${
@@ -543,7 +1106,6 @@ export default function PublicVideoPage() {
             <span className="text-[10px] font-semibold drop-shadow">Save</span>
           </button>
 
-          {/* share — opens a small menu with WhatsApp / Instagram / Copy link / Download */}
           <div className="relative">
             <button onClick={() => setShowShareMenu((prev) => !prev)} className="flex flex-col items-center gap-1 text-foreground">
               <div className="w-11 h-11 rounded-full bg-background backdrop-blur-md hover:bg-surface flex items-center justify-center transition">
@@ -592,7 +1154,6 @@ export default function PublicVideoPage() {
                   <span className="text-foreground text-xs font-medium whitespace-nowrap">Copy link</span>
                 </button>
 
-                {/* Download — only shown if this video allows downloading */}
                 {v.allowDownload && (
                   <button
                     onClick={() => {
@@ -703,7 +1264,6 @@ export default function PublicVideoPage() {
                           Reply
                         </button>
 
-                        {/* replies to this comment */}
                         {comments
                           .filter((r) => r.parentCommentId === c._id)
                           .map((r) => (
@@ -738,5 +1298,31 @@ export default function PublicVideoPage() {
         )}
       </div>
     </div>
+  );
+}
+
+/* ────────────────────────────────────────────────────────────
+   Router: ?v=<id> → detail view, otherwise the feed
+   ──────────────────────────────────────────────────────────── */
+
+function VideosPageInner() {
+  const searchParams = useSearchParams();
+  const videoId = searchParams.get("v");
+
+  return videoId ? <VideoDetail videoId={videoId} /> : <VideoFeed />;
+}
+
+export default function PublicVideoPage() {
+  // useSearchParams needs a Suspense boundary in the App Router.
+  return (
+    <Suspense
+      fallback={
+        <div className="h-screen flex items-center justify-center bg-background">
+          <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
+        </div>
+      }
+    >
+      <VideosPageInner />
+    </Suspense>
   );
 }

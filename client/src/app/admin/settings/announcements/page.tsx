@@ -120,7 +120,7 @@ export default function AnnouncementsPage() {
   };
 
   const inputCls =
-    "w-full px-3.5 py-2.5 rounded-xl border border-line text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition";
+    "w-full px-3.5 py-2.5 rounded-xl bg-background text-foreground border border-line text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition";
 
   return (
     <div>

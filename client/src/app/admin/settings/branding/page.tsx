@@ -201,13 +201,13 @@ export default function BrandingPage() {
           ))}
         </div>
 
-        <div className="px-5 py-3.5 border-t border-line bg-surface/30 flex justify-end">
+        <div className="px-5 py-3.5 flex justify-center border-t border-line bg-surface/30 ">
           <button
             onClick={handleSave}
             disabled={saving}
-            className="px-4 py-2 rounded-lg bg-primary text-foreground text-xs font-semibold hover:bg-primary-dark transition disabled:opacity-50 shadow-sm"
+            className="px-5 py-3 rounded-sm bg-primary text-foreground text-xs font-semibold hover:bg-primary-dark transition disabled:opacity-50 shadow-sm"
           >
-            {saving ? "Saving..." : "Save changes"}
+            {saving ? "Saving..." : "Save Logo"}
           </button>
         </div>
       </div>

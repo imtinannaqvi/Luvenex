@@ -45,19 +45,19 @@ function StatCard({
 }) {
   return (
     <div className={`${softCard} px-4 py-3.5 w-full`}>
-      {loading ? (
+      {/* {loading ? (
         <div className="animate-pulse">
           <div className="h-5 w-14 bg-surface rounded-lg" />
           <div className="h-3 w-24 bg-surface rounded-lg mt-2" />
         </div>
-      ) : (
+      ) : ( */}
         <>
           <div className={`text-lg sm:text-xl font-bold tabular-nums ${alert ? "text-primary" : "text-foreground"}`}>
             {value}
           </div>
           <div className="text-[11px] leading-snug text-muted mt-1">{label}</div>
         </>
-      )}
+      
     </div>
   );
 }
@@ -246,9 +246,9 @@ export default function AdminDashboard() {
       </div>
     </div>
 
-    {loading ? (
+    {/* {loading ? (
       <div className="h-56 sm:h-72 rounded-2xl bg-surface animate-pulse" />
-    ) : (
+    ) : ( */}
       <div className="h-56 sm:h-72">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={growthData} margin={{ top: 8, right: 4, left: -18, bottom: 0 }}>
@@ -306,7 +306,7 @@ export default function AdminDashboard() {
           </ComposedChart>
         </ResponsiveContainer>
       </div>
-    )}
+    
   </div>
 </div>
 

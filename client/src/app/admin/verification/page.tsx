@@ -48,7 +48,7 @@ useEffect(() => {
     <div>
       <h1 className="text-2xl font-bold text-foreground italic mb-6">Verification Requests</h1>
       {users.length === 0 ? (
-        <div className="bg-background border border-line rounded-2xl p-8 text-center">
+        <div className="bg-background border border-line rounded-sm p-8 text-center">
           <p className="text-muted text-sm">No pending requests.</p>
         </div>
       ) : (
@@ -56,15 +56,15 @@ useEffect(() => {
           {users.map((u) => (
             <div
               key={u._id}
-              className="bg-background border border-line rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col"
+              className="bg-background border border-line rounded-sm p-5 shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col"
             >
               <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-full bg-surface border border-line flex items-center justify-center text-sm font-bold text-foreground shrink-0">
+                <div className="w-10 h-10 rounded-sm bg-surface border border-line flex items-center justify-center text-sm font-bold text-foreground shrink-0">
                   {u.name?.[0]?.toUpperCase() || "?"}
                 </div>
                 <div className="min-w-0">
                   <p className="text-sm font-semibold text-foreground truncate">{u.name}</p>
-                  <span className="inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full bg-surface border border-line text-muted capitalize mt-0.5">
+                  <span className="inline-block text-[10px] font-semibold px-2 py-0.5 rounded-sm bg-surface border border-line text-muted capitalize mt-0.5">
                     {u.role}
                   </span>
                 </div>
@@ -80,13 +80,13 @@ useEffect(() => {
               <div className="flex gap-2 mt-4">
                 <button
                   onClick={() => review(u._id, "approved")}
-                  className="flex-1 text-xs font-semibold px-3 py-2 rounded-lg bg-primary text-foreground hover:bg-primary-dark transition"
+                  className="flex-1 text-xs font-semibold px-3 py-2 rounded-sm bg-primary text-foreground hover:bg-primary-dark transition"
                 >
                   Approve
                 </button>
                 <button
                   onClick={() => review(u._id, "rejected")}
-                  className="flex-1 text-xs font-semibold px-3 py-2 rounded-lg border border-line text-foreground hover:bg-surface transition"
+                  className="flex-1 text-xs font-semibold px-3 py-2 rounded-sm border border-line text-foreground hover:bg-surface transition"
                 >
                   Reject
                 </button>

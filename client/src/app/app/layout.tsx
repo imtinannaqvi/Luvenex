@@ -20,6 +20,7 @@ import {
   FiBookmark,
   FiMenu,
   FiX,
+  FiLifeBuoy,
 } from "react-icons/fi";
 import { getToken, getUser, clearSession } from "@/lib/auth";
 import NotificationBell from "@/components/NotificationBell";
@@ -117,6 +118,7 @@ function AppShell({
             icon: FiBookmark,
           },
           { href: "/app/profile", label: "Profile", icon: FiUser },
+          { href: "/app/support", label: "Support", icon: FiLifeBuoy },
         ]
       : [
           { href: "/app", label: "Overview", icon: FiGrid },
@@ -141,6 +143,7 @@ function AppShell({
             icon: FiCompass,
           },
           { href: "/app/referrals", label: "Referrals", icon: FiGift },
+          { href: "/app/support", label: "Support", icon: FiLifeBuoy },
         ];
 
   const renderNavItem = (item: (typeof navItems)[number]) => {
@@ -406,8 +409,7 @@ function AppShell({
               : "flex-1 p-4 sm:p-6 lg:p-8"
           }
         >
-          {/* Skipped on full-bleed pages (Messages) — that layout fills the
-              height exactly and a banner would push the composer off-screen. */}
+        
           {!isFullBleedPage && <AnnouncementBanner />}
           {children}
         </div>

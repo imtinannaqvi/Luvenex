@@ -51,7 +51,7 @@ export default function ReferralPage() {
   if (loading) {
     return (
       <div className="min-h-[50vh] flex items-center justify-center">
-        <div className="w-8 h-8 border-red-600 border-2 border-t-transparent rounded-full animate-spin"></div>
+        <div className="w-6 h-6 border-red-600 border-2 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -59,7 +59,7 @@ export default function ReferralPage() {
   if (!data) {
     return (
       <div className="max-w-6xl mx-auto text-center py-12 bg-card border border-border-color rounded-2xl shadow-sm">
-        <p className="text-sm text-zinc-400">Unable to load referral info. Please try again later.</p>
+        <p className="text-sm text-foreground">Unable to load referral info. Please try again later.</p>
       </div>
     );
   }
@@ -89,7 +89,7 @@ export default function ReferralPage() {
 
       {/* How It Works Section */}
       <div className="bg-card border border-border-color rounded-xl p-6 sm:p-8 shadow-sm">
-        <p className="text-[11px] font-bold tracking-wider text-zinc-400 uppercase mb-5">How It Works</p>
+        <p className="text-[11px] font-bold tracking-wider text-foreground uppercase mb-5">How It Works</p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
           {/* Step 1 */}
@@ -99,7 +99,7 @@ export default function ReferralPage() {
             </div>
             <div>
               <h3 className="text-sm font-bold text-foreground">Share your link</h3>
-              <p className="text-xs text-zinc-400 mt-1 leading-relaxed">
+              <p className="text-xs text-foreground mt-1 leading-relaxed">
                 Send your unique referral link to sellers, creators, or brands looking to collaborate.
               </p>
             </div>
@@ -112,7 +112,7 @@ export default function ReferralPage() {
             </div>
             <div>
               <h3 className="text-sm font-bold text-foreground">They sign up & deal</h3>
-              <p className="text-xs text-zinc-400 mt-1 leading-relaxed">
+              <p className="text-xs text-foreground mt-1 leading-relaxed">
                 When they register using your link and complete their first deal, they become your referral.
               </p>
             </div>
@@ -125,7 +125,7 @@ export default function ReferralPage() {
             </div>
             <div>
               <h3 className="text-sm font-bold text-foreground">You earn rewards</h3>
-              <p className="text-xs text-zinc-400 mt-1 leading-relaxed">
+              <p className="text-xs text-foreground mt-1 leading-relaxed">
                 You receive {referralPercent}% of their first deal's value directly in your wallet, automatically.
               </p>
             </div>
@@ -182,7 +182,7 @@ export default function ReferralPage() {
             </svg>
           </div>
           <div>
-            <p className="text-xs font-semibold text-zinc-400">Total Earned</p>
+            <p className="text-xs font-semibold text-foreground">Total Earned</p>
             <p className="text-lg font-bold text-foreground mt-0.5 italic">{money(data.rewardsEarnedMinor ?? 0)}</p>
           </div>
         </div>
@@ -195,7 +195,7 @@ export default function ReferralPage() {
             </svg>
           </div>
           <div>
-            <p className="text-xs font-semibold text-zinc-400">Total Referrals</p>
+            <p className="text-xs font-semibold text-foreground">Total Referrals</p>
             <p className="text-lg font-bold text-foreground mt-0.5 italic">{data.totalReferred ?? 0}</p>
           </div>
         </div>
@@ -208,7 +208,7 @@ export default function ReferralPage() {
             </svg>
           </div>
           <div>
-            <p className="text-xs font-medium text-zinc-400">Referral Code</p>
+            <p className="text-xs font-medium text-foreground">Referral Code</p>
             <p className="text-base font-bold text-foreground mt-0.5 tracking-wider font-mono bg-surface px-2.5 py-0.5 rounded-md border border-border-color inline-block">
               {data.referralCode ?? "—"}
             </p>
@@ -220,12 +220,12 @@ export default function ReferralPage() {
       <div className="bg-card border border-border-color rounded-xl p-5 sm:p-6 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-sm font-bold text-foreground">People you've referred</h2>
-          <span className="text-xs text-zinc-400 font-medium">Total: {referredUsers.length}</span>
+          <span className="text-xs text-foreground font-medium">Total: {referredUsers.length}</span>
         </div>
 
         {referredUsers.length === 0 ? (
           <div className="text-center py-10 border border-dashed border-border-color rounded-xl bg-surface">
-            <p className="text-xs text-zinc-400">
+            <p className="text-xs text-foreground">
               No one yet — share your link to start earning.
             </p>
           </div>
@@ -239,10 +239,10 @@ export default function ReferralPage() {
                   </div>
                   <div>
                     <p className="text-xs sm:text-sm font-semibold text-foreground">{u.name}</p>
-                    <p className="text-[10px] text-zinc-400 capitalize">{u.role}</p>
+                    <p className="text-[10px] text-foreground capitalize">{u.role}</p>
                   </div>
                 </div>
-                <span className="text-xs text-zinc-400 font-mono">
+                <span className="text-xs text-foreground font-mono">
                   {new Date(u.createdAt).toLocaleDateString('en-PK', { year: 'numeric', month: 'short', day: 'numeric' })}
                 </span>
               </div>
