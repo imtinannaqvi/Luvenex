@@ -207,307 +207,314 @@ export default function AdminSettingsPage() {
         })}
       </div>
 
-      <div className="bg-background border border-line rounded-sm overflow-hidden">
-        {activeSection === "commission" && (
-          <>
-            <SectionHeader
-              title="Commission Split"
-              subtitle="Fee division between brand and creator"
-              icon={<FiPercent size={17} />}
-            />
-            <div className="p-6 space-y-4">
-              <div className="flex gap-4">
-                <div className="flex-1">
-                  <label className="block text-xs font-semibold text-foreground mb-1.5">
-                    Brand fee (%)
-                  </label>
-                  <input
-                    type="number"
-                    value={settings.brandFeePercent ?? ""}
-                    onChange={(e) => update("brandFeePercent", Number(e.target.value))}
-                    className={inputCls}
-                  />
-                </div>
-                <div className="flex-1">
-                  <label className="block text-xs font-semibold text-foreground mb-1.5">
-                    Influencer fee (%)
-                  </label>
-                  <input
-                    type="number"
-                    value={settings.influencerFeePercent ?? ""}
-                    onChange={(e) => update("influencerFeePercent", Number(e.target.value))}
-                    className={inputCls}
-                  />
-                </div>
-              </div>
-              <div
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-sm border ${
-                  totalCommission > 100
-                    ? "bg-red-50 border-red-200"
-                    : "bg-primary/5 border-primary/10"
-                }`}
-              >
-                <span
-                  className={`text-xs font-semibold ${
-                    totalCommission > 100 ? "text-red-600" : "text-primary"
-                  }`}
-                >
-                  {totalCommission > 100
-                    ? `Total commission is ${totalCommission}% — reduce it to 100% or less before saving.`
-                    : `Total commission: ${totalCommission}%`}
-                </span>
-              </div>
-            </div>
-            <SaveButton onClick={handleSave} saving={saving} />
-          </>
-        )}
-
-        {activeSection === "financial" && (
-          <>
-            <SectionHeader
-              title="Financial Limits"
-              subtitle="Deal price boundaries and payout thresholds"
-              icon={<FiDollarSign size={17} />}
-            />
-            <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-semibold text-foreground mb-1.5">
-                  Referral reward (%)
-                </label>
-                <input
-                  type="number"
-                  value={settings.referralRewardPercent ?? ""}
-                  onChange={(e) => update("referralRewardPercent", Number(e.target.value))}
-                  className={inputCls}
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-foreground mb-1.5">
-                  Min withdrawal (PKR)
-                </label>
-                <input
-                  type="number"
-                  value={minorToMajor(settings.minWithdrawalMinor)}
-                  onChange={(e) => update("minWithdrawalMinor", majorToMinor(e.target.value))}
-                  className={inputCls}
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-foreground mb-1.5">
-                  Min deal price (PKR)
-                </label>
-                <input
-                  type="number"
-                  value={minorToMajor(settings.minDealPriceMinor)}
-                  onChange={(e) => update("minDealPriceMinor", majorToMinor(e.target.value))}
-                  className={inputCls}
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-foreground mb-1.5">
-                  Max deal price (0 = no limit)
-                </label>
-                <input
-                  type="number"
-                  value={minorToMajor(settings.maxDealPriceMinor)}
-                  onChange={(e) => update("maxDealPriceMinor", majorToMinor(e.target.value))}
-                  className={inputCls}
-                />
-              </div>
-            </div>
-            <SaveButton onClick={handleSave} saving={saving} />
-          </>
-        )}
-
-        {activeSection === "timing" && (
-          <>
-            <SectionHeader
-              title="Timing & Moderation"
-              subtitle="Escrow release windows and review thresholds"
-              icon={<FiClock size={17} />}
-            />
-            <div className="p-6 space-y-4">
-              <div className="flex gap-4">
-                <div className="flex-1">
-                  <label className="block text-xs font-semibold text-foreground mb-1.5">
-                    Auto-release (days)
-                  </label>
-                  <input
-                    type="number"
-                    value={settings.autoReleaseDays ?? ""}
-                    onChange={(e) => update("autoReleaseDays", Number(e.target.value))}
-                    className={inputCls}
-                  />
-                </div>
-                <div className="flex-1">
-                  <label className="block text-xs font-semibold text-foreground mb-1.5">
-                    Complaint flag threshold
-                  </label>
-                  <input
-                    type="number"
-                    value={settings.complaintAutoFlagThreshold ?? ""}
-                    onChange={(e) => update("complaintAutoFlagThreshold", Number(e.target.value))}
-                    className={inputCls}
-                  />
-                </div>
-              </div>
-
-              <div className="pt-2 border-t border-line/60">
-                <label className="flex items-center gap-2.5 text-sm cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={settings.reviewModerationEnabled ?? false}
-                    onChange={(e) => update("reviewModerationEnabled", e.target.checked)}
-                    className="w-4 h-4"
-                  />
-                  <span className="font-medium text-foreground">
-                    Require approval for low-rated reviews
-                  </span>
-                </label>
-                {settings.reviewModerationEnabled && (
-                  <input
-                    type="number"
-                    min="1"
-                    max="5"
-                    placeholder="Reviews at or below this rating need approval"
-                    value={settings.reviewModerationMinRating ?? ""}
-                    onChange={(e) => update("reviewModerationMinRating", Number(e.target.value))}
-                    className="w-full mt-2 px-3.5 py-2.5 rounded-sm border border-line text-sm"
-                  />
-                )}
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-foreground mb-1.5">
-                  Auto-suspend unverified accounts after (days, 0 = disabled)
-                </label>
-                <input
-                  type="number"
-                  value={settings.inactiveAccountAutoSuspendDays ?? ""}
-                  onChange={(e) =>
-                    update("inactiveAccountAutoSuspendDays", Number(e.target.value))
-                  }
-                  className={inputCls}
-                />
-              </div>
-            </div>
-            <SaveButton onClick={handleSave} saving={saving} />
-          </>
-        )}
-
-        {activeSection === "verification" && (
-          <>
-            <SectionHeader
-              title="Verification"
-              subtitle="When creators become eligible to apply for a verified badge"
-              icon={<FiCheckCircle size={17} />}
-            />
-            <div className="p-6 space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-foreground mb-1.5">
-                  Completed deals required to apply
-                </label>
-                <input
-                  type="number"
-                  min="0"
-                  value={settings.minDealsForVerification ?? ""}
-                  onChange={(e) => update("minDealsForVerification", Number(e.target.value))}
-                  className={inputCls}
-                />
-               
-              </div>
-
-              
-            </div>
-            <SaveButton onClick={handleSave} saving={saving} />
-          </>
-        )}
-
-        {activeSection === "about" && (
-          <>
-            <SectionHeader
-              title="About Page"
-              subtitle="Public-facing content shown on your About Us page"
-              icon={<FiInfo size={17} />}
-            />
-            <div className="p-6 space-y-5">
+     <div className="bg-background border border-line rounded-sm overflow-hidden">
+  {activeSection === "commission" && (
+    <div className="flex flex-col justify-between min-h-[480px]">
+      <div>
+        <SectionHeader
+          title="Commission Split"
+          subtitle="Fee division between brand and creator"
+          icon={<FiPercent size={17} />}
+        />
+        <div className="p-8 space-y-6">
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <label className="block text-xs font-semibold text-foreground mb-1.5">
+                Brand fee (%)
+              </label>
               <input
-                type="text"
-                placeholder="Page title"
-                value={aboutTitle}
-                onChange={(e) => setAboutTitle(e.target.value)}
-                className="w-full text-lg font-bold px-0 py-1 border-0 border-b border-line focus:outline-none focus:border-primary bg-transparent"
+                type="number"
+                value={settings.brandFeePercent ?? ""}
+                onChange={(e) => update("brandFeePercent", Number(e.target.value))}
+                className={inputCls}
               />
-
-              <div>
-                <label className="block text-sm font-semibold text-foreground mb-1.5">
-                  Hero image
-                </label>
-                {aboutHeroPreview ? (
-                  <div className="relative w-full h-40 rounded-xl overflow-hidden border border-line group">
-                    <img src={aboutHeroPreview} className="w-full h-full object-cover" alt="" />
-                    <label className="absolute inset-0 bg-black/0 group-hover:bg-background/40 transition flex items-center justify-center cursor-pointer">
-                      <span className="opacity-0 group-hover:opacity-100 text-foreground text-xs font-semibold transition">
-                        Change image
-                      </span>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0] || null;
-                          setAboutHeroImage(file);
-                          if (file) setAboutHeroPreview(URL.createObjectURL(file));
-                        }}
-                        className="hidden"
-                      />
-                    </label>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setAboutHeroImage(null);
-                        setAboutHeroPreview(null);
-                      }}
-                      className="absolute top-2 right-2 w-6 h-6 rounded-sm bg-background/60 hover:bg-background/80 text-foreground flex items-center justify-center transition"
-                    >
-                      <FiX size={13} />
-                    </button>
-                  </div>
-                ) : (
-                  <label className="flex flex-col items-center justify-center gap-1.5 w-full h-28 border-2 border-dashed border-line hover:border-primary hover:bg-primary/5 rounded-sm cursor-pointer transition">
-                    <FiImage size={18} className="text-foreground" />
-                    <p className="text-xs text-foreground">Click to upload hero image</p>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0] || null;
-                        setAboutHeroImage(file);
-                        if (file) setAboutHeroPreview(URL.createObjectURL(file));
-                      }}
-                      className="hidden"
-                    />
-                  </label>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-foreground mb-1.5">Content</label>
-                <div className="rounded-xl border border-line overflow-hidden bg-background">
-                  <ReactQuill
-                    theme="snow"
-                    value={aboutContent}
-                    onChange={setAboutContent}
-                    modules={quillModules}
-                    placeholder="Write about your platform..."
-                    className="[&_.ql-editor]:min-h-[220px] [&_.ql-toolbar]:border-line [&_.ql-container]:border-line"
-                  />
-                </div>
-              </div>
             </div>
-            <SaveButton onClick={handleSaveAbout} saving={savingAbout} />
-          </>
-        )}
+            <div className="flex-1">
+              <label className="block text-xs font-semibold text-foreground mb-1.5">
+                Influencer fee (%)
+              </label>
+              <input
+                type="number"
+                value={settings.influencerFeePercent ?? ""}
+                onChange={(e) => update("influencerFeePercent", Number(e.target.value))}
+                className={inputCls}
+              />
+            </div>
+          </div>
+          <div
+            className={`flex items-center gap-2 px-4 py-3.5 rounded-sm border ${
+              totalCommission > 100
+                ? "bg-red-50 border-red-200"
+                : "bg-primary/5 border-primary/10"
+            }`}
+          >
+            <span
+              className={`text-xs font-semibold ${
+                totalCommission > 100 ? "text-red-600" : "text-primary"
+              }`}
+            >
+              {totalCommission > 100
+                ? `Total commission is ${totalCommission}% — reduce it to 100% or less before saving.`
+                : `Total commission: ${totalCommission}%`}
+            </span>
+          </div>
+        </div>
       </div>
+      <SaveButton onClick={handleSave} saving={saving} />
+    </div>
+  )}
+
+  {activeSection === "financial" && (
+    <div className="flex flex-col justify-between min-h-[480px]">
+      <div>
+        <SectionHeader
+          title="Financial Limits"
+          subtitle="Deal price boundaries and payout thresholds"
+          icon={<FiDollarSign size={17} />}
+        />
+        <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-xs font-semibold text-foreground mb-1.5">
+              Referral reward (%)
+            </label>
+            <input
+              type="number"
+              value={settings.referralRewardPercent ?? ""}
+              onChange={(e) => update("referralRewardPercent", Number(e.target.value))}
+              className={inputCls}
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-foreground mb-1.5">
+              Min withdrawal (PKR)
+            </label>
+            <input
+              type="number"
+              value={minorToMajor(settings.minWithdrawalMinor)}
+              onChange={(e) => update("minWithdrawalMinor", majorToMinor(e.target.value))}
+              className={inputCls}
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-foreground mb-1.5">
+              Min deal price (PKR)
+            </label>
+            <input
+              type="number"
+              value={minorToMajor(settings.minDealPriceMinor)}
+              onChange={(e) => update("minDealPriceMinor", majorToMinor(e.target.value))}
+              className={inputCls}
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-foreground mb-1.5">
+              Max deal price (0 = no limit)
+            </label>
+            <input
+              type="number"
+              value={minorToMajor(settings.maxDealPriceMinor)}
+              onChange={(e) => update("maxDealPriceMinor", majorToMinor(e.target.value))}
+              className={inputCls}
+            />
+          </div>
+        </div>
+      </div>
+      <SaveButton onClick={handleSave} saving={saving} />
+    </div>
+  )}
+
+  {activeSection === "timing" && (
+    <div className="flex flex-col justify-between min-h-[480px]">
+      <div>
+        <SectionHeader
+          title="Timing & Moderation"
+          subtitle="Escrow release windows and review thresholds"
+          icon={<FiClock size={17} />}
+        />
+        <div className="p-6 space-y-4">
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <label className="block text-xs font-semibold text-foreground mb-1.5">
+                Auto-release (days)
+              </label>
+              <input
+                type="number"
+                value={settings.autoReleaseDays ?? ""}
+                onChange={(e) => update("autoReleaseDays", Number(e.target.value))}
+                className={inputCls}
+              />
+            </div>
+            <div className="flex-1">
+              <label className="block text-xs font-semibold text-foreground mb-1.5">
+                Complaint flag threshold
+              </label>
+              <input
+                type="number"
+                value={settings.complaintAutoFlagThreshold ?? ""}
+                onChange={(e) => update("complaintAutoFlagThreshold", Number(e.target.value))}
+                className={inputCls}
+              />
+            </div>
+          </div>
+
+          <div className="pt-2 border-t border-line/60">
+            <label className="flex items-center gap-2.5 text-sm cursor-pointer">
+              <input
+                type="checkbox"
+                checked={settings.reviewModerationEnabled ?? false}
+                onChange={(e) => update("reviewModerationEnabled", e.target.checked)}
+                className="w-4 h-4"
+              />
+              <span className="font-medium text-foreground">
+                Require approval for low-rated reviews
+              </span>
+            </label>
+            {settings.reviewModerationEnabled && (
+              <input
+                type="number"
+                min="1"
+                max="5"
+                placeholder="Reviews at or below this rating need approval"
+                value={settings.reviewModerationMinRating ?? ""}
+                onChange={(e) => update("reviewModerationMinRating", Number(e.target.value))}
+                className="w-full mt-2 px-3.5 py-2.5 rounded-sm border border-line text-sm"
+              />
+            )}
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-foreground mb-1.5">
+              Auto-suspend unverified accounts after (days, 0 = disabled)
+            </label>
+            <input
+              type="number"
+              value={settings.inactiveAccountAutoSuspendDays ?? ""}
+              onChange={(e) =>
+                update("inactiveAccountAutoSuspendDays", Number(e.target.value))
+              }
+              className={inputCls}
+            />
+          </div>
+        </div>
+      </div>
+      <SaveButton onClick={handleSave} saving={saving} />
+    </div>
+  )}
+
+  {activeSection === "verification" && (
+    <div className="flex flex-col justify-between min-h-[480px]">
+      <div>
+        <SectionHeader
+          title="Verification"
+          subtitle="When creators become eligible to apply for a verified badge"
+          icon={<FiCheckCircle size={17} />}
+        />
+        <div className="p-6 space-y-4">
+          <div>
+            <label className="block text-xs font-semibold text-foreground mb-1.5">
+              Completed deals required to apply
+            </label>
+            <input
+              type="number"
+              min="0"
+              value={settings.minDealsForVerification ?? ""}
+              onChange={(e) => update("minDealsForVerification", Number(e.target.value))}
+              className={inputCls}
+            />
+          </div>
+        </div>
+      </div>
+      <SaveButton onClick={handleSave} saving={saving} />
+    </div>
+  )}
+
+  {activeSection === "about" && (
+    <div className="flex flex-col justify-between min-h-[480px]">
+      <div>
+        <SectionHeader
+          title="About Page"
+          subtitle="Public-facing content shown on your About Us page"
+          icon={<FiInfo size={17} />}
+        />
+        <div className="p-6 space-y-5">
+          <input
+            type="text"
+            placeholder="Page title"
+            value={aboutTitle}
+            onChange={(e) => setAboutTitle(e.target.value)}
+            className="w-full text-lg font-bold px-0 py-1 border-0 border-b border-line focus:outline-none focus:border-primary bg-transparent"
+          />
+
+          <div>
+            <label className="block text-sm font-semibold text-foreground mb-1.5">
+              Hero image
+            </label>
+            {aboutHeroPreview ? (
+              <div className="relative w-full h-40 rounded-xl overflow-hidden border border-line group">
+                <img src={aboutHeroPreview} className="w-full h-full object-cover" alt="" />
+                <label className="absolute inset-0 bg-black/0 group-hover:bg-background/40 transition flex items-center justify-center cursor-pointer">
+                  <span className="opacity-0 group-hover:opacity-100 text-foreground text-xs font-semibold transition">
+                    Change image
+                  </span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0] || null;
+                      setAboutHeroImage(file);
+                      if (file) setAboutHeroPreview(URL.createObjectURL(file));
+                    }}
+                    className="hidden"
+                  />
+                </label>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAboutHeroImage(null);
+                    setAboutHeroPreview(null);
+                  }}
+                  className="absolute top-2 right-2 w-6 h-6 rounded-sm bg-background/60 hover:bg-background/80 text-foreground flex items-center justify-center transition"
+                >
+                  <FiX size={13} />
+                </button>
+              </div>
+            ) : (
+              <label className="flex flex-col items-center justify-center gap-1.5 w-full h-28 border-2 border-dashed border-line hover:border-primary hover:bg-primary/5 rounded-sm cursor-pointer transition">
+                <FiImage size={18} className="text-foreground" />
+                <p className="text-xs text-foreground">Click to upload hero image</p>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0] || null;
+                    setAboutHeroImage(file);
+                    if (file) setAboutHeroPreview(URL.createObjectURL(file));
+                  }}
+                  className="hidden"
+                />
+              </label>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-foreground mb-1.5">Content</label>
+            <div className="rounded-xl border border-line overflow-hidden bg-background">
+              <ReactQuill
+                theme="snow"
+                value={aboutContent}
+                onChange={setAboutContent}
+                modules={quillModules}
+                placeholder="Write about your platform..."
+                className="[&_.ql-editor]:min-h-[220px] [&_.ql-toolbar]:border-line [&_.ql-container]:border-line"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <SaveButton onClick={handleSaveAbout} saving={savingAbout} />
+    </div>
+  )}
+</div>
     </div>
   );
 }

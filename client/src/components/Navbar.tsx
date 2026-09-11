@@ -73,15 +73,11 @@ const Navbar = () => {
     <header className="w-full bg-background text-foreground z-30 relative border-b border-border-color transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-4">
         {/* Logo */}
-        <Link href="/" className="">
+              <Link href="/" className="">
           <img
             src={logo || FALLBACK_LOGO}
             alt="Luvenex"
-            // The bundled logo is a single-colour mark that needs inverting in
-            // light mode. An uploaded logo is used exactly as supplied.
-            className={`h-7 sm:h-9 w-auto select-none transition-all ${
-              usingUploadedLogo ? "" : "dark:invert-0 invert"
-            }`}
+            className="h-7 sm:h-9 w-auto select-none transition-all invert dark:invert-0"
             onError={() => setLogo(null)}
           />
         </Link>
@@ -107,7 +103,7 @@ const Navbar = () => {
               href="/app"
               aria-label="Go to Dashboard"
               title="Go to Dashboard"
-              className="flex items-center gap-1.5 sm:gap-2 h-9 px-2 sm:px-3 rounded-full text-foreground/80 hover:text-foreground hover:bg-foreground/10 transition"
+              className="flex items-center gap-1.5 sm:gap-2 h-9 px-2 sm:px-3  text-foreground/80 hover:text-foreground transition"
             >
               <svg
                 viewBox="0 0 24 24"
@@ -135,7 +131,7 @@ const Navbar = () => {
                 disabled={loggingOut}
                 aria-label="Log out"
                 title="Log out"
-                className="flex items-center gap-1.5 sm:gap-2 h-9 px-3 sm:px-4 rounded-full text-foreground/80 hover:text-foreground hover:bg-foreground/10 transition cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                className="flex items-center gap-1.5 sm:gap-2 h-9 px-3 sm:px-4  text-foreground/80 hover:text-foreground  transition cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 <svg
                   width="18"
@@ -159,7 +155,7 @@ const Navbar = () => {
                 href="/login"
                 aria-label="Log in"
                 title="Log in"
-                className="flex items-center gap-1.5 sm:gap-2 h-9 px-3 sm:px-4 rounded-full text-foreground/80 hover:text-foreground hover:bg-foreground/10 transition"
+                className="flex items-center gap-1.5 sm:gap-2 h-9 px-3 sm:px-4  text-foreground/80 hover:text-foreground  transition"
               >
                 <svg
                   width="18"

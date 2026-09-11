@@ -243,7 +243,7 @@ export default function ContactPage() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="px-10 py-4 rounded-sm bg-primary text-white font-bold text-xs uppercase tracking-widest transition-all duration-300 hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/30 disabled:opacity-50 cursor-pointer"
+                className="px-10 py-4 rounded-sm bg-surface text-foreground font-bold text-md transition-all duration-300 hover:bg-primary   cursor-pointer"
               >
                 {submitting ? "Sending..." : "Send Message"}
               </button>

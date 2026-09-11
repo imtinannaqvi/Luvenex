@@ -104,20 +104,16 @@ export default function Footer() {
           <Link href="/about" className="hover:text-foreground transition-colors">ABOUT US</Link>
           <Link href="/how-it-works" className="hover:text-foreground transition-colors">HOW IT WORKS</Link>
           <Link href="/discover" className="hover:text-foreground transition-colors">DISCOVER CREATORS</Link>
-          <Link href="/brands" className="hover:text-foreground transition-colors">BRANDS</Link>
+          <Link href="/explore" className="hover:text-foreground transition-colors">Explore</Link>
         </nav>
 
         {/* Center Brand Title & Info */}
         <div className="flex flex-col items-center justify-center text-center space-y-4 my-8 md:my-0 max-w-lg">
-          <Link href="/" className="">
+                    <Link href="/" className="">
             <img
               src={logo || FALLBACK_LOGO}
               alt="Luvenex"
-              // The bundled logo is a single-colour mark that needs inverting in
-              // light mode. An uploaded logo is used exactly as supplied.
-              className={`h-10 sm:h-14 w-auto select-none transition-all ${
-                usingUploadedLogo ? "" : "dark:invert-0 invert"
-              }`}
+              className="h-10 sm:h-14 w-auto select-none transition-all invert dark:invert-0"
               onError={() => setLogo(null)}
             />
           </Link>

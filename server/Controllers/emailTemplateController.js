@@ -1,5 +1,7 @@
 import EmailTemplate from '../models/EmailTemplate.js';
 import { TEMPLATE_DEFS, TEMPLATE_KEYS, renderTemplate } from '../config/emailTemplates.js';
+import { wrapEmail, styleBodyHtml } from '../config/emailLayout.js';
+import { deliver, getLogoUrl } from '../services/email.service.js';
 
 
 export const getTemplates = async (req, res) => {
@@ -46,6 +48,7 @@ export const updateTemplate = async (req, res) => {
             return res.status(400).json({ error: { message: 'Body is required' } });
         }
 
+        // Catch typo'd placeholders before they ship as blanks in a real email.
         const allowed = def.vars.map((v) => v.key);
         const used = [
             ...String(subject || '').matchAll(/\{\{\s*(\w+)\s*\}\}/g),
@@ -80,6 +83,7 @@ export const updateTemplate = async (req, res) => {
     }
 };
 
+/** Throws away the admin's edits and goes back to the shipped wording. */
 export const resetTemplate = async (req, res) => {
     try {
         const { key } = req.params;
@@ -102,20 +106,27 @@ export const sendTestEmail = async (req, res) => {
             return res.status(404).json({ error: { message: 'Unknown template' } });
         }
 
+        const to = String(req.body.to || req.user.email || '').trim();
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to)) {
+            return res.status(400).json({ error: { message: 'Enter a valid email address' } });
+        }
+
         const sample = Object.fromEntries(def.vars.map((v) => [v.key, v.sample]));
         const row = await EmailTemplate.findOne({ key });
-        const subject = renderTemplate(row?.subject ?? def.defaultSubject, sample);
-        const body = renderTemplate(row?.body ?? def.defaultBody, sample);
 
-        console.log('\n────────── TEST EMAIL ──────────');
-        console.log('To:      ', req.user.email);
-        console.log('Subject: ', subject);
-        console.log('Body:    ', body.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim());
-        console.log('────────────────────────────────\n');
+        
+        const subjectSrc = req.body.subject ?? row?.subject ?? def.defaultSubject;
+        const bodySrc = req.body.body ?? row?.body ?? def.defaultBody;
 
-        res.json({
-            message: `Test rendered for ${req.user.email}. No mail transport is configured yet, so it was written to the server log.`,
+        const logoUrl = await getLogoUrl();
+        const html = wrapEmail({
+            body: styleBodyHtml(renderTemplate(bodySrc, sample)),
+            logoUrl,
         });
+
+        await deliver({ to, subject: renderTemplate(subjectSrc, sample), html });
+
+        res.json({ message: `Test sent to ${to}.` });
     } catch (error) {
         res.status(500).json({ error: { message: error.message } });
     }
