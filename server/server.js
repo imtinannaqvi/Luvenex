@@ -45,6 +45,7 @@ import brandingRouter from './routes/brandingRoutes.js'
 import announcementRouter from './routes/announcementRoutes.js'
 import supportRouter from './routes/supportRoutes.js'
 import Supportticketroutes from './routes/Supportticketroutes.js'
+import EmailTemplateRouter from './routes/emailTemplateRoutes.js'
 
 connectDB();
 
@@ -126,7 +127,7 @@ app.use('/api/branding', brandingRouter);
 app.use('/api/announcements', announcementRouter);
 app.use('/api/support', supportRouter);
 app.use('/api/support-tickets', Supportticketroutes);
-
+app.use('/api/email-templates', EmailTemplateRouter)
 
 app.use((err, req, res, next) => {
   console.error('ERROR:', err);

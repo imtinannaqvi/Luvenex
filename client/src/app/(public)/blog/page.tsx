@@ -167,9 +167,7 @@ export default function BlogListingPage() {
                     <div className="mt-2 w-10 h-1 bg-red-600 rounded-full" />
                   </div>
 
-                  <span className="text-sm text-zinc-600">
-                    {posts.length} {posts.length === 1 ? "article" : "articles"}
-                  </span>
+              
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7">

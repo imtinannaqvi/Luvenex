@@ -296,7 +296,7 @@ export default function SupportPage() {
               <input
                 type="text"
                 maxLength={60}
-                placeholder="Loomaze Support"
+                placeholder=" Support"
                 value={headerTitle}
                 onChange={(e) => setHeaderTitle(e.target.value)}
                 className={inputCls}
@@ -310,7 +310,7 @@ export default function SupportPage() {
               <input
                 type="text"
                 maxLength={100}
-                placeholder="We reply within minutes"
+                placeholder="We reply fast"
                 value={headerSubtitle}
                 onChange={(e) => setHeaderSubtitle(e.target.value)}
                 className={inputCls}

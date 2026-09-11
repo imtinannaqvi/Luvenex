@@ -76,9 +76,9 @@ function SignupForm() {
         <div className="absolute -top-16 -left-16 w-44 h-44 bg-primary/50 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -bottom-16 -right-16 w-44 h-44 bg-primary/50 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="relative z-10 w-full bg-ink/40 rounded-sm shadow-2xl p-8 backdrop-blur-xl">
+        <div className="relative z-10 w-full bg-ink/40 border border-primary/20 rounded-sm shadow-2xl p-8 backdrop-blur-xl">
           <div className="flex justify-center mb-4">
-            <img src="/luvenex-logo-black.png" alt="Luvenex" className="h-12 w-auto" />
+            <img src="/file_00000000b0e88211bb2c2f2e15c336ee.png" alt="Luvenex" className="h-13 w-auto" />
           </div>
 
           <p className="text-lg italic text-foreground mb-6 text-center">
@@ -265,7 +265,7 @@ function SignupForm() {
               <button
                 type="submit"
                 disabled={loading}
-                className="px-16 py-3.5 rounded-sm mt-2 bg-primary/40 text-foreground font-semibold text-sm
+                className="px-16 py-3.5 rounded-sm mt-2 bg-surface text-foreground font-semibold text-sm
                            hover:bg-primary-dark transition disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {loading ? "Creating account..." : "Sign up"}

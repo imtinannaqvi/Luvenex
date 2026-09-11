@@ -34,10 +34,10 @@ export default function ForgotPasswordPage() {
                 <div className="absolute -top-16 -left-16 w-44 h-44 bg-primary/50 rounded-full blur-3xl pointer-events-none" />
                 <div className="absolute -bottom-16 -right-16 w-44 h-44 bg-primary/50 rounded-full blur-3xl pointer-events-none" />
 
-                <div className="relative z-10 w-full bg-ink/40 rounded-sm shadow-2xl p-8 backdrop-blur-xl">
+                <div className="relative z-10 w-full bg-ink/10 border border-primary/20 rounded-sm shadow-2xl p-8 backdrop-blur-xl">
                     <div className="flex justify-center mb-4">
                         <img
-                            src="/luvenex-logo-black.png"
+                            src="/file_0000000052bc82119cb8f54648f4109b.png"
                             alt="Luvenex"
                             className="h-12 w-auto dark:invert"
                         />
@@ -71,7 +71,7 @@ export default function ForgotPasswordPage() {
                                     <button
                                         type="submit"
                                         disabled={loading}
-                                        className="px-16 py-3.5 rounded-sm bg-primary/40 text-foreground font-semibold text-sm
+                                        className="px-12 py-3.5 rounded-sm bg-surface text-foreground font-semibold text-sm
                                                    hover:bg-primary-dark transition disabled:opacity-60 disabled:cursor-not-allowed"
                                     >
                                         {loading ? "Sending..." : "Send reset code"}

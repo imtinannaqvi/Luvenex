@@ -61,6 +61,7 @@ const NAV_ITEMS: NavItem[] = [
     children: [
       { href: "/admin/settings/branding", label: "Branding" },
       { href: "/admin/settings/announcements", label: "Announcements" },
+      { href: "/admin/settings/email-templates", label: "Email Templates" },
       { href: "/admin/settings/support", label: "Support" },
     ],
   },

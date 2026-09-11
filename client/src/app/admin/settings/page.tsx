@@ -6,7 +6,15 @@ import { toast } from "react-toastify";
 import { apiFetch } from "@/lib/api";
 import { getToken } from "@/lib/auth";
 import { minorToMajor, majorToMinor } from "@/lib/money";
-import { FiInfo, FiImage, FiX, FiPercent, FiDollarSign, FiClock } from "react-icons/fi";
+import {
+  FiInfo,
+  FiImage,
+  FiX,
+  FiPercent,
+  FiDollarSign,
+  FiClock,
+  FiCheckCircle,
+} from "react-icons/fi";
 import "react-quill-new/dist/quill.snow.css";
 
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
@@ -27,6 +35,7 @@ const SECTIONS = [
   { key: "commission", label: "Commission Split", icon: FiPercent },
   { key: "financial", label: "Financial Limits", icon: FiDollarSign },
   { key: "timing", label: "Timing & Moderation", icon: FiClock },
+  { key: "verification", label: "Verification", icon: FiCheckCircle },
   { key: "about", label: "About Us", icon: FiInfo },
 ] as const;
 
@@ -56,11 +65,11 @@ function SectionHeader({
 
 function SaveButton({ onClick, saving }: { onClick: () => void; saving: boolean }) {
   return (
-    <div className="px-6 py-4 border-t border-line bg-surface/30 flex justify-end">
+    <div className="px-6 py-4 border-t border-line bg-surface/30 flex justify-center">
       <button
         onClick={onClick}
         disabled={saving}
-        className="px-6 py-2.5 rounded-xl bg-primary text-foreground text-sm font-semibold hover:bg-primary-dark transition disabled:opacity-50 shadow-sm"
+        className="px-6 py-2.5 rounded-sm bg-primary text-foreground text-sm font-semibold hover:bg-primary-dark transition disabled:opacity-50 shadow-sm"
       >
         {saving ? "Saving..." : "Save changes"}
       </button>
@@ -99,7 +108,6 @@ export default function AdminSettingsPage() {
   const update = (key: string, value: any) =>
     setSettings((prev: any) => ({ ...prev, [key]: value }));
 
-  // Only sends the keys this page owns, so it can't clobber the Platform page.
   const handleSave = async () => {
     setSaving(true);
     try {
@@ -115,6 +123,7 @@ export default function AdminSettingsPage() {
         reviewModerationEnabled: settings.reviewModerationEnabled,
         reviewModerationMinRating: settings.reviewModerationMinRating,
         inactiveAccountAutoSuspendDays: settings.inactiveAccountAutoSuspendDays,
+        minDealsForVerification: settings.minDealsForVerification,
       };
       const data = await apiFetch("/api/settings", {
         method: "PATCH",
@@ -163,7 +172,7 @@ export default function AdminSettingsPage() {
   if (!settings) return null;
 
   const inputCls =
-    "w-full px-3.5 py-2.5 rounded-xl border border-line text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition";
+    "w-full px-3.5 py-2.5 rounded-sm border border-line text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition";
 
   const totalCommission =
     (settings.brandFeePercent ?? 0) + (settings.influencerFeePercent ?? 0);
@@ -172,7 +181,9 @@ export default function AdminSettingsPage() {
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-foreground italic">General Settings</h1>
-        <p className="text-sm text-foreground mt-1">Fees, limits, timing rules, and your About page.</p>
+        <p className="text-sm text-foreground mt-1">
+          Fees, limits, timing rules, verification, and your About page.
+        </p>
       </div>
 
       <div className="flex flex-wrap items-center gap-2 mb-6 p-1.5 bg-surface border border-line rounded-sm overflow-x-auto">
@@ -379,6 +390,34 @@ export default function AdminSettingsPage() {
                   className={inputCls}
                 />
               </div>
+            </div>
+            <SaveButton onClick={handleSave} saving={saving} />
+          </>
+        )}
+
+        {activeSection === "verification" && (
+          <>
+            <SectionHeader
+              title="Verification"
+              subtitle="When creators become eligible to apply for a verified badge"
+              icon={<FiCheckCircle size={17} />}
+            />
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-foreground mb-1.5">
+                  Completed deals required to apply
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  value={settings.minDealsForVerification ?? ""}
+                  onChange={(e) => update("minDealsForVerification", Number(e.target.value))}
+                  className={inputCls}
+                />
+               
+              </div>
+
+              
             </div>
             <SaveButton onClick={handleSave} saving={saving} />
           </>
