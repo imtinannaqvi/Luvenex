@@ -256,7 +256,7 @@ export default function SeoSettingsPage() {
   }
 
   const inputCls =
-    "w-full px-3.5 py-2.5 rounded-xl border border-line bg-background text-sm text-foreground placeholder:text-foreground/30 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition";
+    "w-full px-3.5 py-2.5 rounded-sm border border-line bg-background text-sm text-foreground placeholder:text-foreground/30 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition";
 
   const previewTitle = (seo.titleTemplate || "%s").replace("%s", "Discover Creators");
   const previewUrl = seo.canonicalBaseUrl || "https://luvenex.com";
@@ -621,9 +621,8 @@ export default function SeoSettingsPage() {
                 <select
                   value={newType}
                   onChange={(e) => setNewType(Number(e.target.value))}
-                  /* Not inputCls — that sets w-full, which would fight w-28
-                     and push the Add button outside the card. */
-                  className="w-28 shrink-0 px-3.5 py-2.5 rounded-xl border border-line bg-background text-sm text-foreground cursor-pointer focus:outline-none focus:border-primary"
+                  
+                  className="w-28 shrink-0 px-3.5 py-2.5 rounded-sm border border-line bg-background text-sm text-foreground cursor-pointer focus:outline-none focus:border-primary"
                 >
                   <option value={301}>301</option>
                   <option value={302}>302</option>
@@ -681,7 +680,7 @@ export default function SeoSettingsPage() {
         <button
           onClick={handleSave}
           disabled={saving}
-          className="px-6 py-2.5 rounded-xl bg-primary text-white text-sm font-semibold hover:opacity-90 transition disabled:opacity-50"
+          className="px-6 py-2.5 rounded-sm bg-primary text-white text-sm font-semibold hover:opacity-90 transition disabled:opacity-50"
         >
           {saving ? "Saving..." : "Save changes"}
         </button>
