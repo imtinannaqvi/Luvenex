@@ -32,7 +32,7 @@ function Section({
   children,
 }: {
   title: string;
-  subtitle: string;
+  subtitle?: string;
   icon: React.ReactNode;
   children: React.ReactNode;
 }) {
@@ -44,8 +44,8 @@ function Section({
         </div>
         <div className="min-w-0">
           <h2 className="text-lg font-bold italic text-foreground">{title}</h2>
-          <p className="text-xs text-foreground/60 mt-0.5">{subtitle}</p>
-        </div>
+          {subtitle && <p className="text-xs text-foreground/60 mt-0.5">{subtitle}</p>}
+                  </div>
       </div>
       <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">{children}</div>
     </section>
