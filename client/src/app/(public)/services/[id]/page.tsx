@@ -94,7 +94,7 @@ export default function ServiceDetailPage() {
           </p>
           <button
             onClick={() => router.push("/services")}
-            className="mt-6 w-full py-3 rounded-xl bg-red-600 text-white font-semibold text-xs tracking-wide uppercase transition hover:bg-red-700 active:scale-95 shadow-lg shadow-red-600/30 cursor-pointer"
+            className="mt-6 w-full py-3 rounded-xl bg-red-600 text-foreground font-semibold text-xs tracking-wide uppercase transition hover:bg-red-700 active:scale-95 shadow-lg shadow-red-600/30 cursor-pointer"
           >
             Back to Services
           </button>
@@ -262,20 +262,20 @@ export default function ServiceDetailPage() {
   <div className="max-w-4xl mx-auto p-6 sm:p-10 relative overflow-hidden">
     <div className="max-w-xl mx-auto text-center space-y-2 mb-8">
       <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-foreground">Interested in working together?</h2>
-      <p className="text-muted text-sm leading-relaxed">
+      <p className="text-foreground text-sm leading-relaxed">
         Submit your project brief today. Our team will get back to you shortly.
       </p>
     </div>
 
     {submitted ? (
       <div className="max-w-xl mx-auto bg-[#141414] border border-neutral-800 rounded-2xl p-6 text-center space-y-3 shadow-xl">
-        <div className="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center mx-auto shadow-lg shadow-red-600/40">
+        <div className="w-12 h-12 rounded-full bg-red-600 text-foreground flex items-center justify-center mx-auto shadow-lg shadow-red-600/40">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
           </svg>
         </div>
         <p className="text-base font-bold text-foreground">Request Submitted!</p>
-        <p className="text-xs text-muted leading-relaxed">
+        <p className="text-xs text-foreground leading-relaxed">
           We received your brief and will be in touch with a matched creator shortly.
         </p>
       </div>

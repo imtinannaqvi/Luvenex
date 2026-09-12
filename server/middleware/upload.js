@@ -273,3 +273,25 @@ export const removeUpload = (relPath) => {
   const abs = path.join(process.cwd(), relPath);
   fs.unlink(abs, () => {});
 };
+
+
+
+const seoDir = 'uploads/seo';
+if (!fs.existsSync(seoDir)) fs.mkdirSync(seoDir, { recursive: true });
+
+const seoStorage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, seoDir),
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    cb(null, `og-${Date.now()}${ext}`);
+  },
+});
+
+export const uploadSeoImage = multer({
+  storage: seoStorage,
+  fileFilter: imageOnlyFilter,
+  limits: {
+    ...defaultLimits,          
+    fileSize: 5 * 1024 * 1024,  
+  },
+});

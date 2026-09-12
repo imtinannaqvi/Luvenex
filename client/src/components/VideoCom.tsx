@@ -60,7 +60,7 @@ export default function VideoCom() {
           <span className="text-[#B90808]">From Creators.</span>
         </h2>
 
-        <p className="text-zinc-400 text-sm sm:text-base mt-4 max-w-md mx-auto leading-relaxed">
+        <p className="text-foreground text-sm sm:text-base mt-4 max-w-md mx-auto leading-relaxed">
           A live look at what brands and creators are Uploading together on Luvenex right now.
         </p>
       </div>

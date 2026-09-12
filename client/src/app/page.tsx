@@ -10,12 +10,14 @@ import VideoCom from "@/components/VideoCom"
 import FeatureBlog from "@/components/FeatureBlog";
 import FloatingControls from "@/components/FloatingControls";
 import GigsCom from "@/components/GigsCom";
+import ModelCom from "@/components/ModelComp";
 
 export default function Home() {
   return (
     <div className="bg-background">
       <FloatingControls />
       <VideoSlider/>
+      <ModelCom/>
       <AboutUs />
       <VideoCom/>
       <Service />

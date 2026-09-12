@@ -62,7 +62,7 @@ const Card = ({ s }: { s: Service }) => (
         </h3>
 
         {s.shortDescription && (
-          <p className="text-sm text-muted leading-relaxed line-clamp-2 mt-2 group-hover:text-foreground/70 transition-colors duration-300">
+          <p className="text-sm text-foreground leading-relaxed line-clamp-2 mt-2 group-hover:text-foreground/70 transition-colors duration-300">
             {s.shortDescription}
           </p>
         )}
@@ -92,7 +92,7 @@ const Card = ({ s }: { s: Service }) => (
     <h2 className="text-2xl sm:text-3xl font-extrabold text-foreground italic tracking-tight leading-[1.05]">
       Let us match you <span className="text-red-600 italic">directly</span>
     </h2>
-    <p className="text-muted text-sm sm:text-base leading-relaxed max-w-md lg:text-right">
+    <p className="text-foreground text-sm sm:text-base leading-relaxed max-w-md lg:text-right">
       Want our team to handle it for you? We match you with the right
       option — no manual searching required.
     </p>
@@ -129,8 +129,7 @@ const Card = ({ s }: { s: Service }) => (
           /* ── Marquee: cards flow right → left after a short pause ── */
           <div className="marquee relative w-full overflow-x-hidden overflow-y-visible rounded-3xl">
 
-            {/* Background parallax strip — one continuous layer behind everything,
-                clipped to the marquee bounds so it never peeks through card gaps */}
+          
             {bgImages.length > 0 && (
               <div className="absolute inset-0 z-0 overflow-hidden opacity-[0.06] dark:opacity-[0.08]">
                 <div className="absolute inset-0 flex items-center animate-[marquee-scroll_40s_linear_infinite_reverse]">

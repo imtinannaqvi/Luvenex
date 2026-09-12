@@ -86,7 +86,7 @@ export default function FeatureBlog() {
               )}
               <div className="flex flex-col flex-grow justify-between space-y-12">
                 <div className="space-y-3">
-                  <span className="inline-block bg-primary text-foreground text-[11px] font-bold px-3 py-1 rounded-sm uppercase tracking-wider">
+                  <span className="inline-block bg-primary text-white text-[11px] font-bold px-3 py-1 rounded-sm uppercase tracking-wider">
                     {formatDate(blog.createdAt || blog.date)}
                   </span>
                   <h3 className="text-base sm:text-lg font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">
