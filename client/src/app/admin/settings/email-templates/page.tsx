@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { apiFetch } from "@/lib/api";
 import { getToken } from "@/lib/auth";
-import { FiMail, FiSend, FiX } from "react-icons/fi";
+import { FiSend, FiX } from "react-icons/fi";
 
 type Variable = { key: string; label: string; sample: string };
 
@@ -76,6 +76,7 @@ const previewShell = (html: string, logoUrl: string | null, platformName = "Luve
 };
 
 export default function EmailTemplatesPage() {
+  const [tab, setTab] = useState<"editor" | "preview">("editor");
   const [templates, setTemplates] = useState<Template[]>([]);
   const [activeKey, setActiveKey] = useState("");
   const [loading, setLoading] = useState(true);
@@ -88,6 +89,10 @@ export default function EmailTemplatesPage() {
   const [testTo, setTestTo] = useState("");
   const [testing, setTesting] = useState(false);
   const [testOpen, setTestOpen] = useState(false);
+
+  const subjectRef = useRef<HTMLInputElement>(null);
+  const bodyRef = useRef<HTMLTextAreaElement>(null);
+  const lastFocused = useRef<"subject" | "body">("body");
 
   const active = templates.find((t) => t.key === activeKey) || null;
 
@@ -126,6 +131,27 @@ export default function EmailTemplatesPage() {
   ) as Record<string, string>;
 
   const dirty = active !== null && (subject !== active.subject || body !== active.body);
+
+  /** Drops {{variable}} in at the cursor of whichever field was last focused. */
+  const insertVar = (key: string) => {
+    const token = `{{${key}}}`;
+    const isSubject = lastFocused.current === "subject";
+    const el = isSubject ? subjectRef.current : bodyRef.current;
+    if (!el) return;
+
+    const value = isSubject ? subject : body;
+    const start = el.selectionStart ?? value.length;
+    const end = el.selectionEnd ?? start;
+    const next = value.slice(0, start) + token + value.slice(end);
+
+    if (isSubject) setSubject(next);
+    else setBody(next);
+
+    requestAnimationFrame(() => {
+      el.focus();
+      el.setSelectionRange(start + token.length, start + token.length);
+    });
+  };
 
   const handleSave = async () => {
     if (!active) return;
@@ -183,139 +209,172 @@ export default function EmailTemplatesPage() {
     "w-full px-3.5 py-2.5 rounded-sm border border-line bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition";
 
   return (
-    <div>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-foreground ">Email Templates</h1>
-       
+    <div className="max-w-6xl">
+      <div className="mb-5">
+        <h1 className="text-2xl font-bold text-foreground">Email Templates</h1>
       </div>
 
       {active && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
-          {/* ── Fields ── */}
-          <div className="bg-background border border-line rounded-sm overflow-hidden">
-            <div className="flex items-center gap-3 px-6 py-5 border-b border-line bg-surface/40">
-              <div className="w-10 h-10 rounded-sm bg-surface flex items-center justify-center text-foreground shrink-0">
-                <FiMail size={17} />
-              </div>
-              <div className="min-w-0">
-                <h2 className="text-lg font-bold italic text-foreground">Email content</h2>
-                <p className="text-xs text-foreground/60 mt-0.5">{active.description}</p>
-              </div>
-            </div>
+        <>
+          {/* Applies to both tabs, so it sits above them */}
+          <div className="mb-5 max-w-sm">
+            <label className="block text-xs font-semibold text-foreground mb-1.5">
+              Which email
+            </label>
+            <select
+              value={activeKey}
+              onChange={(e) => setActiveKey(e.target.value)}
+              className={inputCls + " cursor-pointer"}
+            >
+              {templates.map((t) => (
+                <option key={t.key} value={t.key}>
+                  {t.name}
+                </option>
+              ))}
+            </select>
+            <p className="text-[11px] text-foreground/50 mt-1.5">{active.description}</p>
+          </div>
 
-            <div className="p-6 space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-foreground mb-1.5">
-                  Which email
-                </label>
-                <select
-                  value={activeKey}
-                  onChange={(e) => setActiveKey(e.target.value)}
-                  className={inputCls + " cursor-pointer"}
-                >
-                  {templates.map((t) => (
-                    <option key={t.key} value={t.key}>
-                      {t.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+          {/* ── Editor / Preview ── */}
+          <div className="flex items-center gap-6  mb-6">
+            {(["editor", "preview"] as const).map((t) => (
+              <button
+                key={t}
+                onClick={() => setTab(t)}
+                className={`relative pb-3 text-sm font-semibold capitalize transition ${
+                  tab === t ? "text-primary" : "text-foreground/50 hover:text-foreground"
+                }`}
+              >
+                {t}
+                {tab === t && (
+                  <span className="absolute left-0 right-0 -bottom-px h-0.5 bg-primary" />
+                )}
+              </button>
+            ))}
+          </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-foreground mb-1.5">
-                  Subject line
-                </label>
-                <input
-                  type="text"
-                  value={subject}
-                  onChange={(e) => setSubject(e.target.value)}
-                  className={inputCls}
-                />
-              </div>
+          {tab === "editor" ? (
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6 items-start">
+              {/* ── Fields ── */}
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs font-semibold text-foreground mb-1.5">
+                    Email Subject
+                  </label>
+                  <input
+                    ref={subjectRef}
+                    type="text"
+                    value={subject}
+                    onFocus={() => (lastFocused.current = "subject")}
+                    onChange={(e) => setSubject(e.target.value)}
+                    className={inputCls}
+                  />
+                </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-foreground mb-1.5">
-                  Body (HTML)
-                </label>
-                <textarea
-                  rows={14}
-                  value={body}
-                  onChange={(e) => setBody(e.target.value)}
-                  spellCheck={false}
-                  className={inputCls + " font-mono text-xs leading-relaxed resize-y"}
-                />
-              </div>
-
-              <div>
-                <p className="text-xs font-semibold text-foreground mb-2">Available values</p>
-                <div className="flex flex-wrap gap-1.5">
-                  {active.vars.map((v) => (
-                    <span
-                      key={v.key}
-                      title={`${v.label} — e.g. ${v.sample}`}
-                      className="px-2.5 py-1 rounded-sm border border-line bg-surface/40 text-[11px] font-mono text-primary"
-                    >
-                      {`{{${v.key}}}`}
+                <div>
+                  <div className="flex items-center justify-between gap-3 mb-1.5">
+                    <label className="text-xs font-semibold text-foreground">Body (HTML)</label>
+                    <span className="text-[11px] text-foreground/35">
+                      {body.length.toLocaleString()} characters
                     </span>
+                  </div>
+                  {/* Framed as one block so the editor reads as a code pane
+                      rather than a large empty field. */}
+                  <div className="rounded-sm border border-line bg-surface/30 focus-within:border-primary transition overflow-hidden">
+                    <textarea
+                      ref={bodyRef}
+                      rows={11}
+                      value={body}
+                      onFocus={() => (lastFocused.current = "body")}
+                      onChange={(e) => setBody(e.target.value)}
+                      spellCheck={false}
+                      className="w-full px-4 py-3.5 bg-transparent text-foreground font-mono text-xs leading-[1.7] resize-y focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 pt-1">
+                  <button
+                    onClick={() => setTestOpen(true)}
+                    className="flex items-center gap-1.5 px-5 py-2.5 rounded-sm border border-line text-sm font-semibold text-foreground hover:bg-surface transition"
+                  >
+                    <FiSend size={14} />
+                    Send test
+                  </button>
+
+                  <button
+                    onClick={handleSave}
+                    disabled={saving || !dirty}
+                    className={`px-6 py-2.5 rounded-sm text-sm font-semibold transition ${
+                      dirty
+                        ? "bg-primary text-white hover:opacity-90"
+                        : "border border-line text-foreground/40 cursor-default"
+                    }`}
+                  >
+                    {saving ? "Saving..." : dirty ? "Save changes" : "No changes"}
+                  </button>
+                </div>
+              </div>
+
+             
+              <div className="rounded-sm border border-line border-l-2 bg-surface/40 p-5 lg:sticky lg:top-6">
+                <p className="text-sm font-bold text-foreground">Available Variables</p>
+                <p className="text-xs text-foreground/60 mt-1.5 leading-relaxed">
+                  Click one to drop it into whichever field you last had selected. Each is replaced
+                  with real data when the email sends.
+                </p>
+
+                <div className="mt-4 space-y-1.5">
+                  {active.vars.map((v) => (
+                    <button
+                      key={v.key}
+                      type="button"
+                      onClick={() => insertVar(v.key)}
+                      className="w-full text-left px-3 py-2 rounded-sm border border-line bg-background hover:border-primary hover:bg-primary/5 transition group"
+                    >
+                      <span className="block font-mono text-[11px] text-primary">
+                        {`{{${v.key}}}`}
+                      </span>
+                      <span className="block text-[11px] text-foreground/50 mt-0.5 truncate">
+                        {v.label} — {v.sample}
+                      </span>
+                    </button>
                   ))}
                 </div>
               </div>
             </div>
+          ) : (
+            /* ── Preview ── */
+            <div className="max-w-2xl">
+              <div className="rounded-sm border border-line overflow-hidden">
+                <div className="px-5 py-3 border-b border-line bg-surface/40">
+                  <p className="text-[11px] text-foreground/50">Subject</p>
+                  <p className="text-sm font-semibold text-foreground mt-0.5 break-words">
+                    {render(subject, sampleData) || (
+                      <span className="text-foreground/30">No subject</span>
+                    )}
+                  </p>
+                </div>
 
-            <div className="px-6 py-4 border-t border-line bg-surface/30 flex items-center justify-center gap-2">
-              <button
-                onClick={() => setTestOpen(true)}
-                className="flex items-center gap-1.5 px-5 py-2.5 rounded-sm border border-line text-sm font-semibold text-foreground hover:bg-surface transition"
-              >
-                <FiSend size={14} />
-                Send test
-              </button>
-
-              <button
-                onClick={handleSave}
-                disabled={saving || !dirty}
-                className="px-6 py-2.5 rounded-sm bg-surface text-foreground text-sm font-semibold hover:opacity-90 hover:bg-primary transition "
-              >
-                {saving ? "Saving..." : dirty ? "Save changes" : "Saved"}
-              </button>
+                <div className="p-4 bg-surface/20">
+                  {/* An iframe keeps the email's CSS out of the admin UI */}
+                  <iframe
+                    title="Email preview"
+                    srcDoc={previewShell(styleBodyHtml(render(body, sampleData)), logoUrl)}
+                    className="w-full h-[620px] rounded-sm border border-line bg-white"
+                    sandbox=""
+                  />
+                </div>
+              </div>
             </div>
-          </div>
-          {/* ── Preview ── */}
-          <div className="bg-background border border-line rounded-sm overflow-hidden lg:sticky lg:top-6">
-            <div className="px-6 py-4 border-b border-line bg-surface/40">
-              <h2 className="text-sm font-bold text-foreground">Preview</h2>
-              <p className="text-[11px] text-foreground mt-0.5">
-                Sample data · updates as you type
-              </p>
-            </div>
-
-            <div className="px-6 py-3 border-b border-line">
-              <p className="text-[14px] text-foreground">Subject</p>
-              <p className="text-sm font-semibold text-foreground mt-0.5 break-words">
-                {render(subject, sampleData) || (
-                  <span className="text-foreground">No subject</span>
-                )}
-              </p>
-            </div>
-
-            <div className="p-4 bg-surface/20">
-              {/* An iframe keeps the email's CSS out of the admin UI */}
-              <iframe
-                title="Email preview"
-                srcDoc={previewShell(styleBodyHtml(render(body, sampleData)), logoUrl)}
-                className="w-full h-[560px] rounded-sm border border-line bg-background"
-                sandbox=""
-              />
-            </div>
-          </div>
-
-        </div>
+          )}
+        </>
       )}
 
       {/* ── Send test dialog ── */}
       {testOpen && active && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
           onClick={() => setTestOpen(false)}
         >
           <div
@@ -352,20 +411,22 @@ export default function EmailTemplatesPage() {
                 }}
                 className={inputCls}
               />
-            
+              <p className="text-[11px] text-foreground/50 mt-2">
+                Sends what&apos;s in the fields right now, saved or not.
+              </p>
             </div>
 
             <div className="px-5 py-4 border-t border-line bg-surface/30 flex justify-end gap-2">
               <button
                 onClick={() => setTestOpen(false)}
-                className="px-4 py-2.5 rounded-xl border border-line text-sm font-semibold text-foreground hover:bg-surface transition"
+                className="px-4 py-2.5 rounded-sm border border-line text-sm font-semibold text-foreground hover:bg-surface transition"
               >
                 Cancel
               </button>
               <button
                 onClick={handleTest}
                 disabled={testing || !testTo.trim()}
-                className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-surface text-foreground text-sm font-semibold hover:bg-primary transition "
+                className="flex items-center gap-1.5 px-5 py-2.5 rounded-sm bg-surface text-foreground text-sm font-semibold hover:bg-primary hover:text-white transition disabled:opacity-40"
               >
                 <FiSend size={14} />
                 {testing ? "Sending..." : "Send"}
