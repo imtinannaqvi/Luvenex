@@ -71,8 +71,15 @@ export default function MessagesPage() {
 
   const loadMessages = async (conversationId: string) => {
     try {
+      // Cache-bust: a manual browser refresh bypasses the cache and
+      // always hits the server, which is why that "fixed" things. This
+      // fetch was reusing the exact same URL it had just requested a
+      // moment before (on chat open), so the browser/CDN could legally
+      // serve back that earlier cached response — one made before the
+      // new attachment existed — instead of asking the server again.
+      // A unique query string on every call forecloses that.
       const data = await apiFetch(
-        `/api/conversations/${conversationId}/messages`,
+        `/api/conversations/${conversationId}/messages?_=${Date.now()}`,
         { token: getToken()! }
       );
       setMessages(data.messages || []);
