@@ -66,7 +66,7 @@ export default function AdminPayoutQueuePage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-foreground tracking-tight mb-6">Payout Queue</h1>
+      <h1 className="text-2xl font-bold text-foreground  mb-6">Payout Queue</h1>
 
       {loading ? (
         <div className="flex justify-center py-12">
@@ -74,7 +74,7 @@ export default function AdminPayoutQueuePage() {
         </div>
       ) : payouts.length === 0 ? (
         <div className="bg-background border border-line rounded-sm p-8 text-center">
-          <p className="text-muted text-sm">No pending payouts. All caught up.</p>
+          <p className="text-foreground text-sm">No pending payouts. All caught up.</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -83,14 +83,14 @@ export default function AdminPayoutQueuePage() {
               <div className="flex items-start justify-between">
                 <div>
                   <p className="font-semibold text-foreground">{p.userId?.name}</p>
-                  <p className="text-sm text-muted">{p.userId?.email}</p>
+                  <p className="text-sm text-foreground">{p.userId?.email}</p>
                   <p className="text-lg font-bold text-foreground mt-2">{money(p.amountMinor)}</p>
-                  <p className="text-sm text-muted capitalize">via {p.method}</p>
-                  <div className="text-xs text-muted mt-2">
+                  <p className="text-sm text-foreground capitalize">via {p.method}</p>
+                  <div className="text-xs text-foreground mt-2">
                     <p>Account: {p.accountDetails?.accountTitle} — {p.accountDetails?.accountNumber}</p>
                     {p.accountDetails?.bankName && <p>Bank: {p.accountDetails.bankName}</p>}
                   </div>
-                  <p className="text-xs text-muted mt-2">
+                  <p className="text-xs text-foreground mt-2">
                     Requested {new Date(p.createdAt).toLocaleDateString()}
                   </p>
                 </div>
@@ -99,14 +99,14 @@ export default function AdminPayoutQueuePage() {
                   <button
                     disabled={actionLoadingId === p._id}
                     onClick={() => complete(p._id)}
-                    className="text-xs px-3 py-1.5 rounded-md bg-background text-paper hover:bg-surface transition disabled:opacity-50"
+                    className="text-xs px-3 py-1.5 rounded-md bg-background text-foreground hover:bg-surface transition disabled:opacity-50"
                   >
                     Mark sent
                   </button>
                   <button
                     disabled={actionLoadingId === p._id}
                     onClick={() => setRejectingId(rejectingId === p._id ? null : p._id)}
-                    className="text-xs px-3 py-1.5 rounded-md bg-primary text-paper hover:bg-primary-dark transition disabled:opacity-50"
+                    className="text-xs px-3 py-1.5 rounded-md bg-primary text-foreground hover:bg-primary-dark transition disabled:opacity-50"
                   >
                     Reject
                   </button>
@@ -126,7 +126,7 @@ export default function AdminPayoutQueuePage() {
                   <button
                     disabled={actionLoadingId === p._id || !rejectionReason}
                     onClick={() => reject(p._id)}
-                    className="px-4 py-2 rounded-lg bg-primary text-paper text-sm font-medium hover:bg-primary-dark transition disabled:opacity-50"
+                    className="px-4 py-2 rounded-sm bg-primary text-foreground text-sm font-medium hover:bg-primary-dark transition disabled:opacity-50"
                   >
                     Confirm reject
                   </button>

@@ -179,7 +179,7 @@ useEffect(() => {
         <h1 className="text-2xl md:text-3xl font-bold text-foreground italic">Blog</h1>
         <button
           onClick={() => (showEditor ? resetForm() : setShowEditor(true))}
-          className="px-4 py-2 rounded-lg bg-primary text-foreground text-sm font-medium hover:bg-primary-dark transition shadow-sm cursor-pointer relative z-20"
+          className="px-4 py-2 rounded-sm bg-primary text-foreground text-sm font-medium hover:bg-primary-dark transition shadow-sm cursor-pointer relative z-20"
         >
           {showEditor ? "Close" : "+ New post"}
         </button>
@@ -188,7 +188,7 @@ useEffect(() => {
       {showEditor && (
         <form onSubmit={handlePublish} className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           {/* ── LEFT: main content ── */}
-          <div className="lg:col-span-2 bg-background border border-line rounded-2xl p-6 sm:p-8 space-y-4">
+          <div className="lg:col-span-2 bg-background border border-line rounded-sm p-6 sm:p-8 space-y-4">
             <div>
               <input
                 type="text"
@@ -196,10 +196,10 @@ useEffect(() => {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 required
-                className="w-full text-lg md:text-xl font-bold px-0 py-1 border-0 border-b border-line focus:outline-none focus:border-primary bg-transparent"
+                className="w-full text-lg md:text-xl text-foreground font-bold px-0 py-1 border-0 border-b border-line focus:outline-none focus:border-primary bg-transparent"
               />
               {slugPreview && (
-                <p className="text-xs text-muted mt-2">
+                <p className="text-xs text-foreground mt-2">
                   Permalink:{" "}
                   <span className="text-primary">
                     yourdomain.com/blog/<span className="font-medium">{slugPreview}</span>
@@ -215,13 +215,13 @@ useEffect(() => {
                 value={shortDescription}
                 onChange={(e) => setShortDescription(e.target.value)}
                 rows={2}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-line text-sm"
+                className="w-full px-3.5 py-2.5 rounded-sm border border-line text-sm placeholder:text-foreground"
               />
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-foreground mb-1.5">Content</label>
-              <div className="rounded-xl border border-line overflow-hidden bg-background">
+              <div className="rounded-sm border border-line overflow-hidden bg-background">
                 <ReactQuill
                   key={editingId ?? "new"}
                   theme="snow"
@@ -240,14 +240,14 @@ useEffect(() => {
                 placeholder="Author"
                 value={author}
                 onChange={(e) => setAuthor(e.target.value)}
-                className="flex-1 px-3.5 py-2.5 rounded-xl border border-line text-sm"
+                className="flex-1 px-3.5 py-2.5 rounded-sm border border-line text-sm placeholder:text-foreground"
               />
               <input
                 type="text"
                 placeholder="Category"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="flex-1 px-3.5 py-2.5 rounded-xl border border-line text-sm"
+                className="flex-1 px-3.5 py-2.5 rounded-sm border border-line text-sm placeholder:text-foreground"
               />
             </div>
             <input
@@ -255,7 +255,7 @@ useEffect(() => {
               placeholder="Tags (comma separated)"
               value={tags}
               onChange={(e) => setTags(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-line text-sm"
+              className="w-full px-3.5 py-2.5 rounded-sm border border-line text-sm placeholder:text-foreground"
             />
           </div>
 
@@ -285,7 +285,7 @@ useEffect(() => {
 
               {!publishNow && (
                 <div className="mt-3">
-                  <label className="block text-xs text-muted mb-1">Publish date & time</label>
+                  <label className="block text-xs text-foreground mb-1">Publish date & time</label>
                   <input
                     type="datetime-local"
                     value={scheduledFor}
@@ -307,7 +307,7 @@ useEffect(() => {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full mt-4 py-2.5 rounded-xl bg-primary text-paper text-sm font-semibold hover:bg-primary-dark transition disabled:opacity-50 cursor-pointer"
+                className="w-full mt-4 py-2.5 rounded-xl bg-primary text-foreground text-sm font-semibold hover:bg-primary-dark transition disabled:opacity-50 cursor-pointer"
               >
                 {submitting
                   ? "Saving..."
@@ -331,7 +331,7 @@ useEffect(() => {
                   <img src={imagePreview} className="w-full h-32 object-cover" alt="Preview" />
                 ) : (
                   <div className="py-8 text-center">
-                    <p className="text-xs text-muted">Click to upload</p>
+                    <p className="text-xs text-foreground">Click to upload</p>
                   </div>
                 )}
                 <input
@@ -358,9 +358,9 @@ useEffect(() => {
                     value={seoTitle}
                     onChange={(e) => setSeoTitle(e.target.value)}
                     maxLength={60}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-line text-sm"
+                    className="w-full px-3.5 py-2.5 rounded-sm border border-line text-sm placeholder:text-foreground"
                   />
-                  <p className="text-[11px] text-muted mt-1">
+                  <p className="text-[11px] text-foreground mt-1">
                     {seoTitle.length}/60 — falls back to the post title if empty
                   </p>
                 </div>
@@ -373,9 +373,9 @@ useEffect(() => {
                     onChange={(e) => setSeoDescription(e.target.value)}
                     rows={3}
                     maxLength={160}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-line text-sm"
+                    className="w-full px-3.5 py-2.5 rounded-sm border border-line text-sm placeholder:text-foreground"
                   />
-                  <p className="text-[11px] text-muted mt-1">
+                  <p className="text-[11px] text-foreground mt-1">
                     {seoDescription.length}/160 — falls back to the short description
                   </p>
                 </div>
@@ -423,7 +423,7 @@ useEffect(() => {
                               className="w-12 h-12 object-cover rounded-sm border border-line"
                             />
                           ) : (
-                            <div className="w-12 h-12 rounded-lg bg-line/20 border border-line flex items-center justify-center text-[10px] text-muted font-medium text-center">
+                            <div className="w-12 h-12 rounded-lg bg-line border border-line flex items-center justify-center text-[10px] text-muted font-medium text-center">
                               No Img
                             </div>
                           )}
@@ -433,7 +433,7 @@ useEffect(() => {
                           {p.title}
                         </td>
 
-                        <td className="py-3 px-4 sm:px-6 text-muted">
+                        <td className="py-3 px-4 sm:px-6 text-foreground">
                           {p.category || "—"}
                         </td>
 
@@ -447,7 +447,7 @@ useEffect(() => {
                           </span>
                         </td>
 
-                        <td className="py-3 px-4 sm:px-6 text-muted">
+                        <td className="py-3 px-4 sm:px-6 text-foreground">
                           {p.author || "Admin"}
                         </td>
 

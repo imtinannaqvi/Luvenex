@@ -4,15 +4,57 @@ import { useEffect, useState } from "react";
 import { getToken } from "@/lib/auth";
 import { apiFetch } from "@/lib/api";
 import { toast } from "react-toastify";
+import { FiX, FiFlag } from "react-icons/fi";
 
 /* soft card shell — matches the rest of admin */
 const softCard =
-  "bg-card rounded-3xl border border-border-color shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_28px_-16px_rgba(0,0,0,0.10)]";
+  "bg-card rounded-sm border border-border-color shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_28px_-16px_rgba(0,0,0,0.10)]";
+
+const fmtDateTime = (iso?: string) =>
+  iso
+    ? new Date(iso).toLocaleString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+    : "—";
+
+/** One label/value row in the detail sidebar — same shape for every field
+ *  instead of a wall of paragraph text. */
+function DetailRow({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <>
+      <span className="text-[11px] font-semibold text-foreground/60 uppercase tracking-wide pt-0.5">
+        {label}
+      </span>
+      <span className="text-sm text-foreground break-words">{children}</span>
+    </>
+  );
+}
+
+function getMeta(m: any) {
+  const senderName = m.senderId?.name || m.user?.name || "Unknown User";
+  const senderRole = m.senderId?.role || m.senderRole || m.role || "User";
+  const senderInitial = senderName.charAt(0).toUpperCase();
+
+  const recipientName = m.recipientId?.name || m.receiver?.name || m.targetUser?.name;
+  const recipientRole = m.recipientId?.role || m.receiver?.role;
+
+  return { senderName, senderRole, senderInitial, recipientName, recipientRole };
+}
 
 export default function AdminFlaggedMessagesPage() {
   const [messages, setMessages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [active, setActive] = useState<any>(null);
 
   useEffect(() => {
     const loadMessages = async (isInitial = false) => {
@@ -35,17 +77,13 @@ export default function AdminFlaggedMessagesPage() {
     return () => clearInterval(interval);
   }, []);
 
-  const toggleExpand = (id: string) => {
-    setExpandedId(expandedId === id ? null : id);
-  };
-
   return (
-    <div className="max-w-3xl px-4 sm:px-6 py-8 space-y-5">
+    <div className="max-w-7xl px-4 sm:px-6 py-8 space-y-5">
       {/* Header */}
       <div className="flex items-end justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground tracking-tight">Flagged Messages</h1>
-          <p className="text-xs text-zinc-500 mt-1">Review reported content and participant context</p>
+          <p className="text-xs text-foreground mt-1">Review reported content and participant context</p>
         </div>
       </div>
 
@@ -67,132 +105,192 @@ export default function AdminFlaggedMessagesPage() {
             </svg>
           </div>
           <p className="text-foreground text-sm font-semibold">All clear</p>
-          <p className="text-zinc-500 text-xs mt-0.5">No flagged messages found in conversations.</p>
+          <p className="text-foreground text-xs mt-0.5">No flagged messages found in conversations.</p>
         </div>
       ) : (
-        <div className="space-y-3">
-          {messages.map((m) => {
-            const senderName = m.senderId?.name || m.user?.name || "Unknown User";
-            const senderRole = m.senderId?.role || m.senderRole || m.role || "User";
-            const senderInitial = senderName.charAt(0).toUpperCase();
-
-            const recipientName = m.recipientId?.name || m.receiver?.name || m.targetUser?.name;
-            const recipientRole = m.recipientId?.role || m.receiver?.role;
-            const recipientInitial = recipientName ? recipientName.charAt(0).toUpperCase() : null;
-
-            const formattedDateTime = new Date(m.createdAt).toLocaleString("en-US", {
-              month: "short",
-              day: "numeric",
-              year: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-            });
-
-            const isExpanded = expandedId === m._id;
-
-            return (
-              <div
-                key={m._id}
-                className={`${softCard} transition-all border overflow-hidden ${
-                  isExpanded ? "border-zinc-400/50 shadow-md" : "hover:border-zinc-400/30"
-                }`}
-              >
-                {/* Collapsed Header / Trigger Bar */}
-                <div
-                  onClick={() => toggleExpand(m._id)}
-                  className="p-4 sm:p-5 flex items-center justify-between gap-3 cursor-pointer select-none bg-card hover:bg-surface/40 transition-colors"
-                >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-9 h-9 rounded-xl bg-surface text-foreground font-bold text-xs flex items-center justify-center shrink-0 border border-border-color shadow-sm">
-                      {senderInitial}
-                    </div>
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-semibold text-foreground truncate">{senderName}</span>
-                        <span className="text-[10px] font-medium bg-zinc-200/60 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 px-1.5 py-0.5 rounded capitalize">
-                          {senderRole}
-                        </span>
-                      </div>
-                      <p className="text-xs text-zinc-500 truncate mt-0.5 max-w-xs sm:max-w-md">
-                        "{m.body}"
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3 shrink-0">
-                    <span className="text-[11px] text-zinc-400 font-medium hidden sm:inline">
-                      {formattedDateTime}
-                    </span>
-                    <div
-                      className={`w-7 h-7 rounded-full bg-surface border border-border-color flex items-center justify-center text-zinc-500 transition-transform duration-200 ${
-                        isExpanded ? "rotate-180 bg-zinc-200/40 dark:bg-zinc-800 text-foreground" : ""
-                      }`}
-                    >
-                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Expanded Details Body */}
-                {isExpanded && (
-                  <div className="px-4 sm:px-5 pb-5 pt-1 space-y-4 border-t border-border-color/60 bg-surface/20 animate-fadeIn">
-                    {/* Participant Context Info */}
-                    <div className="flex flex-wrap items-center justify-between gap-3 pt-3 text-xs">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        {/* Sender info pill */}
-                        <div className="flex items-center gap-2 bg-card px-2.5 py-1.5 rounded-xl border border-border-color shadow-sm">
-                          <span className="font-semibold text-foreground">{senderName}</span>
-                          <span className="text-[10px] text-zinc-500 capitalize">({senderRole})</span>
+        <div className={`${softCard} overflow-hidden`}>
+          {/* ── Table, md and up ── */}
+          <table className="hidden md:table w-full text-left border-collapse">
+            <thead>
+              <tr className="border-b border-border-color bg-surface/60">
+                <th className="pl-5 pr-3 py-3.5 text-xs font-semibold text-foreground w-[200px]">
+                  Sender
+                </th>
+                <th className="px-3 py-3.5 text-xs font-semibold text-foreground">Message</th>
+                <th className="px-3 py-3.5 text-xs font-semibold text-foreground w-[220px]">
+                  Flag Reasons
+                </th>
+                <th className="px-3 py-3.5 text-xs font-semibold text-foreground w-[140px]">Date</th>
+                <th className="pl-3 pr-5 py-3.5 text-xs font-semibold text-foreground w-[90px] text-right">
+                  Action
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border-color">
+              {messages.map((m) => {
+                const { senderName, senderRole, senderInitial } = getMeta(m);
+                return (
+                  <tr key={m._id} className="hover:bg-surface/50 transition-colors">
+                    <td className="pl-5 pr-3 py-4">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <div className="w-8 h-8 rounded-lg bg-surface text-foreground font-bold text-xs flex items-center justify-center shrink-0 border border-border-color">
+                          {senderInitial}
                         </div>
-
-                        {recipientName && (
-                          <>
-                            <span className="text-zinc-400 font-medium">sent to</span>
-                            {/* Recipient info pill */}
-                            <div className="flex items-center gap-2 bg-card px-2.5 py-1.5 rounded-xl border border-border-color shadow-sm">
-                              <span className="font-semibold text-foreground">{recipientName}</span>
-                              {recipientRole && (
-                                <span className="text-[10px] text-zinc-500 capitalize">({recipientRole})</span>
-                              )}
-                            </div>
-                          </>
-                        )}
+                        <div className="min-w-0">
+                          <span className="text-sm font-semibold text-foreground truncate block">
+                            {senderName}
+                          </span>
+                          <span className="text-[10px] text-foreground capitalize">{senderRole}</span>
+                        </div>
                       </div>
-
-                      <span className="text-[11px] text-zinc-500 font-medium sm:hidden">
-                        {formattedDateTime}
-                      </span>
-                    </div>
-
-                    {/* Flagged Message Highlight Box */}
-                    <div className="relative bg-red-500/[0.04] border border-red-500/20 rounded-2xl p-3.5 shadow-xs">
-                      <div className="absolute top-3.5 left-3.5 w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                      <p className="text-xs sm:text-sm text-foreground leading-relaxed pl-4 font-normal">
-                        "{m.body}"
-                      </p>
-                    </div>
-
-                    {/* Flag Reasons */}
-                    {m.flagReasons && m.flagReasons.length > 0 && (
-                      <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                        <span className="text-[11px] font-medium text-zinc-500 mr-1">Flag reasons:</span>
-                        {m.flagReasons.map((r: string, i: number) => (
+                    </td>
+                    <td className="px-3 py-4 max-w-0">
+                      <p className="text-sm text-foreground truncate">{m.body}</p>
+                    </td>
+                    <td className="px-3 py-4">
+                      <div className="flex flex-wrap gap-1">
+                        {(m.flagReasons || []).slice(0, 2).map((r: string, i: number) => (
                           <span
                             key={i}
-                            className="text-[11px] font-medium bg-red-500/10 text-red-500 px-2.5 py-0.5 rounded-lg border border-red-500/20"
+                            className="text-xs font-semibold  text-foreground px-2 py-0.5 "
                           >
                             {r}
                           </span>
                         ))}
+                        {(m.flagReasons?.length || 0) > 2 && (
+                          <span className="text-[10px] text-foreground/50">
+                            +{m.flagReasons.length - 2}
+                          </span>
+                        )}
                       </div>
-                    )}
+                    </td>
+                    <td className="px-3 py-4">
+                      <span className="text-xs text-foreground whitespace-nowrap">
+                        {fmtDateTime(m.createdAt)}
+                      </span>
+                    </td>
+                    <td className="pl-3 pr-5 py-4 text-right">
+                      <button
+                        onClick={() => setActive(m)}
+                        className="px-3.5 py-1.5 rounded-sm border border-red-500/30 text-red-500 text-xs font-semibold hover:bg-red-500 hover:text-white transition"
+                      >
+                        View
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+
+          {/* ── Stacked cards below md ── */}
+          <div className="md:hidden divide-y divide-border-color">
+            {messages.map((m) => {
+              const { senderName, senderRole, senderInitial } = getMeta(m);
+              return (
+                <div key={m._id} className="px-4 py-4">
+                  <div className="flex items-center gap-2.5 mb-2">
+                    <div className="w-8 h-8 rounded-lg bg-surface text-foreground font-bold text-xs flex items-center justify-center shrink-0 border border-border-color">
+                      {senderInitial}
+                    </div>
+                    <div className="min-w-0">
+                      <span className="text-sm font-semibold text-foreground truncate block">
+                        {senderName}
+                      </span>
+                      <span className="text-[10px] text-foreground/60 capitalize">{senderRole}</span>
+                    </div>
                   </div>
+                  <p className="text-xs text-foreground/70 line-clamp-2">{m.body}</p>
+                  <div className="flex items-center justify-between gap-3 mt-3">
+                    <span className="text-[11px] text-foreground/60">{fmtDateTime(m.createdAt)}</span>
+                    <button
+                      onClick={() => setActive(m)}
+                      className="px-4 py-2 rounded-sm border border-red-500/30 text-red-500 text-xs font-semibold hover:bg-red-500 hover:text-white transition"
+                    >
+                      View
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* ── Detail sidebar ── */}
+      {active && (
+        <div className="fixed inset-0 z-50 flex justify-end">
+          <div
+            className="absolute inset-0 bg-background backdrop-blur-sm"
+            onClick={() => setActive(null)}
+          />
+
+          <div className="relative w-full sm:max-w-md h-full bg-card border-l border-border-color flex flex-col shadow-2xl overflow-hidden">
+            {/* Header */}
+            <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-border-color shrink-0">
+              <h2 className="flex items-center gap-2 text-sm font-bold text-foreground ">
+                <FiFlag className="text-red-500" size={14} />
+                Flagged Message
+              </h2>
+              <button
+                onClick={() => setActive(null)}
+                className="w-7 h-7 shrink-0 rounded-sm text-foreground/60 hover:text-foreground hover:bg-surface flex items-center justify-center transition"
+                aria-label="Close"
+              >
+                <FiX size={16} />
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="flex-1 overflow-y-auto min-h-0 px-5 py-4">
+              <div className="grid grid-cols-[84px_1fr] gap-x-3 gap-y-3">
+                <DetailRow label="Sender">
+                  {getMeta(active).senderName}{" "}
+                  <span className="text-foreground">({getMeta(active).senderRole})</span>
+                </DetailRow>
+
+                {getMeta(active).recipientName && (
+                  <DetailRow label="Recipient">
+                    {getMeta(active).recipientName}{" "}
+                    {getMeta(active).recipientRole && (
+                      <span className="text-foreground/50 capitalize">
+                        ({getMeta(active).recipientRole})
+                      </span>
+                    )}
+                  </DetailRow>
                 )}
+
+                <DetailRow label="Date">{fmtDateTime(active.createdAt)}</DetailRow>
               </div>
-            );
-          })}
+
+              {active.flagReasons && active.flagReasons.length > 0 && (
+                <div className="mt-5 pt-4 border-t border-border-color">
+                  <span className="text-[14px] font-semibold text-foreground">
+                    Flag Reasons
+                  </span>
+                  <div className="flex flex-wrap gap-1.5 mt-2">
+                    {active.flagReasons.map((r: string, i: number) => (
+                      <span
+                        key={i}
+                        className="text-[13px] font-medium bg-background text-foreground px-2.5 py-2.5 rounded-sm border border-border-color"
+                      >
+                        {r}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="mt-5 pt-4 border-t border-border-color">
+                <span className="text-[14px] font-semibold text-foreground">
+                  Message
+                </span>
+                <div className="relative  mt-2">
+                  <p className="text-sm text-foreground leading-relaxed pl-4">{active.body}</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

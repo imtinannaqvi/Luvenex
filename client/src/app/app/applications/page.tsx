@@ -205,7 +205,7 @@ useEffect(() => {
           <p className="text-sm lg:text-base font-semibold italic text-foreground">
             {statusFilter === "all" ? "No applications submitted yet" : `No ${statusFilter} applications`}
           </p>
-          <p className="text-xs lg:text-sm text-muted mt-1 max-w-xs lg:max-w-sm mx-auto leading-relaxed">
+          <p className="text-xs lg:text-sm text-foreground mt-1 max-w-xs lg:max-w-sm mx-auto leading-relaxed">
             {statusFilter === "all"
               ? "You haven't applied to any campaign proposals. Explore open campaigns to pitch your services!"
               : `You currently don't have any applications marked as ${statusFilter}.`}
@@ -213,7 +213,7 @@ useEffect(() => {
           {statusFilter === "all" && (
             <Link
               href="/app/campaigns"
-              className="inline-flex items-center gap-2 mt-4 px-4 lg:px-5 py-2 lg:py-2.5 rounded-xl bg-primary text-white text-xs lg:text-sm font-semibold hover:opacity-90 transition shadow-2xs"
+              className="inline-flex items-center gap-2 mt-4 px-4 lg:px-5 py-2 lg:py-2.5 rounded-xl bg-primary text-foreground text-xs lg:text-sm font-semibold hover:opacity-90 transition shadow-2xs"
             >
               <FiBriefcase size={14} /> Browse Campaigns <FiArrowRight size={13} />
             </Link>
@@ -250,14 +250,14 @@ useEffect(() => {
                           <span className="text-[11px] lg:text-xs font-bold text-foreground">Edit Proposal Terms</span>
                           <button
                             onClick={cancelEdit}
-                            className="text-muted hover:text-foreground transition"
+                            className="text-foreground hover:text-foreground transition"
                           >
                             <FiX size={15} />
                           </button>
                         </div>
 
                         <div>
-                          <label className="block text-md lg:text-sm font-bold text-muted mb-1">
+                          <label className="block text-md lg:text-sm font-bold text-foreground mb-1">
                             Pitch / Proposal Text
                           </label>
                           <textarea
@@ -265,13 +265,13 @@ useEffect(() => {
                             onChange={(e) => setEditText(e.target.value)}
                             rows={3}
                             placeholder="Explain why you're a great fit..."
-                            className="w-full px-3 lg:px-4 py-2 lg:py-2.5 rounded-xl border border-border-color text-xs lg:text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition"
+                            className="w-full px-3 lg:px-4 py-2 lg:py-2.5 rounded-sm border border-border-color text-xs lg:text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition"
                           />
                         </div>
 
                         <div className="grid grid-cols-2 gap-2 lg:gap-3">
                           <div>
-                            <label className="block text-[10px] lg:text-xs font-bold text-muted  mb-1">
+                            <label className="block text-[10px] lg:text-xs font-bold text-foreground  mb-1">
                               Price (PKR)
                             </label>
                             <input
@@ -283,7 +283,7 @@ useEffect(() => {
                             />
                           </div>
                           <div>
-                            <label className="block text-[10px] lg:text-xs font-bold text-muted  mb-1">
+                            <label className="block text-[10px] lg:text-xs font-bold text-foreground  mb-1">
                               Delivery (Days)
                             </label>
                             <input
@@ -300,14 +300,14 @@ useEffect(() => {
                           <button
                             onClick={() => saveEdit(a._id)}
                             disabled={saving}
-                            className="inline-flex items-center gap-1.5 px-4 lg:px-5 py-2 lg:py-2.5 rounded-md bg-primary text-white text-xs lg:text-sm font-semibold hover:opacity-90 transition disabled:opacity-50 cursor-pointer"
+                            className="inline-flex items-center gap-1.5 px-4 lg:px-5 py-2 lg:py-2.5 rounded-md bg-primary text-foreground text-xs lg:text-sm font-semibold hover:opacity-90 transition disabled:opacity-50 cursor-pointer"
                           >
                             <FiCheck size={14} />
                             {saving ? "Saving..." : "Save Changes"}
                           </button>
                           <button
                             onClick={cancelEdit}
-                            className="px-4 lg:px-5 py-2 lg:py-2.5 rounded-sm border border-border-color text-xs lg:text-sm font-semibold text-muted hover:text-foreground hover:bg-surface transition cursor-pointer"
+                            className="px-4 lg:px-5 py-2 lg:py-2.5 rounded-sm border border-border-color text-xs lg:text-sm font-semibold text-foreground hover:text-foreground hover:bg-surface transition cursor-pointer"
                           >
                             Cancel
                           </button>
@@ -331,7 +331,7 @@ useEffect(() => {
                             )}
                             {a.proposedDeliveryDays && (
                               <span className="inline-flex items-center gap-1 text-[11px] lg:text-xs font-semibold px-2.5 lg:px-3 py-1 lg:py-1.5 rounded-sm bg-surface text-foreground/70 border border-border-color/60">
-                                <FiClock size={12} className="text-muted" />
+                                <FiClock size={12} className="text-foreground" />
                                 {a.proposedDeliveryDays} {a.proposedDeliveryDays === 1 ? "day" : "days"} delivery
                               </span>
                             )}
@@ -355,7 +355,7 @@ useEffect(() => {
                       {a.status === "pending" && (
                         <button
                           onClick={() => startEdit(a)}
-                          className="w-8 h-8 lg:w-9 lg:h-9 rounded-xl border border-border-color/80 bg-surface/50 hover:bg-card hover:border-primary/40 flex items-center justify-center text-foreground/70 hover:text-primary transition shrink-0 cursor-pointer shadow-2xs"
+                          className="w-8 h-8 lg:w-9 lg:h-9 rounded-sm border border-border-color/80 bg-surface/50 hover:bg-card hover:border-primary/40 flex items-center justify-center text-foreground/70 hover:text-primary transition shrink-0 cursor-pointer shadow-2xs"
                           title="Edit application proposal"
                         >
                           <FiEdit2 size={13} />

@@ -81,7 +81,7 @@ function Segmented<T extends string>({
             className={`flex items-center gap-2 px-4 py-2.5 rounded-sm border text-sm font-semibold transition ${
               selected
                 ? "border-primary bg-primary/10 text-primary"
-                : "border-line text-muted hover:text-foreground hover:border-foreground/20"
+                : "border-line text-foreground hover:text-muted hover:border-foreground/20"
             }`}
           >
             <Icon size={15} />
@@ -177,7 +177,7 @@ export default function SupportPage() {
   }
 
   const inputCls =
-    "w-full px-3.5 py-2.5 rounded-xl border border-line text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition";
+    "w-full px-3.5 py-2.5 rounded-sm border border-line text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition";
 
   const LauncherIcon = ICON_MAP[buttonIcon];
   const isRight = widgetPosition === "bottom-right";
@@ -186,7 +186,7 @@ export default function SupportPage() {
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-foreground italic">Support Widget</h1>
-        <p className="text-sm text-muted mt-1">
+        <p className="text-sm text-foreground mt-1">
           The floating chat button that opens WhatsApp for visitors.
         </p>
       </div>
@@ -200,7 +200,7 @@ export default function SupportPage() {
                 <span className="block text-sm font-semibold text-foreground">
                   Show the widget
                 </span>
-                <span className="block text-xs text-muted mt-0.5">
+                <span className="block text-xs text-foreground mt-0.5">
                   Turn off to hide it everywhere without losing these settings.
                 </span>
               </span>
@@ -233,7 +233,7 @@ export default function SupportPage() {
                 onChange={(e) => setWhatsappNumber(e.target.value)}
                 className={inputCls}
               />
-              <p className="text-xs text-muted mt-1.5">
+              <p className="text-xs text-foreground mt-1.5">
                 Country code + number, no spaces or symbols. E.g. 923001234567 for Pakistan.
               </p>
             </div>
@@ -261,7 +261,7 @@ export default function SupportPage() {
                   <button
                     type="button"
                     onClick={() => setPrimaryColor(DEFAULT_COLOR)}
-                    className="text-xs text-muted hover:text-foreground underline whitespace-nowrap shrink-0"
+                    className="text-xs text-foreground hover:text-foreground underline whitespace-nowrap shrink-0"
                   >
                     Reset to green
                   </button>
@@ -329,7 +329,7 @@ export default function SupportPage() {
                 onChange={(e) => setGreetingMessage(e.target.value)}
                 className={inputCls}
               />
-              <p className="text-xs text-muted mt-1.5">
+              <p className="text-xs text-foreground mt-1.5">
                 {greetingMessage.length}/400
               </p>
             </div>
@@ -352,13 +352,13 @@ export default function SupportPage() {
           <div className="bg-background border border-line rounded-sm overflow-hidden">
             <div className="px-6 py-4 border-b border-line bg-surface/40">
               <h2 className="text-base font-bold text-foreground">Preview</h2>
-              <p className="text-xs text-muted mt-0.5">Updates as you edit</p>
+              <p className="text-xs text-foreground mt-0.5">Updates as you edit</p>
             </div>
 
             <div className="p-5 bg-surface/40">
               <div className="rounded-xl border border-line bg-background overflow-hidden">
                 <div
-                  className="px-4 py-3 text-white"
+                  className="px-4 py-3 text-foreground"
                   style={{ backgroundColor: primaryColor }}
                 >
                   <p className="text-sm font-bold leading-tight">
@@ -369,7 +369,7 @@ export default function SupportPage() {
                   </p>
                 </div>
                 <div className="p-4">
-                  <div className="rounded-xl rounded-tl-sm bg-surface px-3 py-2.5 text-xs text-foreground">
+                  <div className="rounded-sm rounded-tl-sm bg-surface px-3 py-2.5 text-xs text-foreground">
                     {greetingMessage || "Your greeting message appears here."}
                   </div>
                 </div>
@@ -380,14 +380,14 @@ export default function SupportPage() {
                 className={`mt-4 flex ${isRight ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className="w-12 h-12 rounded-full flex items-center justify-center text-white shadow-md"
+                  className="w-12 h-12 rounded-full flex items-center justify-center text-foreground shadow-md"
                   style={{ backgroundColor: primaryColor }}
                 >
                   <LauncherIcon size={20} />
                 </div>
               </div>
 
-              <p className="text-[11px] text-muted mt-3 text-center">
+              <p className="text-[11px] text-foreground mt-3 text-center">
                 {isEnabled
                   ? `Shows in the ${isRight ? "bottom right" : "bottom left"} corner`
                   : "Widget is turned off — visitors won't see this"}

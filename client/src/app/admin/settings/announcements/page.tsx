@@ -49,8 +49,8 @@ const TYPE_STYLES: Record<string, string> = {
 function statusOf(a: Announcement) {
   if (!a.isActive) return { label: "Inactive", cls: "bg-surface text-muted border-line" };
   if (a.expiresAt && new Date(a.expiresAt).getTime() < Date.now())
-    return { label: "Expired", cls: "bg-surface text-muted border-line" };
-  return { label: "Live", cls: "bg-green-50 text-green-700 border-green-200" };
+    return { label: "Expired", cls: "bg-surface text-foregroun border-line" };
+  return { label: "Live", cls: "bg-primary text-foreground border-white" };
 }
 
 // <input type="date"> wants YYYY-MM-DD; the API returns a full ISO timestamp.
@@ -120,20 +120,20 @@ export default function AnnouncementsPage() {
   };
 
   const inputCls =
-    "w-full px-3.5 py-2.5 rounded-xl bg-background text-foreground border border-line text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition";
+    "w-full px-3.5 py-2.5 rounded-sm bg-background text-foreground border border-line text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition";
 
   return (
     <div>
       <div className="mb-6 flex items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-foreground italic">Announcements</h1>
-          <p className="text-sm text-muted mt-1">
+          <p className="text-sm text-foreground mt-1">
             Banners shown to brands and influencers across the site.
           </p>
         </div>
         <button
           onClick={() => setDraft({ ...EMPTY })}
-          className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-primary text-foreground text-sm font-semibold hover:bg-primary-dark transition shadow-sm shrink-0"
+          className="flex items-center gap-1.5 px-4 py-2.5 rounded-sm bg-primary text-foreground text-sm font-semibold hover:bg-primary-dark transition shadow-sm shrink-0"
         >
           <FiPlus size={15} />
           New announcement
@@ -151,7 +151,7 @@ export default function AnnouncementsPage() {
               <FiVolume2 size={19} />
             </div>
             <p className="text-sm font-semibold text-foreground">No announcements yet</p>
-            <p className="text-xs text-muted mt-1">
+            <p className="text-xs text-foreground mt-1">
               Create one to show a banner to brands, influencers, or both.
             </p>
           </div>
@@ -165,18 +165,18 @@ export default function AnnouncementsPage() {
                     <div className="flex items-center gap-2 flex-wrap">
                       <p className="text-sm font-semibold text-foreground truncate">{a.title}</p>
                       <span
-                        className={`text-[10px] font-semibold px-2 py-0.5 rounded-sm border ${TYPE_STYLES[a.type]}`}
+                        // className={`text-[10px] font-semibold px-2 py-0.5 rounded-sm border ${TYPE_STYLES[a.type]}`}
                       >
-                        {labelFor(TYPES, a.type)}
+                        {/* {labelFor(TYPES, a.type)} */}
                       </span>
                       <span
-                        className={`text-[10px] font-semibold px-2 py-0.5 rounded-sm border ${status.cls}`}
+                        className={`text-[14px] font-semibold px-2 py-0.5 rounded-sm  border ${status.cls}`}
                       >
                         {status.label}
                       </span>
                     </div>
-                    <p className="text-xs text-muted mt-1 line-clamp-1">{a.message}</p>
-                    <p className="text-[11px] text-muted mt-1.5">
+                    <p className="text-xs text-foreground mt-1 line-clamp-1">{a.message}</p>
+                    <p className="text-[11px] text-foreground mt-1.5">
                       {labelFor(AUDIENCES, a.audience)}
                       {a.expiresAt
                         ? ` · expires ${new Date(a.expiresAt).toLocaleDateString()}`
@@ -186,14 +186,14 @@ export default function AnnouncementsPage() {
                   <div className="flex items-center gap-1 shrink-0">
                     <button
                       onClick={() => setDraft({ ...EMPTY, ...a })}
-                      className="w-8 h-8 rounded-sm text-muted hover:text-foreground hover:bg-surface flex items-center justify-center transition"
+                      className="w-8 h-8 rounded-sm text-foreground hover:text-foreground hover:bg-surface flex items-center justify-center transition"
                       aria-label="Edit"
                     >
                       <FiEdit2 size={14} />
                     </button>
                     <button
                       onClick={() => handleDelete(a._id!)}
-                      className="w-8 h-8 rounded-sm text-muted hover:text-red-600 hover:bg-red-50 flex items-center justify-center transition"
+                      className="w-8 h-8 rounded-sm text-foreground hover:text-red-600 hover:bg-red-50 flex items-center justify-center transition"
                       aria-label="Delete"
                     >
                       <FiTrash2 size={14} />
@@ -208,14 +208,14 @@ export default function AnnouncementsPage() {
 
       {draft && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40">
-          <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto bg-background border border-line rounded-xl shadow-lg">
+          <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto bg-background border border-line rounded-sm shadow-lg">
             <div className="flex items-center justify-between px-6 py-5">
               <h2 className="text-xl font-bold text-foreground">
                 {draft._id ? "Edit Announcement" : "New Announcement"}
               </h2>
               <button
                 onClick={() => setDraft(null)}
-                className="w-8 h-8 rounded-sm text-muted hover:text-foreground hover:bg-surface flex items-center justify-center transition"
+                className="w-8 h-8 rounded-sm text-foreground hover:text-foreground hover:bg-surface flex items-center justify-center transition"
                 aria-label="Close"
               >
                 <FiX size={18} />
@@ -300,14 +300,14 @@ export default function AnnouncementsPage() {
             <div className="px-6 py-5 flex justify-end gap-2">
               <button
                 onClick={() => setDraft(null)}
-                className="px-5 py-2.5 rounded-xl border border-line text-sm font-semibold text-foreground hover:bg-surface transition"
+                className="px-5 py-2.5 rounded-sm border border-line text-sm font-semibold text-foreground hover:bg-surface transition"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="px-6 py-2.5 rounded-xl bg-primary text-foreground text-sm font-semibold hover:bg-primary-dark transition disabled:opacity-50 shadow-sm"
+                className="px-6 py-2.5 rounded-sm bg-primary text-foreground text-sm font-semibold hover:bg-primary-dark transition disabled:opacity-50 shadow-sm"
               >
                 {saving ? "Saving..." : draft._id ? "Save" : "Create"}
               </button>

@@ -232,7 +232,7 @@ export default function EmailTemplatesPage() {
                 </option>
               ))}
             </select>
-            <p className="text-[11px] text-foreground/50 mt-1.5">{active.description}</p>
+            <p className="text-[11px] text-foreground mt-1.5">{active.description}</p>
           </div>
 
           {/* ── Editor / Preview ── */}
@@ -242,7 +242,7 @@ export default function EmailTemplatesPage() {
                 key={t}
                 onClick={() => setTab(t)}
                 className={`relative pb-3 text-sm font-semibold capitalize transition ${
-                  tab === t ? "text-primary" : "text-foreground/50 hover:text-foreground"
+                  tab === t ? "text-foreground" : "text-foreground/50 hover:text-foreground"
                 }`}
               >
                 {t}
@@ -274,12 +274,11 @@ export default function EmailTemplatesPage() {
                 <div>
                   <div className="flex items-center justify-between gap-3 mb-1.5">
                     <label className="text-xs font-semibold text-foreground">Body (HTML)</label>
-                    <span className="text-[11px] text-foreground/35">
+                    <span className="text-[11px] text-foreground">
                       {body.length.toLocaleString()} characters
                     </span>
                   </div>
-                  {/* Framed as one block so the editor reads as a code pane
-                      rather than a large empty field. */}
+                 
                   <div className="rounded-sm border border-line bg-surface/30 focus-within:border-primary transition overflow-hidden">
                     <textarea
                       ref={bodyRef}
@@ -307,8 +306,8 @@ export default function EmailTemplatesPage() {
                     disabled={saving || !dirty}
                     className={`px-6 py-2.5 rounded-sm text-sm font-semibold transition ${
                       dirty
-                        ? "bg-primary text-white hover:opacity-90"
-                        : "border border-line text-foreground/40 cursor-default"
+                        ? "bg-primary text-foreground hover:opacity-90"
+                        : "border border-line text-foreground cursor-default"
                     }`}
                   >
                     {saving ? "Saving..." : dirty ? "Save changes" : "No changes"}
@@ -319,7 +318,7 @@ export default function EmailTemplatesPage() {
              
               <div className="rounded-sm border border-line border-l-2 bg-surface/40 p-5 lg:sticky lg:top-6">
                 <p className="text-sm font-bold text-foreground">Available Variables</p>
-                <p className="text-xs text-foreground/60 mt-1.5 leading-relaxed">
+                <p className="text-xs text-foreground mt-1.5 leading-relaxed">
                   Click one to drop it into whichever field you last had selected. Each is replaced
                   with real data when the email sends.
                 </p>
@@ -335,7 +334,7 @@ export default function EmailTemplatesPage() {
                       <span className="block font-mono text-[11px] text-primary">
                         {`{{${v.key}}}`}
                       </span>
-                      <span className="block text-[11px] text-foreground/50 mt-0.5 truncate">
+                      <span className="block text-[11px] text-foreground mt-0.5 truncate">
                         {v.label} — {v.sample}
                       </span>
                     </button>
@@ -351,7 +350,7 @@ export default function EmailTemplatesPage() {
                   <p className="text-[11px] text-foreground/50">Subject</p>
                   <p className="text-sm font-semibold text-foreground mt-0.5 break-words">
                     {render(subject, sampleData) || (
-                      <span className="text-foreground/30">No subject</span>
+                      <span className="text-foreground">No subject</span>
                     )}
                   </p>
                 </div>
@@ -374,21 +373,21 @@ export default function EmailTemplatesPage() {
       {/* ── Send test dialog ── */}
       {testOpen && active && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background backdrop-blur-sm"
           onClick={() => setTestOpen(false)}
         >
           <div
-            className="w-full max-w-sm bg-background border border-line rounded-xl shadow-2xl"
+            className="w-full max-w-sm bg-background border border-line rounded-sm shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-start justify-between gap-3 px-5 py-4 border-b border-line">
               <div className="min-w-0">
                 <h3 className="text-base font-bold text-foreground">Send a test</h3>
-                <p className="text-[11px] text-foreground/50 mt-0.5 truncate">{active.name}</p>
+                <p className="text-[11px] text-foreground mt-0.5 truncate">{active.name}</p>
               </div>
               <button
                 onClick={() => setTestOpen(false)}
-                className="w-8 h-8 shrink-0 rounded-lg text-foreground/50 hover:text-foreground hover:bg-surface flex items-center justify-center transition"
+                className="w-8 h-8 shrink-0 rounded-sm text-foreground hover:text-foreground hover:bg-surface flex items-center justify-center transition"
                 aria-label="Close"
               >
                 <FiX size={17} />
@@ -411,7 +410,7 @@ export default function EmailTemplatesPage() {
                 }}
                 className={inputCls}
               />
-              <p className="text-[11px] text-foreground/50 mt-2">
+              <p className="text-[11px] text-foreground mt-2">
                 Sends what&apos;s in the fields right now, saved or not.
               </p>
             </div>

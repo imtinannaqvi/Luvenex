@@ -52,7 +52,7 @@ function SectionHeader({
 }) {
   return (
     <div className="flex items-center gap-3 px-6 py-5 border-b border-line bg-surface/40">
-      <div className="w-10 h-10 rounded-sm bg-primary flex items-center justify-center text-white shrink-0">
+      <div className="w-10 h-10 rounded-sm bg-primary flex items-center justify-center text-foreground shrink-0">
         {icon}
       </div>
       <div className="min-w-0">

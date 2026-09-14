@@ -9,6 +9,11 @@ export default function ExplorePage() {
   const [loading, setLoading] = useState(true);
   const [category, setCategory] = useState("");
   const [query, setQuery] = useState("");
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    setIsLoaded(true);
+  }, []);
 
   useEffect(() => {
     const params = new URLSearchParams();
@@ -35,7 +40,13 @@ export default function ExplorePage() {
   return (
     <div className="min-h-screen bg-background text-foreground px-4 sm:px-6 py-12">
       {/* Centered search bar */}
-      <div className="max-w-xl mx-auto text-center mb-10">
+      <div
+        className={`max-w-xl mx-auto text-center mb-10 transition-all duration-700 ease-out transform ${
+          isLoaded
+            ? "opacity-100 scale-100 translate-y-0"
+            : "opacity-0 scale-75 translate-y-6"
+        }`}
+      >
         <h1 className="text-xl sm:text-3xl font-black italic tracking-tight mb-6">
           Explore <span className="text-[#B90808]">More</span>
         </h1>
@@ -75,11 +86,18 @@ export default function ExplorePage() {
         </p>
       ) : (
         <div className="max-w-6xl mx-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-          {filteredVideos.map((v) => (
+          {filteredVideos.map((v, idx) => (
             <Link
               key={v._id}
               href={`/videos?v=${v._id}`}
-              className="group relative aspect-[9/16] rounded-sm overflow-hidden bg-zinc-900 border border-border-color transition"
+              className={`group relative aspect-[9/16] rounded-sm overflow-hidden bg-zinc-900 border border-border-color transition-all duration-700 ease-out ${
+                isLoaded
+                  ? "opacity-100 scale-100 translate-y-0"
+                  : "opacity-0 scale-75 translate-y-8"
+              }`}
+              style={{
+                transitionDelay: isLoaded ? `${100 + idx * 60}ms` : "0ms",
+              }}
             >
               <video
                 src={`${process.env.NEXT_PUBLIC_API_URL}${v.videoUrl}`}

@@ -149,7 +149,7 @@ export default function AppDashboard() {
           <div className="text-xl sm:text-2xl font-bold italic text-foreground mt-1.5">
             {activeDeals.length}
           </div>
-          <p className="text-[12px] sm:text-[13px] text-zinc-400 mt-1">
+          <p className="text-[12px] sm:text-[13px] text-foreground mt-1">
             In progress & pending
           </p>
         </div>
@@ -161,7 +161,7 @@ export default function AppDashboard() {
           <div className="text-lg sm:text-2xl font-bold italic text-foreground mt-1.5 break-words">
             {money(wallet?.balanceMinor || 0)}
           </div>
-          <p className="text-[12px] sm:text-[13px] text-zinc-400 mt-1">
+          <p className="text-[12px] sm:text-[13px] text-foreground mt-1">
             Available for payout
           </p>
         </div>
@@ -172,7 +172,7 @@ export default function AppDashboard() {
             <div className="text-lg sm:text-2xl font-bold italic text-foreground mt-1.5 break-words">
               {money(wallet.escrowMinor)}
             </div>
-            <p className="text-[12px] sm:text-[13px] text-zinc-400 mt-1">
+            <p className="text-[12px] sm:text-[13px] text-foreground mt-1">
               Held until delivery
             </p>
           </div>
@@ -185,7 +185,7 @@ export default function AppDashboard() {
           <div className="text-lg sm:text-2xl font-bold italic text-foreground mt-1.5 break-words">
             PKR {totalVolumePKR.toLocaleString()}
           </div>
-          <p className="text-[12px] sm:text-[14px] text-zinc-400 mt-1">
+          <p className="text-[12px] sm:text-[14px] text-foreground mt-1">
             Across completed deals
           </p>
         </div>
@@ -200,9 +200,8 @@ export default function AppDashboard() {
               <h2 className="text-sm sm:text-base font-bold text-foreground tracking-tight">
                 {isBrand ? "Spending" : "Earnings"} over time
               </h2>
-              <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
             </div>
-            <p className="text-xs sm:text-sm text-zinc-500 mt-0.5">
+            <p className="text-xs sm:text-sm text-foreground mt-0.5">
               Performance tracking over the last 12 months
             </p>
           </div>
@@ -210,7 +209,7 @@ export default function AppDashboard() {
           {/* Metric Badge */}
           <div className="self-start sm:self-auto px-3.5 py-1.5 rounded bg-surface border border-border-color flex items-center gap-3">
             <div>
-              <span className="text-[10px] sm:text-xs font-medium text-zinc-500 block italic">
+              <span className="text-[10px] sm:text-xs font-medium text-foreground block italic">
                 Total {isBrand ? "Spent" : "Earned"}
               </span>
               <p className="text-xs sm:text-sm font-black text-foreground">
@@ -302,7 +301,7 @@ export default function AppDashboard() {
                       </div>
 
                       <div className="pt-0.5">
-                        <span className="text-[10px] text-zinc-500 block font-medium">
+                        <span className="text-[10px] text-foreground block font-medium">
                           Amount
                         </span>
                         <p className="font-extrabold text-sm text-foreground">
@@ -371,7 +370,7 @@ export default function AppDashboard() {
 
             {deals.length === 0 ? (
               <div className="p-8 text-center bg-surface border border-border-color rounded-2xl">
-                <p className="text-xs sm:text-sm text-zinc-500">
+                <p className="text-xs sm:text-sm text-foreground">
                   No active or historical deals yet.
                 </p>
               </div>
@@ -387,7 +386,7 @@ export default function AppDashboard() {
                       <p className="text-xs sm:text-sm font-bold text-foreground group-hover:text-red-600 transition truncate">
                         {d.title}
                       </p>
-                      <p className="text-[11px] sm:text-xs font-semibold text-zinc-500 mt-0.5">
+                      <p className="text-[11px] sm:text-xs font-semibold text-foreground mt-0.5">
                         {money(d.priceMinor)}
                       </p>
                     </div>
@@ -414,14 +413,14 @@ export default function AppDashboard() {
                   Recent Activity
                 </h2>
               </div>
-              <span className="text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded bg-surface border border-border-color text-zinc-500">
+              <span className="text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded bg-surface border border-border-color text-foreground">
                 Latest {notifications.length}
               </span>
             </div>
 
             {notifications.length === 0 ? (
               <div className="p-8 text-center bg-surface border border-border-color rounded">
-                <p className="text-xs sm:text-sm text-zinc-500">
+                <p className="text-xs sm:text-sm text-foreground">
                   No recent notifications.
                 </p>
               </div>
@@ -436,14 +435,14 @@ export default function AppDashboard() {
                       <p className="text-xs sm:text-sm font-bold text-foreground truncate">
                         {n.title}
                       </p>
-                      <span className="text-[10px] sm:text-xs font-medium text-zinc-400 shrink-0">
+                      <span className="text-[10px] sm:text-xs font-medium text-foreground shrink-0">
                         {new Date(n.createdAt).toLocaleDateString("en-US", {
                           month: "short",
                           day: "numeric",
                         })}
                       </span>
                     </div>
-                    <p className="text-[11px] sm:text-xs text-zinc-500 line-clamp-2 mt-1 leading-relaxed">
+                    <p className="text-[11px] sm:text-xs text-foreground line-clamp-2 mt-1 leading-relaxed">
                       {n.message}
                     </p>
                   </div>

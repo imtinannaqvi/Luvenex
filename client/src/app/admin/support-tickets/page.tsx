@@ -202,7 +202,7 @@ export default function AdminSupportTicketsPage() {
             onKeyDown={(e) => {
               if (e.key === "Enter") setQuery(search.trim());
             }}
-            className="w-full pl-10 pr-3.5 py-2.5 rounded-sm border border-line bg-background text-sm text-foreground placeholder:text-muted focus:outline-none focus:border-primary"
+            className="w-full pl-10 pr-3.5 py-2.5 rounded-sm border border-line bg-background text-sm text-foreground placeholder:text-foreground focus:outline-none focus:border-primary"
           />
         </div>
 
@@ -240,27 +240,27 @@ export default function AdminSupportTicketsPage() {
               <FiLifeBuoy size={19} />
             </div>
             <p className="text-sm font-semibold text-foreground">No tickets found</p>
-            <p className="text-xs text-muted mt-1">Nothing matches these filters.</p>
+            <p className="text-xs text-foreground mt-1">Nothing matches these filters.</p>
           </div>
         ) : (
           <>
             <table className="hidden md:table w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-line bg-surface/40">
-                  <th className="pl-5 pr-3 py-3.5 text-xs font-semibold text-muted w-[120px]">
+                  <th className="pl-5 pr-3 py-3.5 text-xs font-semibold text-foreground w-[120px]">
                     Ticket #
                   </th>
-                  <th className="px-3 py-3.5 text-xs font-semibold text-muted">Subject</th>
-                  <th className="px-3 py-3.5 text-xs font-semibold text-muted w-[170px]">From</th>
-                  <th className="px-3 py-3.5 text-xs font-semibold text-muted w-[100px]">
+                  <th className="px-3 py-3.5 text-xs font-semibold text-foreground">Subject</th>
+                  <th className="px-3 py-3.5 text-xs font-semibold text-foreground w-[170px]">From</th>
+                  <th className="px-3 py-3.5 text-xs font-semibold text-foreground w-[100px]">
                     Priority
                   </th>
-                  <th className="px-3 py-3.5 text-xs font-semibold text-muted w-[130px]">Status</th>
-                  <th className="px-3 py-3.5 text-xs font-semibold text-muted w-[80px] text-center">
+                  <th className="px-3 py-3.5 text-xs font-semibold text-foreground w-[130px]">Status</th>
+                  <th className="px-3 py-3.5 text-xs font-semibold text-foreground w-[80px] text-center">
                     Replies
                   </th>
-                  <th className="px-3 py-3.5 text-xs font-semibold text-muted w-[120px]">Date</th>
-                  <th className="pl-3 pr-5 py-3.5 text-xs font-semibold text-muted w-[90px] text-right">
+                  <th className="px-3 py-3.5 text-xs font-semibold text-foreground w-[120px]">Date</th>
+                  <th className="pl-3 pr-5 py-3.5 text-xs font-semibold text-foreground w-[90px] text-right">
                     Action
                   </th>
                 </tr>
@@ -278,13 +278,13 @@ export default function AdminSupportTicketsPage() {
                     </td>
                     <td className="px-3 py-4 max-w-0">
                       <p className="text-sm font-semibold text-foreground truncate">{t.title}</p>
-                      <p className="text-xs text-muted mt-0.5 truncate">
+                      <p className="text-xs text-foreground mt-0.5 truncate">
                         {CATEGORY_LABELS[t.category] || "Other"}
                       </p>
                     </td>
                     <td className="px-3 py-4">
-                      <p className="text-sm text-foreground truncate">{t.createdBy?.name}</p>
-                      <p className="text-xs text-muted capitalize">{t.createdByRole}</p>
+                      <p className="text-lg text-foreground truncate">{t.createdBy?.name}</p>
+                      <p className="text-xs text-foreground capitalize">{t.createdByRole}</p>
                     </td>
                     <td className="px-3 py-4">
                       <span
@@ -301,10 +301,10 @@ export default function AdminSupportTicketsPage() {
                       </span>
                     </td>
                     <td className="px-3 py-4 text-center">
-                      <span className="text-sm text-foreground/70">{t.messages?.length || 0}</span>
+                      <span className="text-sm text-foreground">{t.messages?.length || 0}</span>
                     </td>
                     <td className="px-3 py-4">
-                      <span className="text-xs text-muted whitespace-nowrap">
+                      <span className="text-xs text-foreground whitespace-nowrap">
                         {fmtDate(t.createdAt)}
                       </span>
                     </td>
@@ -345,7 +345,7 @@ export default function AdminSupportTicketsPage() {
                     </span>
                   </div>
                   <p className="text-sm font-semibold text-foreground truncate">{t.title}</p>
-                  <p className="text-xs text-muted mt-1">
+                  <p className="text-xs text-foreground mt-1">
                     {t.createdBy?.name} · {t.createdByRole} · {t.priority} ·{" "}
                     {t.messages?.length || 0} replies · {fmtDate(t.createdAt)}
                   </p>
@@ -419,7 +419,7 @@ export default function AdminSupportTicketsPage() {
                     key={s}
                     disabled={updating}
                     onClick={() => !isCurrent && patchTicket({ status: s })}
-                    className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold border transition disabled:opacity-50 ${
+                    className={`px-3.5 py-1.5 rounded-sm text-xs font-semibold border transition disabled:opacity-50 ${
                       isCurrent
                         ? "bg-primary text-foreground border-primary"
                         : "border-line text-foreground hover:text-foreground hover:border-foreground/25"
@@ -443,7 +443,7 @@ export default function AdminSupportTicketsPage() {
             </div>
 
             {/* Thread */}
-            <div className="flex-1 overflow-y-auto px-6 py-5 space-y-4 min-h-0 bg-surface/20">
+            <div className="flex-1 overflow-y-auto px-6 py-5 space-y-3 min-h-0 bg-surface/20">
               <div className="rounded-sm border border-line bg-background px-4 py-3">
                 <p className="text-md text-foreground mb-1">
                   <span className="font-semibold text-foreground/80">
@@ -461,7 +461,7 @@ export default function AdminSupportTicketsPage() {
                 return (
                   <div
                     key={m._id}
-                    className={`rounded-xl px-4 py-3 border ${
+                    className={`rounded-sm px-4 py-3 border ${
                       fromAdmin
                         ? "ml-8 bg-primary/10 border-primary/25"
                         : "mr-8 bg-background border-line"
@@ -504,12 +504,12 @@ export default function AdminSupportTicketsPage() {
                         sendReply();
                       }
                     }}
-                    className="flex-1 px-4 py-3 rounded-xl border border-line bg-surface/40 text-sm text-foreground placeholder:text-muted resize-none focus:outline-none focus:border-primary focus:bg-background transition"
+                    className="flex-1 px-4 py-3 rounded-sm border border-line bg-surface/40 text-sm text-foreground placeholder:text-muted resize-none focus:outline-none focus:border-primary focus:bg-background transition"
                   />
                   <button
                     onClick={sendReply}
                     disabled={sending || !reply.trim()}
-                    className="shrink-0 w-12 h-12 rounded-xl bg-primary text-foreground flex items-center justify-center hover:opacity-90 active:scale-95 transition disabled:opacity-30 disabled:active:scale-100"
+                    className="shrink-0 w-12 h-12 rounded-sm bg-primary text-foreground flex items-center justify-center hover:opacity-90 active:scale-95 transition disabled:opacity-30 disabled:active:scale-100"
                     aria-label="Send reply"
                   >
                     <FiSend size={17} />

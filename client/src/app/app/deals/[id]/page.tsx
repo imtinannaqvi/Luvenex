@@ -341,7 +341,7 @@ const respondToCancellation = async (agree: boolean) => {
               </div>
              
  
-              <p className="text-xs sm:text-sm text-muted mt-0.5 italic flex items-center gap-1.5">
+              <p className="text-xs sm:text-sm text-foreground mt-0.5 italic flex items-center gap-1.5">
                 <span>Working with</span>
                 <span className="font-semibold text-foreground">{otherParty?.name || "Partner"}</span>
                 <span className="text-xs px-2 py-0.5 rounded-sm bg-surface border border-line/60 font-medium text-foreground capitalize">
@@ -367,7 +367,7 @@ const respondToCancellation = async (agree: boolean) => {
               <span className="text-sm font-bold  text-foreground flex items-center gap-1.5">
                 <FiClock size={12} /> Progress Tracker
               </span>
-              <span className="text-sm px-2.5 py-1.5 rounded-sm  border bg-primary text-white border-primary">
+              <span className="text-sm px-2.5 py-1.5 rounded-sm  border bg-primary text-foreground border-primary">
                 {deal.status.replace(/_/g, " ")}
               </span>
             </div>
@@ -383,10 +383,10 @@ const respondToCancellation = async (agree: boolean) => {
                     <div key={step} className="flex flex-col items-center flex-1">
                       <div
                         className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-200 border ${isPassed
-                            ? "bg-primary text-paper border-primary/20 shadow-2xs"
+                            ? "bg-primary text-foreground border-primary/20 shadow-2xs"
                             : isCurrent
                               ? "bg-background text-primary border-primary ring-4 ring-primary/15 font-extrabold"
-                              : "bg-surface text-muted/60 border-line"
+                              : "bg-surface text-foreground/60 border-line"
                           }`}
                       >
                         {isPassed ? <FiCheck size={14} /> : i + 1}
@@ -396,7 +396,7 @@ const respondToCancellation = async (agree: boolean) => {
                             ? "text-primary font-bold"
                             : isPassed
                               ? "text-foreground"
-                              : "text-muted/60"
+                              : "text-foreground/60"
                           }`}
                       >
                         {STEP_LABELS[step]}
@@ -422,7 +422,7 @@ const respondToCancellation = async (agree: boolean) => {
           </div>
         ) : (
           <div className="py-4 border-b border-line/60 flex items-center gap-2">
-            <span className="text-xs font-semibold text-muted">Status:</span>
+            <span className="text-xs font-semibold text-foreground">Status:</span>
             <span className="text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider border bg-rose-50 text-rose-700 border-rose-200">
               {deal.status.replace(/_/g, " ")}
             </span>
@@ -436,24 +436,24 @@ const respondToCancellation = async (agree: boolean) => {
               <FiShield className="text-primary" size={15} />
               <span>Escrow Payment Summary</span>
             </div>
-            <span className="text-[10px] font-semibold text-white bg-primary border px-3 py-1.5 rounded-md">
+            <span className="text-[10px] font-semibold text-foreground bg-primary border px-3 py-1.5 rounded-md">
               Protected
             </span>
           </div>
 
           <div className="space-y-2 text-xs sm:text-sm">
-            <div className="flex justify-between items-center text-muted">
+            <div className="flex justify-between items-center text-foreground">
               <span>Agreed Deal Amount</span>
               <span className="text-foreground font-medium">{money(deal.priceMinor)}</span>
             </div>
             {isBrand && (
-              <div className="flex justify-between items-center text-muted">
+              <div className="flex justify-between items-center text-foreground">
                 <span>Platform Fee{feePercent(deal.brandFeeMinor)}</span>
                 <span className="text-foreground font-medium">{money(deal.brandFeeMinor)}</span>
               </div>
             )}
             {isInfluencer && (
-              <div className="flex justify-between items-center text-muted">
+              <div className="flex justify-between items-center text-foreground">
                 <span>Platform Fee{feePercent(deal.influencerFeeMinor)}</span>
                 <span className="text-rose-600 font-medium">
                   -{money(deal.influencerFeeMinor)}

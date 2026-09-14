@@ -31,6 +31,11 @@ export default function DiscoverPage() {
   const [sort, setSort] = useState<string>("");
   const [pagination, setPagination] = useState<PaginationData | null>(null);
   const [page, setPage] = useState<number>(1);
+  const [isLoaded, setIsLoaded] = useState<boolean>(false);
+
+  useEffect(() => {
+    setIsLoaded(true);
+  }, []);
 
   const load = async () => {
     setLoading(true);
@@ -86,7 +91,13 @@ export default function DiscoverPage() {
       <div className="absolute -bottom-32 -right-32 w-80 h-80 sm:w-[500px] sm:h-[500px] bg-red-600/30 rounded-full blur-[100px] sm:blur-[160px] pointer-events-none z-0" />
 
       <div className="relative z-10 max-w-7xl mx-auto space-y-8 sm:space-y-10">
-        <div className="text-center max-w-2xl mx-auto space-y-2 sm:space-y-3 border-b border-border-color pb-6 sm:pb-8">
+        <div
+          className={`text-center max-w-2xl mx-auto space-y-2 sm:space-y-3 border-b border-border-color pb-6 sm:pb-8 transition-all duration-700 ease-out transform ${
+            isLoaded
+              ? "opacity-100 scale-100 translate-y-0"
+              : "opacity-0 scale-75 translate-y-6"
+          }`}
+        >
           <h1 className="text-3xl sm:text-4xl font-extrabold italic text-foreground tracking-tight">
             Discover <span className="text-red-600">Creators</span>
           </h1>
@@ -201,11 +212,18 @@ export default function DiscoverPage() {
         ) : (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-              {profiles.map((p) => (
+              {profiles.map((p, idx) => (
                 <Link
                   key={p._id}
                   href={`/creator/${p.handle}`}
-                  className="group relative bg-surface border border-border-color hover:border-red-600 border-t-2 hover:border-t-red-600 transition-all duration-300 rounded-sm p-5 sm:p-6 flex flex-col items-center text-center justify-between backdrop-blur-sm"
+                  className={`group relative bg-surface border border-border-color hover:border-red-600 border-t-2 hover:border-t-red-600 transition-all duration-700 ease-out rounded-sm p-5 sm:p-6 flex flex-col items-center text-center justify-between backdrop-blur-sm ${
+                    isLoaded
+                      ? "opacity-100 scale-100 translate-y-0"
+                      : "opacity-0 scale-75 translate-y-8"
+                  }`}
+                  style={{
+                    transitionDelay: isLoaded ? `${100 + idx * 80}ms` : "0ms",
+                  }}
                 >
                   {p.isVerified && (
                     <div className="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-surface border border-red-800/40 text-red-400 text-[10px] font-semibold flex items-center gap-1">

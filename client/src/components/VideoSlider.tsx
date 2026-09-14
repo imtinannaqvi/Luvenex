@@ -30,10 +30,15 @@ const VideoSlider = () => {
   const [drag, setDrag] = useState(0);
   const dragging = useRef(false);
   const startX = useRef(0);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const sectionRef = useRef<HTMLElement | null>(null);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const [inView, setInView] = useState(true);
+
+  useEffect(() => {
+    setIsLoaded(true);
+  }, []);
 
   useEffect(() => {
     const el = sectionRef.current;
@@ -87,7 +92,13 @@ const VideoSlider = () => {
 
   return (
     <section ref={sectionRef} className="relative w-full pt-12 pb-6 overflow-hidden select-none">
-      <div className="relative z-10 max-w-3xl mx-auto text-center px-4 mb-6">
+      <div
+        className={`relative z-10 max-w-3xl mx-auto text-center px-4 mb-6 transition-all duration-700 ease-out transform ${
+          isLoaded
+            ? "opacity-100 scale-100 translate-y-0"
+            : "opacity-0 scale-75 translate-y-6"
+        }`}
+      >
         <h2 className="text-3xl sm:text-4xl lg:text-6xl italic font-black text-foreground tracking-tight leading-tight whitespace-nowrap">
           Run your creator  <br /> <span className="text-[#B90808]"> marketing here</span>
         </h2>
@@ -189,4 +200,3 @@ const VideoSlider = () => {
 };
 
 export default VideoSlider;
-

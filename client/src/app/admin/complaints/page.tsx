@@ -58,7 +58,7 @@ export default function AdminComplaintsPage() {
       : "bg-gray-500/10 text-gray-600 border-gray-500/20";
 
   return (
-    <div className="max-w-6xl px-4 sm:px-8 py-8">
+    <div className="max-w-7xl px-2 sm:px-8 py-8">
       <h1 className="text-2xl font-bold text-foreground italic mb-6">Complaints</h1>
 
       {error && <p className="text-primary text-sm mb-4">{error}</p>}
@@ -69,10 +69,10 @@ export default function AdminComplaintsPage() {
         </div>
       ) : complaints.length === 0 ? (
         <div className="bg-background border border-line rounded-2xl p-8 text-center">
-          <p className="text-muted text-sm">No complaints filed.</p>
+          <p className="text-foreground text-sm">No complaints filed.</p>
         </div>
       ) : (
-        <div className="bg-background border border-line rounded-2xl overflow-hidden shadow-sm">
+        <div className="bg-background border border-line rounded-sm overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm border-collapse min-w-[820px]">
               <thead>
@@ -94,10 +94,10 @@ export default function AdminComplaintsPage() {
                     <td className="px-5 py-3.5 text-foreground whitespace-nowrap">
                       {c.against?.name || "—"}
                     </td>
-                    <td className="px-5 py-3.5 text-muted capitalize whitespace-nowrap">
+                    <td className="px-5 py-3.5 text-foreground capitalize whitespace-nowrap">
                       {c.reason?.replace(/_/g, " ") || "—"}
                     </td>
-                    <td className="px-5 py-3.5 text-muted max-w-[180px] truncate">
+                    <td className="px-5 py-3.5 text-foreground max-w-[180px] truncate">
                       {c.dealId?.title || "—"}
                     </td>
                     <td className="px-5 py-3.5">
@@ -135,7 +135,7 @@ export default function AdminComplaintsPage() {
                             <option value="dismissed">Dismiss</option>
                           </select>
                         ) : (
-                          <span className="text-xs text-muted italic px-2">Closed</span>
+                          <span className="text-xs text-foreground italic px-2">Closed</span>
                         )}
                       </div>
                     </td>
@@ -152,14 +152,14 @@ export default function AdminComplaintsPage() {
         <>
           <div
             onClick={() => setSelected(null)}
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
+            className="fixed inset-0 bg-background backdrop-blur-sm z-40"
           />
           <div className="fixed top-0 right-0 h-full w-full sm:w-[440px] bg-background border-l border-line z-50 shadow-2xl overflow-y-auto">
             <div className="sticky top-0 bg-background border-b border-line px-6 py-4 flex items-center justify-between">
               <h2 className="text-lg font-bold text-foreground italic">Complaint details</h2>
               <button
                 onClick={() => setSelected(null)}
-                className="p-2 rounded-lg text-muted hover:text-foreground hover:bg-surface transition"
+                className="p-2 rounded-lg text-foreground hover:text-foreground hover:bg-surface transition"
               >
                 <FiX size={18} />
               </button>
@@ -178,30 +178,30 @@ export default function AdminComplaintsPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-[11px] uppercase tracking-wide text-muted font-semibold mb-1">From</p>
+                  <p className="text-[11px] uppercase tracking-wide text-foreground font-semibold mb-1">From</p>
                   <p className="text-sm font-bold text-foreground">{selected.filedBy?.name || "—"}</p>
                   {selected.filedBy?.email && (
-                    <p className="text-xs text-muted mt-0.5">{selected.filedBy.email}</p>
+                    <p className="text-xs text-foreground mt-0.5">{selected.filedBy.email}</p>
                   )}
                 </div>
                 <div>
-                  <p className="text-[11px] uppercase tracking-wide text-muted font-semibold mb-1">Against</p>
+                  <p className="text-[11px] uppercase tracking-wide text-foreground font-semibold mb-1">Against</p>
                   <p className="text-sm font-bold text-foreground">{selected.against?.name || "—"}</p>
                   {selected.against?.email && (
-                    <p className="text-xs text-muted mt-0.5">{selected.against.email}</p>
+                    <p className="text-xs text-foreground mt-0.5">{selected.against.email}</p>
                   )}
                 </div>
               </div>
 
               <div>
-                <p className="text-[11px] uppercase tracking-wide text-muted font-semibold mb-1">Reason</p>
+                <p className="text-[11px] uppercase tracking-wide text-foreground font-semibold mb-1">Reason</p>
                 <p className="text-sm text-foreground capitalize">
                   {selected.reason?.replace(/_/g, " ") || "—"}
                 </p>
               </div>
 
               <div>
-                <p className="text-[11px] uppercase tracking-wide text-muted font-semibold mb-1">Description</p>
+                <p className="text-[11px] uppercase tracking-wide text-foreground font-semibold mb-1">Description</p>
                 <p className="text-sm text-foreground leading-relaxed whitespace-pre-line">
                   {selected.description || "No description provided."}
                 </p>
@@ -209,14 +209,14 @@ export default function AdminComplaintsPage() {
 
               {selected.dealId?.title && (
                 <div>
-                  <p className="text-[11px] uppercase tracking-wide text-muted font-semibold mb-1">Related deal</p>
+                  <p className="text-[11px] uppercase tracking-wide text-foreground font-semibold mb-1">Related deal</p>
                   <p className="text-sm text-foreground">{selected.dealId.title}</p>
                 </div>
               )}
 
               {selected.createdAt && (
                 <div>
-                  <p className="text-[11px] uppercase tracking-wide text-muted font-semibold mb-1">Filed on</p>
+                  <p className="text-[11px] uppercase tracking-wide text-foreground font-semibold mb-1">Filed on</p>
                   <p className="text-sm text-foreground">
                     {new Date(selected.createdAt).toLocaleString("en-US", {
                       month: "long",
@@ -234,14 +234,14 @@ export default function AdminComplaintsPage() {
                   <button
                     disabled={actionLoadingId === selected._id}
                     onClick={() => review(selected._id, "reviewed")}
-                    className="flex-1 text-sm px-4 py-2.5 rounded-xl bg-primary text-white font-semibold hover:bg-primary/90 transition shadow-sm disabled:opacity-50"
+                    className="flex-1 text-sm px-4 py-2.5 rounded-sm bg-primary text-foreground font-semibold hover:bg-primary/90 transition shadow-sm disabled:opacity-50"
                   >
                     {actionLoadingId === selected._id ? "..." : "Mark reviewed"}
                   </button>
                   <button
                     disabled={actionLoadingId === selected._id}
                     onClick={() => review(selected._id, "dismissed")}
-                    className="flex-1 text-sm px-4 py-2.5 rounded-xl bg-background border border-line text-foreground font-medium hover:bg-surface transition disabled:opacity-50"
+                    className="flex-1 text-sm px-4 py-2.5 rounded-sm bg-background border border-line text-foreground font-medium hover:bg-surface transition disabled:opacity-50"
                   >
                     Dismiss
                   </button>

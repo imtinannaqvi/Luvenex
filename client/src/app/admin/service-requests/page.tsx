@@ -4,10 +4,7 @@ import { useState, useEffect } from "react";
 import { apiFetch } from "@/lib/api";
 import { getToken } from "@/lib/auth";
 import { toast } from "react-toastify";
-
-/* soft card shell — matches dashboard + users pages */
-const softCard =
-  "bg-background rounded-sm border border-primary/20 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_28px_-16px_rgba(0,0,0,0.10)]";
+import { FiX, FiInbox } from "react-icons/fi";
 
 const Spinner = ({ className = "" }: { className?: string }) => (
   <div
@@ -17,78 +14,104 @@ const Spinner = ({ className = "" }: { className?: string }) => (
   />
 );
 
+const STATUS_STYLES: Record<string, string> = {
+  pending: "bg-amber-500/10 text-amber-400 border-amber-500/25",
+  matched: "bg-green-500/10 text-green-400 border-green-500/25",
+  closed: "bg-white/5 text-muted border-line",
+  cancelled: "bg-red-500/10 text-red-400 border-red-500/25",
+};
+
+const money = (minor?: number) =>
+  minor ? `PKR ${(minor / 100).toLocaleString("en-PK")}` : "—";
+
+const fmtDate = (iso?: string) =>
+  iso
+    ? new Date(iso).toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      })
+    : "—";
+
 export default function AdminServiceRequestsPage() {
   const [requests, setRequests] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
   const [statusFilter, setStatusFilter] = useState("pending");
-  const [matchingId, setMatchingId] = useState<string | null>(null);
-  const [influencerId, setInfluencerId] = useState('');
+  const [influencers, setInfluencers] = useState<any[]>([]);
+
+  // The request open in the slide-over.
+  const [active, setActive] = useState<any>(null);
+  const [influencerId, setInfluencerId] = useState("");
   const [adminNotes, setAdminNotes] = useState("");
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
-  const [influencers, setInfluencers] = useState<any[]>([])
 
-const load = async (isInitial = false) => {
-  if (isInitial) setLoading(true);
-  setError("");
-  try {
-    const params = new URLSearchParams();
-    if (statusFilter) params.set("status", statusFilter);
-    const data = await apiFetch(`/api/service-requests?${params.toString()}`, {
-      token: getToken()!,
-    });
-    setRequests(data.requests);
-  } catch (err: any) {
-    toast.error(err.message);
-  } finally {
-    if (isInitial) setLoading(false);
-  }
-};
-
-useEffect(() => {
-  load(true);
-  const interval = setInterval(() => load(false), 15000);
-  return () => clearInterval(interval);
-}, [statusFilter]);
+  const load = async (isInitial = false) => {
+    if (isInitial) setLoading(true);
+    try {
+      const params = new URLSearchParams();
+      if (statusFilter) params.set("status", statusFilter);
+      const data = await apiFetch(`/api/service-requests?${params.toString()}`, {
+        token: getToken()!,
+      });
+      setRequests(data.requests);
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      if (isInitial) setLoading(false);
+    }
+  };
 
   useEffect(() => {
-  apiFetch("/api/influencers?limit=100", {})
-    .then((data) => {
-      
-      const valid = (data.profiles || []).filter((p: any) => p.userId?._id);
-      setInfluencers(valid);
-    })
-    .catch(() => setInfluencers([]));
-}, []);
+    load(true);
+    const interval = setInterval(() => load(false), 15000);
+    return () => clearInterval(interval);
+  }, [statusFilter]);
 
-  const money = (minor?: number) => (minor ? `PKR ${(minor / 100).toLocaleString("en-PK")}` : "—");
+  useEffect(() => {
+    apiFetch("/api/influencers?limit=100", {})
+      .then((data) => {
+        const valid = (data.profiles || []).filter((p: any) => p.userId?._id);
+        setInfluencers(valid);
+      })
+      .catch(() => setInfluencers([]));
+  }, []);
 
- const match = async (id: string) => {
-  if (!influencerId) return toast("Please select an influencer to match.");
-  setActionLoadingId(id);
-  try {
-    await apiFetch(`/api/service-requests/${id}/match`, {
-      method: "POST",
-      token: getToken()!,
-      body: { influencerId, adminNotes },
-    });
-    setRequests((prev) => prev.filter((r) => r._id !== id));
-    setMatchingId(null);
+  // Each request gets its own match form, so clear it when switching.
+  const openRequest = (r: any) => {
+    setActive(r);
     setInfluencerId("");
     setAdminNotes("");
-  } catch (err: any) {
-    toast(err.message);
-  } finally {
-    setActionLoadingId(null);
-  }
-};
+  };
+
+  const match = async (id: string) => {
+    if (!influencerId) return toast("Please select an influencer to match.");
+    setActionLoadingId(id);
+    try {
+      await apiFetch(`/api/service-requests/${id}/match`, {
+        method: "POST",
+        token: getToken()!,
+        body: { influencerId, adminNotes },
+      });
+      toast.success("Request matched");
+      setRequests((prev) => prev.filter((r) => r._id !== id));
+      setActive(null);
+      setInfluencerId("");
+      setAdminNotes("");
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setActionLoadingId(null);
+    }
+  };
+
+  const inputCls =
+    "w-full px-3.5 py-2.5 rounded-sm border border-line text-sm bg-background text-foreground placeholder:text-foreground focus:outline-none focus:ring-2 focus:ring-ink/10 focus:border-ink/40 transition";
 
   return (
-    <div className="max-w-6xl px-4 sm:px-6 py-8">
-      {/* Header */}
+    <div className="max-w-7xl px-4 sm:px-6 py-8">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-foreground italic">Service Requests</h1>
-        <p className="text-sm text-muted mt-1">Match brand requests with the right creators.</p>
+        <p className="text-sm text-foreground mt-1">Match brand requests with the right creators.</p>
       </div>
 
       {/* Filter */}
@@ -97,8 +120,7 @@ useEffect(() => {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3.5 py-2 pr-9 rounded-sm border border-line text-sm bg-background text-foreground appearance-none cursor-pointer
-                       focus:outline-none focus:ring-2 focus:ring-ink/10 focus:border-ink/40 transition"
+            className="px-3.5 py-2 pr-9 rounded-sm border border-line text-sm bg-background text-foreground appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ink/10 focus:border-ink/40 transition"
           >
             <option value="pending">Pending</option>
             <option value="matched">Matched</option>
@@ -114,108 +136,267 @@ useEffect(() => {
         </div>
       </div>
 
-      {error && (
-        <div className="bg-primary/[0.06] border border-primary/20 text-primary text-sm font-medium rounded-sm px-4 py-3 mb-4">
-          {error}
-        </div>
-      )}
+      <div className="bg-background border border-line rounded-sm overflow-hidden">
+        {loading ? (
+          <div className="flex justify-center py-16">
+            <div className="w-6 h-6 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
+          </div>
+        ) : requests.length === 0 ? (
+          <div className="py-16 px-6 text-center">
+            <div className="w-11 h-11 rounded-sm bg-primary/10 text-primary flex items-center justify-center mx-auto mb-3">
+              <FiInbox size={19} />
+            </div>
+            <p className="text-sm font-semibold text-foreground">No requests here</p>
+            <p className="text-xs text-foreground mt-1">Nothing matches this filter.</p>
+          </div>
+        ) : (
+          <>
+            {/* ── Table, md and up ── */}
+            <table className="hidden md:table w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b border-line bg-surface/40">
+                  <th className="pl-5 pr-3 py-3.5 text-xs font-semibold text-foreground">Request</th>
+                  <th className="px-3 py-3.5 text-xs font-semibold text-foreground w-[170px]">Budget</th>
+                  <th className="px-3 py-3.5 text-xs font-semibold text-foreground w-[150px]">Brand</th>
+                  <th className="px-3 py-3.5 text-xs font-semibold text-foreground w-[120px]">Status</th>
+                  <th className="px-3 py-3.5 text-xs font-semibold text-foreground w-[110px]">Created</th>
+                  <th className="pl-3 pr-5 py-3.5 text-xs font-semibold text-foreground w-[90px] text-right">
+                    Action
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-line">
+                {requests.map((r) => (
+                  <tr key={r._id} className="hover:bg-surface/50 transition-colors">
+                    <td className="pl-5 pr-3 py-4 max-w-0">
+                      <p className="text-sm font-semibold text-foreground truncate">{r.title}</p>
+                      {/* <p className="text-xs text-foreground mt-0.5 truncate">
+                        {r.description || "No description"}
+                      </p>
+                      {r.category && (
+                        <span className="inline-block mt-1.5 text-[10px] font-semibold px-2 py-0.5 rounded-sm bg-primary/10 border border-primary/20 text-primary capitalize">
+                          {r.category}
+                        </span>
+                      )} */}
+                    </td>
+                    <td className="px-3 py-4">
+                      <span className="text-sm text-foreground whitespace-nowrap">
+                        {money(r.budgetMinMinor)}
+                      </span>
+                      <span className="block text-[11px] text-foreground whitespace-nowrap">
+                        to {money(r.budgetMaxMinor)}
+                      </span>
+                    </td>
+                    <td className="px-3 py-4">
+                      <p className="text-sm text-foreground truncate">{r.brandId?.name || "—"}</p>
+                      {r.matchedInfluencerId && (
+                        <p className="text-[11px] text-green-400 truncate mt-0.5">
+                          → {r.matchedInfluencerId.name}
+                        </p>
+                      )}
+                    </td>
+                    <td className="px-3 py-4">
+                      <span
+                        className={`inline-block text-[11px] font-semibold px-2.5 py-1 rounded-full border capitalize whitespace-nowrap ${
+                          STATUS_STYLES[r.status] || STATUS_STYLES.closed
+                        }`}
+                      >
+                        {r.status}
+                      </span>
+                    </td>
+                    <td className="px-3 py-4">
+                      <span className="text-xs text-foreground whitespace-nowrap">
+                        {fmtDate(r.createdAt)}
+                      </span>
+                    </td>
+                    <td className="pl-3 pr-5 py-4 text-right">
+                      <button
+                        onClick={() => openRequest(r)}
+                        className="px-3.5 py-1.5 rounded-sm border border-primary/40 text-primary text-xs font-semibold hover:bg-primary hover:text-white transition"
+                      >
+                        View
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
 
-      {loading ? (
-        <div className="flex justify-center py-12">
-          <div className="w-6 h-6 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
-        </div>
-      ) : requests.length === 0 ? (
-        <div className={`${softCard} p-8`}>
-          <p className="text-muted text-sm italic">No requests here.</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {requests.map((r) => (
-            <div key={r._id} className={`${softCard} p-5 flex flex-col`}>
-              <div className="min-w-0 flex-1">
-                <p className="font-bold text-foreground">{r.title}</p>
-                {r.description && (
-                  <p className="text-sm text-muted mt-1 leading-relaxed line-clamp-3">{r.description}</p>
-                )}
-
-                {/* meta pills */}
-                <div className="flex flex-wrap items-center gap-2 mt-3">
-                  <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-sm bg-background border border-line text-foreground">
-                    {money(r.budgetMinMinor)} – {money(r.budgetMaxMinor)}
-                  </span>
-                  {r.category && (
-                    <span className="inline-flex items-center text-[11px] font-semibold px-2.5 py-1 rounded-sm bg-primary/[0.06] border border-primary/20 text-primary capitalize">
-                      {r.category}
+            {/* ── Stacked cards below md ── */}
+            <div className="md:hidden divide-y divide-line">
+              {requests.map((r) => (
+                <div key={r._id} className="px-4 py-4">
+                  <div className="flex items-start justify-between gap-2 mb-1.5">
+                    <p className="text-sm font-semibold text-foreground">{r.title}</p>
+                    <span
+                      className={`shrink-0 text-[10px] font-semibold px-2 py-0.5 rounded-full border capitalize ${
+                        STATUS_STYLES[r.status] || STATUS_STYLES.closed
+                      }`}
+                    >
+                      {r.status}
                     </span>
-                  )}
-                  {r.matchedInfluencerId && (
-                    <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-sm bg-emerald-50 border border-emerald-200 text-emerald-700">
-                      <span className="w-1.5 h-1.5 rounded-sm bg-emerald-500" />
-                      Matched: {r.matchedInfluencerId.name}
-                    </span>
-                  )}
-                </div>
-
-                {/* brand / catalog rows */}
-                <div className="text-xs text-muted mt-3 space-y-1 border-t border-line pt-3">
-                  <p>
-                    <span className="font-bold text-foreground">Brand:</span>{" "}
-                    {r.brandId?.name || "—"}{r.brandId?.email ? ` (${r.brandId.email})` : ""}
+                  </div>
+                  <p className="text-xs text-foreground line-clamp-2">{r.description}</p>
+                  <p className="text-[11px] text-foreground mt-2">
+                    {money(r.budgetMinMinor)} – {money(r.budgetMaxMinor)} ·{" "}
+                    {r.brandId?.name || "—"} · {fmtDate(r.createdAt)}
                   </p>
-                  {r.serviceId?.title && (
-                    <p>
-                      <span className="font-bold text-foreground">Catalog service:</span> {r.serviceId.title}
-                    </p>
-                  )}
+                  <button
+                    onClick={() => openRequest(r)}
+                    className="mt-3 px-4 py-2 rounded-sm border border-primary/40 text-primary text-xs font-semibold hover:bg-primary hover:text-white transition"
+                  >
+                    View
+                  </button>
                 </div>
-              </div>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
 
-              {r.status === "pending" && (
-                <button
-                  onClick={() => setMatchingId(matchingId === r._id ? null : r._id)}
-                  className="mt-4 text-sm font-semibold px-4 py-2 rounded-sm bg-surface border border-line text-foreground hover:bg-primary hover:text-white hover:border-primary transition self-start"
+      {/* ── Slide-over ── */}
+      {active && (
+        <div className="fixed inset-0 z-50 flex justify-end">
+          <div
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setActive(null)}
+          />
+
+          <div className="relative w-full sm:max-w-xl bg-background sm:border-l border-line flex flex-col h-full shadow-2xl">
+            {/* Header */}
+            <div className="flex items-start justify-between gap-4 px-6 py-5 border-b border-line shrink-0">
+              <div className="min-w-0">
+                <span
+                  className={`inline-block text-[11px] font-semibold px-2.5 py-1 rounded-full border capitalize ${
+                    STATUS_STYLES[active.status] || STATUS_STYLES.closed
+                  }`}
                 >
-                  {matchingId === r._id ? "Close" : "Match"}
-                </button>
+                  {active.status}
+                </span>
+                <h2 className="text-lg font-bold text-foreground mt-2">{active.title}</h2>
+              </div>
+              <button
+                onClick={() => setActive(null)}
+                className="w-8 h-8 shrink-0 rounded-sm text-foreground hover:text-foreground hover:bg-surface flex items-center justify-center transition"
+                aria-label="Close"
+              >
+                <FiX size={18} />
+              </button>
+            </div>
+
+            {/* Details */}
+            <div className="flex-1 overflow-y-auto px-6 py-5 space-y-5 min-h-0">
+              {active.description && (
+                <div>
+                  <p className="text-[14px] font-semibold  text-foreground mb-1.5">
+                    Description
+                  </p>
+                  <p className="text-sm text-foreground leading-relaxed whitespace-pre-line">
+                    {active.description}
+                  </p>
+                </div>
               )}
 
-             {matchingId === r._id && (
-  <div className="mt-4 pt-4 border-t border-line space-y-2.5">
-    <select
-      value={influencerId}
-      onChange={(e) => setInfluencerId(e.target.value)}
-      className="w-full px-3.5 py-2.5 rounded-sm border border-line text-sm bg-background text-foreground
-                 focus:outline-none focus:ring-2 focus:ring-ink/10 focus:border-ink/40 transition"
-    >
-      <option value="">Select an influencer…</option>
-      {influencers.map((inf) => (
-        <option key={inf.userId?._id || inf._id} value={inf.userId?._id}>
-          {inf.userId?.name || inf.handle}
-        </option>
-      ))}
-    </select>
-    <input
-      type="text"
-      placeholder="Admin notes (optional)"
-      value={adminNotes}
-      onChange={(e) => setAdminNotes(e.target.value)}
-      className="w-full px-3.5 py-2.5 rounded-sm border border-line text-sm bg-background text-foreground
-                 focus:outline-none focus:ring-2 focus:ring-ink/10 focus:border-ink/40 transition"
-    />
-    <button
-      disabled={actionLoadingId === r._id || !influencerId}
-      onClick={() => match(r._id)}
-      className="inline-flex items-center gap-2 px-4 py-2.5 rounded-sm bg-primary text-white text-sm font-semibold hover:bg-primary-dark transition disabled:opacity-50"
-    >
-      {actionLoadingId === r._id && (
-        <Spinner className="w-4 h-4 border-white border-t-transparent" />
-      )}
-      {actionLoadingId === r._id ? "Matching…" : "Confirm match"}
-    </button>
-  </div>
-)}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-[14px] font-semibold  text-foreground mb-1">
+                    Budget
+                  </p>
+                  <p className="text-sm text-foreground">
+                    {money(active.budgetMinMinor)} – {money(active.budgetMaxMinor)}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[14px] font-semibold  text-foreground mb-1">
+                    Category
+                  </p>
+                  <p className="text-sm text-foreground capitalize">{active.category || "—"}</p>
+                </div>
+                <div>
+                  <p className="text-[14px] font-semibold  text-foreground mb-1">
+                    Created
+                  </p>
+                  <p className="text-sm text-foreground">{fmtDate(active.createdAt)}</p>
+                </div>
+                {active.serviceId?.title && (
+                  <div>
+                    <p className="text-[14px] font-semibold  text-foreground mb-1">
+                      Catalog service
+                    </p>
+                    <p className="text-sm text-foreground">{active.serviceId.title}</p>
+                  </div>
+                )}
+              </div>
+
+              <div className="p-4  bg-surface/30">
+                <p className="text-[14px] font-semibold  text-foreground mb-1.5">
+                  Brand
+                </p>
+                <p className="text-sm font-semibold text-foreground">
+                  {active.brandId?.name || "—"}
+                </p>
+                {active.brandId?.email && (
+                  <p className="text-xs text-foreground mt-0.5">{active.brandId.email}</p>
+                )}
+              </div>
+
+              {active.matchedInfluencerId && (
+                <div className="p-4 rounded-sm border border-green-500/25 bg-green-500/10">
+                  <p className="text-[14px] font-semibold  text-green-400 mb-1.5">
+                    Matched creator
+                  </p>
+                  <p className="text-sm font-semibold text-foreground">
+                    {active.matchedInfluencerId.name}
+                  </p>
+                  {active.adminNotes && (
+                    <p className="text-xs text-foreground mt-2 leading-relaxed">{active.adminNotes}</p>
+                  )}
+                </div>
+              )}
             </div>
-          ))}
+
+            {/* Match form — only while the request is still open */}
+            {active.status === "pending" && (
+              <div className="px-6 py-5 border-t border-line bg-surface/30 shrink-0 space-y-2.5">
+                <p className="text-xs font-semibold text-foreground">Match a creator</p>
+
+                <select
+                  value={influencerId}
+                  onChange={(e) => setInfluencerId(e.target.value)}
+                  className={inputCls + " cursor-pointer"}
+                >
+                  <option value="">Select an influencer…</option>
+                  {influencers.map((inf) => (
+                    <option key={inf.userId?._id || inf._id} value={inf.userId?._id}>
+                      {inf.userId?.name || inf.handle}
+                    </option>
+                  ))}
+                </select>
+
+                <input
+                  type="text"
+                  placeholder="Admin notes"
+                  value={adminNotes}
+                  onChange={(e) => setAdminNotes(e.target.value)}
+                  className={inputCls}
+                />
+                <div className="flex justify-center items-center">
+                  
+                <button
+                  disabled={actionLoadingId === active._id || !influencerId}
+                  onClick={() => match(active._id)}
+                  className=" inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-sm bg-primary text-white text-sm font-semibold hover:opacity-90 transition disabled:opacity-40"
+                >
+                  {actionLoadingId === active._id && (
+                    <Spinner className="w-4 h-4 border-white border-t-transparent" />
+                  )}
+                  {actionLoadingId === active._id ? "Matching…" : "Confirm match"}
+                </button>
+                </div>
+
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>

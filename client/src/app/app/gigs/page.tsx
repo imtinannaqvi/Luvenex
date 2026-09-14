@@ -137,7 +137,7 @@ useEffect(() => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "active":
-        return "bg-primary text-white border-primary focus:ring-primary/30";
+        return "bg-primary text-foreground border-primary focus:ring-primary/30";
       case "paused":
         return "bg-surface text-foreground border-border-color focus:ring-primary/10";
       case "draft":
@@ -185,7 +185,7 @@ useEffect(() => {
               setShowForm(true);
             }
           }}
-          className="self-start sm:self-auto px-4 lg:px-5 py-2 lg:py-2.5 rounded-sm bg-primary text-white text-sm lg:text-base font-medium hover:bg-primary/90 transition shadow-sm"
+          className="self-start sm:self-auto px-4 lg:px-5 py-2 lg:py-2.5 rounded-sm bg-primary text-foreground text-sm lg:text-base font-medium hover:bg-primary/90 transition shadow-sm"
         >
           {showForm ? "Cancel" : "+ New gig"}
         </button>
@@ -205,14 +205,14 @@ useEffect(() => {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            className="w-full px-3.5 lg:px-4 py-2.5 lg:py-3 rounded-sm border bg-surface text-foreground placeholder:text-zinc-500 border-border-color text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-primary/30"
+            className="w-full px-3.5 lg:px-4 py-2.5 lg:py-3 rounded-sm border bg-surface text-foreground placeholder:text-foreground border-border-color text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-primary/30"
           />
           <textarea
             placeholder="Describe what's included..."
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={3}
-            className="w-full px-3.5 lg:px-4 py-2.5 lg:py-3 rounded-sm border bg-surface text-foreground placeholder:text-zinc-500 border-border-color text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-primary/30"
+            className="w-full px-3.5 lg:px-4 py-2.5 lg:py-3 rounded-sm border bg-surface text-foreground placeholder:text-foreground border-border-color text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-primary/30"
           />
 
           {/* Deliverables */}
@@ -245,14 +245,14 @@ useEffect(() => {
                 placeholder="e.g. Instagram Reel"
                 value={newDeliverableItem}
                 onChange={(e) => setNewDeliverableItem(e.target.value)}
-                className="flex-1 px-3 lg:px-4 py-2 lg:py-2.5 rounded-sm border bg-surface text-foreground placeholder:text-zinc-500 border-border-color text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-primary/30"
+                className="flex-1 px-3 lg:px-4 py-2 lg:py-2.5 rounded-sm border bg-surface text-foreground placeholder:text-foreground border-border-color text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-primary/30"
               />
               <input
                 type="number"
                 min="1"
                 value={newDeliverableQty}
                 onChange={(e) => setNewDeliverableQty(e.target.value)}
-                className="w-full sm:w-20 lg:w-24 px-2 lg:px-3 py-2 lg:py-2.5 bg-surface text-foreground rounded-sm border border-border-color text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-primary/30"
+                className="w-full sm:w-20 lg:w-24 px-2 lg:px-3 py-2 lg:py-2.5 bg-surface text-foreground placeholder:text-foreground rounded-sm border border-border-color text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-primary/30"
               />
               <button
                 type="button"
@@ -271,7 +271,7 @@ useEffect(() => {
               value={priceMinor}
               onChange={(e) => setPriceMinor(e.target.value)}
               required
-              className="w-full px-3.5 lg:px-4 py-2.5 lg:py-3 rounded-sm bg-surface text-foreground placeholder:text-zinc-500 border border-border-color text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-primary/30"
+              className="w-full px-3.5 lg:px-4 py-2.5 lg:py-3 rounded-sm bg-surface text-foreground placeholder:text-foreground border border-border-color text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-primary/30"
             />
             <input
               type="number"
@@ -279,14 +279,14 @@ useEffect(() => {
               value={deliveryDays}
               onChange={(e) => setDeliveryDays(e.target.value)}
               required
-              className="w-full px-3.5 lg:px-4 py-2.5 lg:py-3 rounded-sm bg-surface text-foreground placeholder:text-zinc-500 border border-border-color text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-primary/30"
+              className="w-full px-3.5 lg:px-4 py-2.5 lg:py-3 rounded-sm bg-surface text-foreground placeholder:text-foreground border border-border-color text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-primary/30"
             />
             <input
               type="number"
               placeholder="Revisions included"
               value={revisions}
               onChange={(e) => setRevisions(e.target.value)}
-              className="w-full px-3.5 lg:px-4 py-2.5 lg:py-3 rounded-sm border bg-surface text-foreground placeholder:text-zinc-500 border-border-color text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-primary/30"
+              className="w-full px-3.5 lg:px-4 py-2.5 lg:py-3 rounded-sm border bg-surface text-foreground placeholder:text-foreground border-border-color text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-primary/30"
             />
           </div>
           <input
@@ -294,22 +294,24 @@ useEffect(() => {
             placeholder="Category (e.g. fashion, fitness)"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="w-full px-3.5 lg:px-4 py-2.5 lg:py-3 rounded-sm border bg-surface text-foreground placeholder:text-zinc-500 border-border-color text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-primary/30"
+            className="w-full px-3.5 lg:px-4 py-2.5 lg:py-3 rounded-sm border bg-surface text-foreground placeholder:text-foreground border-border-color text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-primary/30"
           />
-          <button
+         <div className="flex justify-center items-center">
+           <button
             type="submit"
             disabled={submitting}
-            className="w-full sm:w-auto px-6 lg:px-8 py-2.5 lg:py-3 rounded-sm bg-primary text-white text-sm lg:text-base font-medium hover:bg-primary/90 transition disabled:opacity-50"
+            className="w-full sm:w-auto px-6 lg:px-12 py-2.5 lg:py-3 rounded-sm bg-primary text-foreground text-sm lg:text-base font-medium hover:bg-primary/90 transition disabled:opacity-50"
           >
             {submitting ? "Saving..." : editingId ? "Update gig" : "Post gig"}
           </button>
+         </div>
         </form>
       )}
 
       {!showForm &&
         (gigs.length === 0 ? (
           <div className="bg-card border border-border-color rounded-sm p-8 lg:p-14 text-center shadow-sm">
-            <p className="text-zinc-400 text-sm lg:text-base">
+            <p className="text-foreground text-sm lg:text-base">
               You haven't posted any gigs yet.
             </p>
           </div>
@@ -345,7 +347,7 @@ useEffect(() => {
                       >
                         {g.title}
                       </td>
-                      <td className="py-4 lg:py-5 px-4 sm:px-6 lg:px-8 text-zinc-400 whitespace-nowrap">
+                      <td className="py-4 lg:py-5 px-4 sm:px-6 lg:px-8 text-foreground whitespace-nowrap">
                         {g.category || "—"}
                       </td>
                       <td className="py-4 lg:py-5 px-4 sm:px-6 lg:px-8 font-semibold text-foreground whitespace-nowrap">
@@ -377,7 +379,7 @@ useEffect(() => {
                         <div className="flex items-center justify-end gap-2 lg:gap-3">
                           <button
                             onClick={() => handleStartEdit(g)}
-                            className="px-3 lg:px-4 py-1 lg:py-1.5 rounded-sm text-xs lg:text-sm font-semibold text-foreground bg-surface hover:bg-card border border-border-color transition"
+                            className="px-3 lg:px-4 py-1 lg:py-1.5 rounded-sm text-xs lg:text-sm font-semibold text-foreground bg-surface hover:bg-primary hover:bg-card border border-border-color transition"
                           >
                             Edit
                           </button>

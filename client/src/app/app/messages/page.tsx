@@ -91,12 +91,27 @@ export default function MessagesPage() {
   useEffect(() => {
     const socket = connectSocket();
     socket.on("new_messages", (msg: any) => {
-    
-           if (msg.conversationId === activeIdRef.current) {
-        loadMessages(msg.conversationId);
+      // The server can send conversationId as either a string or a raw
+      // Mongo ObjectId depending on the route that emitted it (socket
+      // "send_message" vs the REST attachment-upload endpoint). A strict
+      // === comparison silently fails for the ObjectId case, so text
+      // messages appeared to work while image/video messages never
+      // matched activeIdRef and just sat there until a full reload
+      // re-fetched everything from scratch. Coerce both sides to string.
+      const msgConvId = String(msg.conversationId);
+      const isActiveConversation = msgConvId === String(activeIdRef.current);
+
+      if (isActiveConversation) {
+        // Don't trust the socket payload's shape for rendering — for
+        // attachments it doesn't carry the same populated fields
+        // (attachmentUrl, etc.) that the REST /messages response does,
+        // so appending it directly left the message in state with
+        // nothing to render until a refetch replaced it. Refetch here
+        // instead; the id-matching fix above is what makes this run
+        // for attachments at all now.
+        loadMessages(msgConvId);
       }
 
-      
       const preview =
         msg.attachmentType === "image"
           ? "📷 Photo"
@@ -107,7 +122,7 @@ export default function MessagesPage() {
           : msg.body || "New message";
 
       const conversationExists = conversationsRef.current.some(
-        (c) => c._id === msg.conversationId
+        (c) => String(c._id) === msgConvId
       );
 
       if (!conversationExists) {
@@ -119,7 +134,7 @@ export default function MessagesPage() {
 
       setConversations((prev) => {
         const updated = prev.map((c) =>
-          c._id === msg.conversationId
+          String(c._id) === msgConvId
             ? {
                 ...c,
                 lastMessagePreview: preview,

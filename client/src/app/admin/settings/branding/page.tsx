@@ -133,7 +133,7 @@ export default function BrandingPage() {
     <div>
       <div className="mb-5">
         <h1 className="text-lg font-semibold text-foreground">Branding</h1>
-        <p className="text-xs text-muted mt-0.5">Your logo and favicon.</p>
+        <p className="text-xs text-foreground mt-0.5">Your logo and favicon.</p>
       </div>
 
       <div className="bg-background border border-line rounded-sm overflow-hidden max-w-xl">
@@ -143,7 +143,7 @@ export default function BrandingPage() {
           </div>
           <div className="min-w-0">
             <h2 className="text-sm font-semibold text-foreground">Images</h2>
-            <p className="text-[11px] text-muted">Shown across the public site</p>
+            <p className="text-[11px] text-foreground">Shown across the public site</p>
           </div>
         </div>
 
@@ -155,7 +155,7 @@ export default function BrandingPage() {
               </label>
               {previews[f.key] ? (
                 <div
-                  className={`relative w-full ${f.boxHeight} rounded-lg overflow-hidden border border-line group bg-surface/40`}
+                  className={`relative w-full ${f.boxHeight} rounded-sm overflow-hidden border border-line group bg-surface/40`}
                 >
                   <img
                     src={previews[f.key]!}
@@ -196,7 +196,7 @@ export default function BrandingPage() {
                   />
                 </label>
               )}
-              <p className="text-[11px] text-muted mt-1">{f.hint}</p>
+              <p className="text-[11px] text-foreground mt-1">{f.hint}</p>
             </div>
           ))}
         </div>
@@ -205,7 +205,7 @@ export default function BrandingPage() {
           <button
             onClick={handleSave}
             disabled={saving}
-            className="px-5 py-3 rounded-sm bg-primary text-foreground text-xs font-semibold hover:bg-primary-dark transition disabled:opacity-50 shadow-sm"
+            className="px-8 py-3 rounded-sm bg-primary text-foreground text-xs font-semibold hover:bg-primary-dark transition disabled:opacity-50 shadow-sm"
           >
             {saving ? "Saving..." : "Save Logo"}
           </button>
