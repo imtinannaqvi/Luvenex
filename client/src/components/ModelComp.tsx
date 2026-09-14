@@ -39,26 +39,29 @@ export default function ModelCom() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
           {MODELS.map((m, i) => (
             <div
               key={m.name}
-              className={`group relative aspect-[4/7] rounded-sm overflow-hidden bg-zinc-900 transition-all duration-700 ease-out ${
+              className={`flex flex-col transition-all duration-700 ease-out ${
                 isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
               }`}
               style={{ transitionDelay: isVisible ? `${i * 120}ms` : "0ms" }}
             >
-              <img
-                src={m.image}
-                alt={m.name}
-                className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-              />
-
-              {/* Caption overlay — fades in on hover */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <div className="absolute inset-x-0 bottom-0 p-3 sm:p-4 translate-y-2 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300">
-                <p className="text-sm sm:text-base font-bold text-foreground leading-tight">{m.name}</p>
-                <p className="text-[11px] sm:text-xs text-foreground/70">{m.role}</p>
+              <div className="group relative aspect-[4/7] rounded-sm overflow-hidden bg-zinc-900">
+                <img
+                  src={m.image}
+                  alt={m.name}
+                  className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                />
+              </div>
+              <div className="text-center mt-3">
+                <p className="text-sm sm:text-base font-bold text-foreground leading-tight">
+                  {m.name}
+                </p>
+                <p className="text-[11px] sm:text-xs text-foreground/70 mt-0.5">
+                  {m.role}
+                </p>
               </div>
             </div>
           ))}
