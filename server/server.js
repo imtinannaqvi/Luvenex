@@ -153,6 +153,8 @@ const io = new Server(httpServer, {
     credentials: true,
   },
 });
+
+app.set("io", io);   // ← add this one line
 setupSocket(io);
 
 setInterval(async () => {
