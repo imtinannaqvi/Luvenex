@@ -283,7 +283,7 @@ export default function AdminSupportTicketsPage() {
                       </p>
                     </td>
                     <td className="px-3 py-4">
-                      <p className="text-lg text-foreground truncate">{t.createdBy?.name}</p>
+                      <p className="text-sm text-foreground truncate">{t.createdBy?.name}</p>
                       <p className="text-xs text-foreground capitalize">{t.createdByRole}</p>
                     </td>
                     <td className="px-3 py-4">

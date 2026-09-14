@@ -103,7 +103,7 @@ const load = async (isInitial = false) => {
       {/* Back Navigation */}
       <button
         onClick={() => router.push("/app/campaigns")}
-        className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted hover:text-foreground transition-colors px-3 py-1.5 rounded-xl hover:bg-surface border border-transparent hover:border-line"
+        className="inline-flex items-center gap-1.5 text-xs font-semibold text-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-xl hover:bg-surface border border-transparent hover:border-line"
       >
         <span>←</span> Back to campaigns
       </button>
@@ -112,7 +112,7 @@ const load = async (isInitial = false) => {
       <div className="flex items-center justify-between pt-1">
         <h2 className="text-sm sm:text-base font-bold text-foreground italic tracking-tight">
           Applicants{" "}
-          <span className="text-muted font-normal text-xs">
+          <span className="text-foreground font-normal text-xs">
             ({applications.length})
           </span>
         </h2>
@@ -121,7 +121,7 @@ const load = async (isInitial = false) => {
       {/* Applicants List */}
       {applications.length === 0 ? (
         <div className="bg-background border border-line/80 rounded-2xl p-8 text-center shadow-2xs">
-          <p className="text-xs text-muted font-medium">
+          <p className="text-xs text-foreground font-medium">
             No applications received yet.
           </p>
         </div>
@@ -136,7 +136,7 @@ const load = async (isInitial = false) => {
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-3">
                   {/* Avatar / Initial Bubble */}
-                  <div className="w-9 h-9 rounded-xl bg-surface border border-line/60 flex items-center justify-center shrink-0 text-foreground font-bold text-xs">
+                  <div className="w-9 h-9 rounded-sm bg-surface border border-line/60 flex items-center justify-center shrink-0 text-foreground font-bold text-xs">
                     {a.influencerId?.avatar ? (
                       <img
                         src={a.influencerId.avatar}
@@ -151,7 +151,7 @@ const load = async (isInitial = false) => {
                     <p className="text-sm font-bold text-foreground truncate leading-snug">
                       {a.influencerId?.name || "Unknown Applicant"}
                     </p>
-                    <p className="text-[11px] text-muted truncate">
+                    <p className="text-[11px] text-foreground truncate">
                       {a.influencerId?.email || "—"}
                     </p>
                   </div>
@@ -168,7 +168,7 @@ const load = async (isInitial = false) => {
 
               {/* Proposal Text Card */}
               {a.proposalText && (
-                <div className="bg-background border border-line/60 rounded-xl p-3 text-xs text-foreground leading-relaxed break-words">
+                <div className="bg-background border border-line/60 rounded-sm p-3 text-xs text-foreground leading-relaxed break-words">
                   {a.proposalText}
                 </div>
               )}
@@ -177,12 +177,12 @@ const load = async (isInitial = false) => {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
                 <div className="flex flex-wrap items-center gap-2">
                   {a.proposedPriceMinor && (
-                    <span className="inline-flex items-center text-xs font-bold text-foreground bg-surface border border-line/60 rounded-lg px-2.5 py-1">
+                    <span className="inline-flex items-center text-xs font-bold text-foreground bg-surface border border-line/60 rounded-sm px-2.5 py-1">
                       {money(a.proposedPriceMinor)}
                     </span>
                   )}
                   {a.proposedDeliveryDays && (
-                    <span className="inline-flex items-center text-xs font-medium text-foreground bg-surface border border-line/60 rounded-lg px-2.5 py-1">
+                    <span className="inline-flex items-center text-xs font-medium text-foreground bg-surface border border-line/60 rounded-sm px-2.5 py-1">
                       ⚡ {a.proposedDeliveryDays} days delivery
                     </span>
                   )}
@@ -215,10 +215,10 @@ const load = async (isInitial = false) => {
       {/* Matched Deal Modal — top level so it shows regardless of list state */}
       {matchedDeal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 px-4">
-          <div className="bg-paper rounded-2xl p-6 max-w-sm w-full text-center shadow-2xl">
+          <div className="bg-background rounded-xl p-6 max-w-sm w-full text-center shadow-2xl">
             <div className="text-4xl mb-3">🎉</div>
             <h3 className="text-base font-bold text-ink mb-1">You're matched!</h3>
-            <p className="text-sm text-muted mb-6">
+            <p className="text-sm text-foreground mb-6">
               {matchedInfluencerName} accepted for "{matchedDeal.title}". What
               would you like to do next?
             </p>
@@ -236,15 +236,15 @@ const load = async (isInitial = false) => {
       toast.error(err.message || "Failed to start chat");
     }
   }}
-  className="flex-1 px-4 py-2.5 rounded-xl border border-line text-sm font-semibold hover:bg-surface transition"
+  className="flex-1 px-4 py-2.5 rounded-xl bg-background text-foreground border border-line text-sm font-semibold hover:bg-surface transition"
 >
-  💬 Start Chat
+   Start Chat
 </button>
               <button
                 onClick={() => router.push(`/app/deals/${matchedDeal._id}`)}
-                className="flex-1 px-4 py-2.5 rounded-xl bg-primary text-paper text-sm font-semibold hover:bg-primary-dark transition"
+                className="flex-1 px-4 py-2.5 rounded-xl bg-primary text-foreground text-sm font-semibold hover:bg-primary-dark transition"
               >
-                📋 View Deal
+                 View Deal
               </button>
             </div>
           </div>

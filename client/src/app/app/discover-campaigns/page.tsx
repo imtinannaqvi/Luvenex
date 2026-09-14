@@ -89,7 +89,7 @@ useEffect(() => {
       <h1 className="text-xl md:text-2xl font-bold text-foreground tracking-tight mb-1">
         Browse Campaigns
       </h1>
-      <p className="text-sm md:text-base text-muted mb-6">
+      <p className="text-sm md:text-base text-foreground mb-6">
         Find open campaigns and pitch your proposal.
       </p>
 
@@ -108,8 +108,8 @@ useEffect(() => {
           <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
         </div>
       ) : campaigns.length === 0 ? (
-        <div className="bg-paper border border-line rounded-2xl p-8 text-center">
-          <p className="text-muted text-sm md:text-base">
+        <div className="bg-background border border-line rounded-xl p-8 text-center">
+          <p className="text-foreground text-sm md:text-base">
             No open campaigns right now — check back soon.
           </p>
         </div>
@@ -125,7 +125,7 @@ useEffect(() => {
                 <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
                   <div className="flex-1 min-w-0">
                     <p className="text-sm md:text-base font-semibold text-foreground">{c.title}</p>
-                    <p className="text-xs md:text-sm text-muted mt-1">
+                    <p className="text-xs md:text-sm text-foreground mt-1">
                       by {c.brandId?.name || "—"}
                     </p>
                     {c.description && (
@@ -171,7 +171,7 @@ useEffect(() => {
                       value={proposalText}
                       onChange={(e) => setProposalText(e.target.value)}
                       rows={4}
-                      className="w-full px-3.5 py-2.5 rounded-sm border bg-background border-line text-sm md:text-base"
+                      className="w-full px-3.5 py-2.5 rounded-sm border bg-background placeholder:text-foreground border-line text-sm md:text-base"
                     />
                     <div className="flex flex-col sm:flex-row gap-3">
                       <input
@@ -179,14 +179,14 @@ useEffect(() => {
                         placeholder="Your price (PKR)"
                         value={proposedPrice}
                         onChange={(e) => setProposedPrice(e.target.value)}
-                        className="flex-1 px-3.5 py-2 md:py-2.5 rounded-sm border bg-background border-line text-sm md:text-base"
+                        className="flex-1 px-3.5 py-2 md:py-2.5 rounded-sm border bg-background placeholder:text-foreground border-line text-sm md:text-base"
                       />
                       <input
                         type="number"
                         placeholder="Delivery days"
                         value={proposedDeliveryDays}
                         onChange={(e) => setProposedDeliveryDays(e.target.value)}
-                        className="flex-1 px-3.5 py-2 md:py-2.5 rounded-sm border bg-background border-line text-sm md:text-base"
+                        className="flex-1 px-3.5 py-2 md:py-2.5 rounded-sm border bg-background placeholder:text-foreground border-line text-sm md:text-base"
                       />
                     </div>
 
@@ -208,7 +208,7 @@ useEffect(() => {
                     <button
                       onClick={() => submitApplication(c._id)}
                       disabled={submitting}
-                      className="px-5 py-2.5 rounded-sm bg-primary text-paper text-sm md:text-base font-semibold hover:bg-primary-dark transition disabled:opacity-50"
+                      className="px-5 py-2.5 rounded-sm bg-primary text-foreground text-sm md:text-base font-semibold hover:bg-primary-dark transition disabled:opacity-50"
                     >
                       {submitting ? "Submitting..." : "Submit application"}
                     </button>
