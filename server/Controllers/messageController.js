@@ -148,17 +148,22 @@ export const sendMessage = async (req, res) => {
     const populated = await message.populate("senderId", "name");
 
     // Realtime delivery (parity with sendAttachment).
-    try {
-      const io = req.app.get("io");
-      if (io) {
-        io.to(conversation._id.toString()).emit("new_messages", {
-          ...populated.toObject(),
-          conversationId: conversation._id.toString(),
-        });
-      }
-    } catch (emitErr) {
-      console.warn("Socket emit failed for message:", emitErr.message);
-    }
+   try {
+  const io = req.app.get("io");
+  console.log("[ATTACHMENT EMIT]", {
+    hasIo: !!io,
+    room: conversation._id.toString(),
+    socketsInRoom: io ? io.sockets.adapter.rooms.get(conversation._id.toString())?.size ?? 0 : "n/a",
+  });
+  if (io) {
+    io.to(conversation._id.toString()).emit("new_messages", {
+      ...populated.toObject(),
+      conversationId: conversation._id.toString(),
+    });
+  }
+} catch (emitErr) {
+  console.warn("Socket emit failed for attachment message:", emitErr.message);
+}
 
     res.status(201).json({ message: populated });
   } catch (error) {
