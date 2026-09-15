@@ -226,8 +226,8 @@ export default function DiscoverPage() {
                   }}
                 >
                   {p.isVerified && (
-                    <div className="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-surface border border-red-800/40 text-red-400 text-[10px] font-semibold flex items-center gap-1">
-                      <svg className="w-3 h-3 fill-red-500" viewBox="0 0 20 20">
+                    <div className="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-surface border border-border-color text-green text-[10px] font-semibold flex items-center gap-1">
+                      <svg className="w-3 h-3 fill-green" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                       </svg>
                       <span>Verified</span>
@@ -263,7 +263,7 @@ export default function DiscoverPage() {
                       {(p.niches || []).slice(0, 2).map((n: string) => (
                         <span
                           key={n}
-                          className="text-[12px] font-medium px-2.5 py-0.5 rounded-sm bg-background text-red-400 border border-red-800/40"
+                          className="text-[13px] font-medium px-2.5 py-0.5 rounded-sm bg-background text-green border border-border-color"
                         >
                           {n}
                         </span>

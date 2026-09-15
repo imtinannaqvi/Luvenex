@@ -14,10 +14,20 @@ const conversationSchema = new mongoose.Schema({
     lastMessageAt:{
         type:Date,
         default: Date.now
-
     },
     lastMessagePreview:{
         type:String
+    },
+   
+    initiatedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
+
+    status: {
+        type: String,
+        enum: ["pending", "accepted"],
+        default: "accepted"
     }
 },{timestamps:true})
 

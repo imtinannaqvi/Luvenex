@@ -1,9 +1,9 @@
 import { verifyToken } from './lib/jwt.js';
 import Message from './models/Message.js';
 import Conversation from './models/Conversation.js';
-import User from './models/User.js';                       // 👈 needed for sender name
+import User from './models/User.js';
 import { scanMessage } from './lib/contentFilter.js';
-import { notify } from './services/notification.service.js'; // ⚠️ adjust path if different
+import { notify } from './services/notification.service.js';
 
 export const setupSocket = (io) => {
   io.use((socket, next) => {
@@ -22,7 +22,6 @@ export const setupSocket = (io) => {
   io.on('connection', (socket) => {
     console.log(`Socket connected: user ${socket.userId}`);
 
-    // 👇 personal room so notifications can be pushed to this specific user
     socket.join(socket.userId);
 
     socket.on('join_conversation', (conversationId) => {
@@ -54,6 +53,17 @@ export const setupSocket = (io) => {
 
         conversation.lastMessageAt = new Date();
         conversation.lastMessagePreview = body.slice(0, 100);
+
+        // Recipient replying to a pending request accepts it. The
+        // initiator sending more messages never flips this on its own.
+        if (
+          conversation.status === 'pending' &&
+          conversation.initiatedBy &&
+          conversation.initiatedBy.toString() !== socket.userId
+        ) {
+          conversation.status = 'accepted';
+        }
+
         await conversation.save();
 
         if (flagged) {
@@ -62,14 +72,11 @@ export const setupSocket = (io) => {
 
         const populated = await message.populate('senderId', 'name');
 
-        // Live message delivery — event name aligned with the frontend
-        // (it listens for "new_messages") and shape matches the REST path.
         io.to(conversationId).emit('new_messages', {
           ...populated.toObject(),
           conversationId: conversation._id.toString(),
         });
 
-        // ── Notify the OTHER participant (DB row + instant push) ──
         try {
           const recipientId = conversation.participants.find(
             p => p.toString() !== socket.userId
@@ -79,7 +86,6 @@ export const setupSocket = (io) => {
             const title = `New message from ${senderName}`;
             const preview = (body || '').slice(0, 80);
 
-            // notify(userId, type, title, message, relatedId) — positional
             await notify(recipientId, 'new_message', title, preview, conversation._id);
 
             io.to(recipientId.toString()).emit('notification', {

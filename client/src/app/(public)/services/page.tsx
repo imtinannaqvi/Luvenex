@@ -136,7 +136,7 @@ export default function ServicesPage() {
           </p>
         )}
         {/* Explore service cue */}
-        <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-red-500 group-hover:text-foreground mt-auto pt-5 transition-colors duration-300">
+        <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-green group-hover:text-foreground mt-auto pt-5 transition-colors duration-300">
           Explore service
           <svg className="w-4 h-4 group-hover:translate-x-0.5 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
             <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />

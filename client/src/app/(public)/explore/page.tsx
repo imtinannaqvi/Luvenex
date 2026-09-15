@@ -70,7 +70,7 @@ export default function ExplorePage() {
             placeholder="Search videos by title, creator, or category"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="w-full pl-11 pr-4 py-3.5 rounded-sm bg-zinc-950 border border-zinc-800 text-foreground text-sm focus:outline-none focus:border-[#B90808] transition"
+            className="w-full pl-11 pr-4 py-3.5 rounded-sm bg-background border border-border-color text-foreground text-sm focus:outline-none focus:border-[#B90808] transition"
           />
         </div>
       </div>

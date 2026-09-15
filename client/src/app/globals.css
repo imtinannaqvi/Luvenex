@@ -8,6 +8,7 @@
   --surface: #F7F7F7;
   --card: #ffffff;
   --border-color: #E5E5E5;
+  --green: #7DB300;
 }
 
 .dark {
@@ -16,6 +17,7 @@
   --surface: #18181b;
   --card: #18181b;
   --border-color: #27272a;
+  --green: #C7FF32;
 }
 
 @theme inline {
@@ -37,6 +39,8 @@
   /* new colors added here */
   --color-third: #B0A8C0;
   --color-sixth: #4A4A4A;
+  --color-green: var(--green);
+  --color-pink: #FF4FA3;
 }
 
 /* Smooth, relaxed scrolling site-wide */
@@ -183,7 +187,6 @@ body {
   animation-play-state: paused;
 }
 
-/* Respect users who prefer reduced motion — turn off smooth scroll and looping animations */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

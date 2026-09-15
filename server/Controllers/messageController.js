@@ -22,6 +22,8 @@ export const startConversation = async (req, res) => {
         participants: [req.user._id, otherUserId],
         dealId,
         relatedGigId: gigId,
+        initiatedBy: req.user._id,
+        status: "pending",
       });
     }
 
@@ -58,8 +60,7 @@ export const getMessages = async (req, res) => {
     if (!isParticipant)
       return res.status(403).json({ error: { message: "Not Authorized" } });
 
-    // Opening the thread marks the OTHER person's messages as read.
-    // This is what makes the sidebar unread count drop back down.
+  
     await Message.updateMany(
       {
         conversationId: req.params.id,
@@ -71,7 +72,7 @@ export const getMessages = async (req, res) => {
 
     const messages = await Message.find({ conversationId: req.params.id })
       .populate("senderId", "name")
-      .sort({ createdAt: 1 }); // oldest first for normal reading order
+      .sort({ createdAt: 1 }); 
 
     res.json({ messages });
   } catch (error) {
@@ -79,7 +80,6 @@ export const getMessages = async (req, res) => {
   }
 };
 
-// GET /api/messages/unread-count → { count }
 export const getUnreadCount = async (req, res) => {
   try {
     const conversations = await Conversation.find({
@@ -99,6 +99,17 @@ export const getUnreadCount = async (req, res) => {
     res.status(500).json({ error: { message: error.message } });
   }
 };
+
+
+function maybeAcceptConversation(conversation, senderId) {
+  if (
+    conversation.status === "pending" &&
+    conversation.initiatedBy &&
+    conversation.initiatedBy.toString() !== senderId.toString()
+  ) {
+    conversation.status = "accepted";
+  }
+}
 
 export const sendMessage = async (req, res) => {
   try {
@@ -132,6 +143,7 @@ export const sendMessage = async (req, res) => {
 
     conversation.lastMessageAt = new Date();
     conversation.lastMessagePreview = body.slice(0, 100);
+    maybeAcceptConversation(conversation, req.user._id);
     await conversation.save();
 
     if (flagged) {
@@ -142,28 +154,21 @@ export const sendMessage = async (req, res) => {
       );
     }
 
-    // Notify the recipient → drives the toast + bell entry.
     await notifyRecipient(req, conversation, req.user, body);
 
     const populated = await message.populate("senderId", "name");
 
-    // Realtime delivery (parity with sendAttachment).
-   try {
-  const io = req.app.get("io");
-  console.log("[ATTACHMENT EMIT]", {
-    hasIo: !!io,
-    room: conversation._id.toString(),
-    socketsInRoom: io ? io.sockets.adapter.rooms.get(conversation._id.toString())?.size ?? 0 : "n/a",
-  });
-  if (io) {
-    io.to(conversation._id.toString()).emit("new_messages", {
-      ...populated.toObject(),
-      conversationId: conversation._id.toString(),
-    });
-  }
-} catch (emitErr) {
-  console.warn("Socket emit failed for attachment message:", emitErr.message);
-}
+    try {
+      const io = req.app.get("io");
+      if (io) {
+        io.to(conversation._id.toString()).emit("new_messages", {
+          ...populated.toObject(),
+          conversationId: conversation._id.toString(),
+        });
+      }
+    } catch (emitErr) {
+      console.warn("Socket emit failed for message:", emitErr.message);
+    }
 
     res.status(201).json({ message: populated });
   } catch (error) {
@@ -229,15 +234,22 @@ export const sendAttachment = async (req, res) => {
 
     conversation.lastMessageAt = new Date();
     conversation.lastMessagePreview = defaultLabel;
+    maybeAcceptConversation(conversation, req.user._id);
     await conversation.save();
 
-    // Notify the recipient of the attachment too.
     await notifyRecipient(req, conversation, req.user, defaultLabel);
 
     const populated = await message.populate("senderId", "name role");
 
     try {
       const io = req.app.get("io");
+      console.log("[ATTACHMENT EMIT]", {
+        hasIo: !!io,
+        room: conversation._id.toString(),
+        socketsInRoom: io
+          ? io.sockets.adapter.rooms.get(conversation._id.toString())?.size ?? 0
+          : "n/a",
+      });
       if (io) {
         io.to(conversation._id.toString()).emit("new_messages", {
           ...populated.toObject(),
@@ -254,9 +266,6 @@ export const sendAttachment = async (req, res) => {
   }
 };
 
-// Creates a notification for the OTHER participant and (best-effort)
-// pushes it live to their personal socket room so the bell/toast update
-// instantly instead of waiting for the next poll.
 async function notifyRecipient(req, conversation, sender, preview) {
   try {
     const recipientId = conversation.participants.find(
@@ -267,7 +276,6 @@ async function notifyRecipient(req, conversation, sender, preview) {
     const title = `New message from ${sender.name || "someone"}`;
     const message = (preview || "").slice(0, 80);
 
-    // notify(userId, type, title, message, relatedId) — positional args.
     await notify(
       recipientId,
       "new_message",
@@ -276,8 +284,7 @@ async function notifyRecipient(req, conversation, sender, preview) {
       conversation._id
     );
 
-    // Optional real-time push (requires the recipient to be joined to a
-    // room named by their user id). Safe no-op if io isn't available.
+   
     try {
       const io = req.app.get("io");
       if (io) {

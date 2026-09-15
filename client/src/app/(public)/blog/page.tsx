@@ -310,8 +310,8 @@ export default function BlogListingPage() {
                             gap-2
                             text-sm
                             font-semibold
-                            text-red-600
-                            group-hover:text-red-700
+                            text-green
+                            group-hover:text-foreground
                             transition
                           "
                         >

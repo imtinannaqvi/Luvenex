@@ -71,13 +71,7 @@ export default function MessagesPage() {
 
   const loadMessages = async (conversationId: string) => {
     try {
-      // Cache-bust: a manual browser refresh bypasses the cache and
-      // always hits the server, which is why that "fixed" things. This
-      // fetch was reusing the exact same URL it had just requested a
-      // moment before (on chat open), so the browser/CDN could legally
-      // serve back that earlier cached response — one made before the
-      // new attachment existed — instead of asking the server again.
-      // A unique query string on every call forecloses that.
+     
       const data = await apiFetch(
         `/api/conversations/${conversationId}/messages?_=${Date.now()}`,
         { token: getToken()! }
@@ -89,8 +83,7 @@ export default function MessagesPage() {
     }
   };
 
-  // Keep a ref in sync so the socket handler below always sees the
-  // latest conversations list without depending on a stale closure.
+
   useEffect(() => {
     conversationsRef.current = conversations;
   }, [conversations]);
@@ -98,24 +91,12 @@ export default function MessagesPage() {
   useEffect(() => {
     const socket = connectSocket();
     socket.on("new_messages", (msg: any) => {
-      // The server can send conversationId as either a string or a raw
-      // Mongo ObjectId depending on the route that emitted it (socket
-      // "send_message" vs the REST attachment-upload endpoint). A strict
-      // === comparison silently fails for the ObjectId case, so text
-      // messages appeared to work while image/video messages never
-      // matched activeIdRef and just sat there until a full reload
-      // re-fetched everything from scratch. Coerce both sides to string.
+     
       const msgConvId = String(msg.conversationId);
       const isActiveConversation = msgConvId === String(activeIdRef.current);
 
       if (isActiveConversation) {
-        // Don't trust the socket payload's shape for rendering — for
-        // attachments it doesn't carry the same populated fields
-        // (attachmentUrl, etc.) that the REST /messages response does,
-        // so appending it directly left the message in state with
-        // nothing to render until a refetch replaced it. Refetch here
-        // instead; the id-matching fix above is what makes this run
-        // for attachments at all now.
+     
         loadMessages(msgConvId);
       }
 
@@ -133,8 +114,7 @@ export default function MessagesPage() {
       );
 
       if (!conversationExists) {
-        // Brand-new conversation/request we don't have yet — pull the
-        // full list so it appears in the sidebar.
+        
         loadConversations();
         return;
       }
@@ -196,8 +176,8 @@ export default function MessagesPage() {
   const activeConv = conversations.find((c) => c._id === activeId);
   const activeOtherUser = activeConv ? otherParticipant(activeConv) : null;
 
-  const isPendingRequest = (conv: any) =>
-    conv.isRequest === true || conv.status === "pending";
+const isPendingRequest = (conv: any) =>
+  conv.isRequest === true || conv.status === "pending";
 
   const messagesTabConvs = conversations.filter((c) => !isPendingRequest(c));
   const requestsTabConvs = conversations.filter((c) => isPendingRequest(c));
@@ -366,11 +346,11 @@ export default function MessagesPage() {
   };
 
   return (
-    <div className="bg-black h-[calc(100vh-4rem)] w-full text-zinc-100 flex">
-      <div className="w-full h-full bg-black overflow-hidden flex flex-col md:flex-row relative">
+    <div className="bg-background h-[calc(100vh-4rem)] w-full text-zinc-100 flex">
+      <div className="w-full h-full bg-background overflow-hidden flex flex-col md:flex-row relative">
         {/* Sidebar: Conversations List */}
         <div
-          className={`w-full md:w-[360px] lg:w-[400px] border-r border-zinc-800/60 flex flex-col bg-black z-10 ${
+          className={`w-full md:w-[360px] lg:w-[400px] border-r border-border-color flex flex-col bg-background z-10 ${
             activeId ? "hidden md:flex" : "flex"
           }`}
         >
@@ -384,11 +364,11 @@ export default function MessagesPage() {
                   className="w-7 h-7 rounded-full object-cover"
                 />
               ) : (
-                <div className="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-white text-xs font-bold">
+                <div className="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-foreground text-xs font-bold">
                   {user?.name?.[0]?.toUpperCase() || "?"}
                 </div>
               )}
-              <h1 className="text-lg font-bold text-white tracking-tight">
+              <h1 className="text-lg font-bold text-foreground tracking-tight">
                 {inboxTab === "requests"
                   ? "Requests"
                   : user?.name || user?.handle || "Messages"}
@@ -397,7 +377,7 @@ export default function MessagesPage() {
 
                       <Link
               href="/app"
-              className="p-2 rounded-full text-zinc-300 hover:bg-zinc-900 transition"
+              className="p-2 rounded-full text-foreground hover:bg-zinc-900 transition"
               title="Home"
             >
               <FiHome size={18} />
@@ -409,23 +389,23 @@ export default function MessagesPage() {
             <div className="relative">
               <FiSearch
                 size={14}
-                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500"
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-foreground"
               />
               <input
                 type="text"
                 placeholder="Search"
                 value={conversationSearch}
                 onChange={(e) => setConversationSearch(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 rounded-xl bg-zinc-900 border-none text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-700 transition"
+                className="w-full pl-9 pr-3 py-2 rounded-xl bg-zinc-900 border-none text-sm text-foreground placeholder-text-foreground focus:outline-none focus:ring-1 focus:ring-zinc-700 transition"
               />
             </div>
           </div>
 
           {/* Conversations Items */}
-          <div className="flex-1 overflow-y-auto p-2 border-t border-zinc-800/60">
+          <div className="flex-1 overflow-y-auto p-2 border-t border-border-color">
             {filteredConversations.length === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center p-6 text-center text-zinc-500 space-y-2">
-                <div className="w-10 h-10 rounded-2xl bg-zinc-900 border border-zinc-800/80 flex items-center justify-center text-zinc-600">
+              <div className="h-full flex flex-col items-center justify-center p-6 text-center text-foreground space-y-2">
+                <div className="w-10 h-10 rounded-2xl bg-zinc-900 border border-border-color flex items-center justify-center text-foreground">
                   <svg
                     className="w-5 h-5"
                     fill="none"
@@ -470,7 +450,7 @@ export default function MessagesPage() {
                           className="w-12 h-12 rounded-full object-cover bg-zinc-900"
                         />
                       ) : (
-                        <div className="w-12 h-12 rounded-full bg-zinc-800 flex items-center justify-center text-white font-bold text-base">
+                        <div className="w-12 h-12 rounded-full bg-zinc-800 flex items-center justify-center text-foreground font-bold text-base">
                           {other?.name?.[0]?.toUpperCase() ||
                             other?.handle?.[0]?.toUpperCase() ||
                             "?"}
@@ -484,13 +464,13 @@ export default function MessagesPage() {
                       <p
                         className={`text-sm truncate ${
                           isActive
-                            ? "text-white font-semibold"
+                            ? "text-foreground font-semibold"
                             : "text-zinc-200 font-medium"
                         }`}
                       >
                         {other?.name || other?.handle || "Unknown User"}
                       </p>
-                      <p className="text-sm text-zinc-500 truncate">
+                      <p className="text-sm text-foreground truncate">
                         {conv.lastMessagePreview || "No messages yet"}
                         {conv.lastMessageAt && (
                           <span> · {formatTime(conv.lastMessageAt)}</span>
@@ -504,7 +484,7 @@ export default function MessagesPage() {
           </div>
 
           {/* Requests toggle — pinned at the bottom of the sidebar */}
-          <div className="border-t border-zinc-800/60 p-2 shrink-0">
+          <div className="border-t border-border-color p-2 shrink-0">
             {inboxTab === "messages" ? (
               <button
                 onClick={() => {
@@ -514,11 +494,11 @@ export default function MessagesPage() {
                 className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-zinc-200 hover:bg-zinc-900/60 transition"
               >
                 <span className="flex items-center gap-2.5 text-sm font-semibold">
-                  <FiInbox size={17} className="text-zinc-400" />
+                  <FiInbox size={17} className="text-foreground" />
                   Requests
                 </span>
                 {requestsTabConvs.length > 0 && (
-                  <span className="flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-white">
+                  <span className="flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-foreground">
                     {requestsTabConvs.length > 9 ? "9+" : requestsTabConvs.length}
                   </span>
                 )}
@@ -529,7 +509,7 @@ export default function MessagesPage() {
                   setInboxTab("messages");
                   setConversationSearch("");
                 }}
-                className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-zinc-200 hover:bg-zinc-900/60 transition text-sm font-semibold"
+                className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-sm text-zinc-200 hover:bg-zinc-900/60 transition text-sm font-semibold"
               >
                 <FiChevronLeft size={18} className="text-zinc-400" />
                 Back to Messages
@@ -540,14 +520,14 @@ export default function MessagesPage() {
 
         {/* Main Chat Pane */}
         <div
-          className={`flex-1 flex flex-col bg-black z-10 ${
+          className={`flex-1 flex flex-col bg-background z-10 ${
             !activeId ? "hidden md:flex" : "flex"
           }`}
         >
           {!activeId ? (
             /* Empty State */
             <div className="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-4">
-              <div className="w-20 h-20 rounded-full border-2 border-zinc-700 flex items-center justify-center text-zinc-300">
+              <div className="w-20 h-20 rounded-full border-2 border-border-color flex items-center justify-center text-zinc-300">
                 <svg
                   className="w-9 h-9"
                   fill="none"
@@ -563,8 +543,8 @@ export default function MessagesPage() {
                 </svg>
               </div>
               <div className="max-w-sm space-y-1">
-                <h3 className="text-base font-bold text-white">Your Messages</h3>
-                <p className="text-sm text-zinc-500">
+                <h3 className="text-base font-bold text-foreground">Your Messages</h3>
+                <p className="text-sm text-foreground">
                   Select a chat from the list to view messages or start a new
                   conversation.
                 </p>
@@ -573,7 +553,7 @@ export default function MessagesPage() {
           ) : (
             <>
               {/* Chat Header */}
-              <div className="px-5 py-3 border-b border-zinc-800/60 bg-black flex items-center justify-between shrink-0">
+              <div className="px-5 py-3 border-b border-border-color bg-background flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-3">
                   {/* Mobile Back Button */}
                   <button
@@ -605,7 +585,7 @@ export default function MessagesPage() {
                           className="w-9 h-9 rounded-full object-cover bg-zinc-900"
                         />
                       ) : (
-                        <div className="w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center text-white font-bold text-xs">
+                        <div className="w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center text-foreground font-bold text-xs">
                           {activeOtherUser?.name?.[0]?.toUpperCase() ||
                             activeOtherUser?.handle?.[0]?.toUpperCase() ||
                             "?"}
@@ -615,12 +595,12 @@ export default function MessagesPage() {
                     </div>
 
                     <div>
-                      <h2 className="text-sm font-bold text-white leading-tight">
+                      <h2 className="text-sm font-bold text-foreground leading-tight">
                         {activeOtherUser?.name ||
                           activeOtherUser?.handle ||
                           "User"}
                       </h2>
-                      <p className="text-xs text-zinc-500 font-medium leading-tight">
+                      <p className="text-xs text-foreground font-medium leading-tight">
                         {activeOtherUser?.handle
                           ? `${activeOtherUser.handle} · Active now`
                           : "Active now"}
@@ -635,7 +615,7 @@ export default function MessagesPage() {
                     onClick={() => setShowMessageSearch((s) => !s)}
                     className={`p-2 rounded-full transition ${
                       showMessageSearch
-                        ? "text-white bg-zinc-900"
+                        ? "text-foreground bg-zinc-900"
                         : "text-zinc-300 hover:bg-zinc-900"
                     }`}
                     title="Search in conversation"
@@ -656,11 +636,11 @@ export default function MessagesPage() {
 
               {/* Message Search Bar */}
               {showMessageSearch && (
-                <div className="px-5 py-2.5 border-b border-zinc-800/60 bg-black shrink-0">
+                <div className="px-5 py-2.5 border-b border-border-color bg-background shrink-0">
                   <div className="relative">
                     <FiSearch
                       size={14}
-                      className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"
+                      className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground"
                     />
                     <input
                       type="text"
@@ -668,16 +648,16 @@ export default function MessagesPage() {
                       placeholder="Search in this conversation..."
                       value={messageSearch}
                       onChange={(e) => setMessageSearch(e.target.value)}
-                      className="w-full pl-9 pr-3 py-2 rounded-xl bg-zinc-900 border-none text-xs text-white placeholder-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-700 transition"
+                      className="w-full pl-9 pr-3 py-2 rounded-xl bg-zinc-900 border-none text-xs text-foreground placeholder-foreground focus:outline-none focus:ring-1 focus:ring-zinc-700 transition"
                     />
                   </div>
                 </div>
               )}
               {/* Requests banner */}
               {isPendingRequest(activeConv) && (
-                <div className="px-5 py-3 border-b border-zinc-800/60 bg-zinc-950 shrink-0 flex items-center justify-between gap-3">
-                  <p className="text-xs text-zinc-400">
-                    <span className="font-semibold text-white">
+                <div className="px-5 py-3 border-b border-border-color bg-zinc-950 shrink-0 flex items-center justify-between gap-3">
+                  <p className="text-xs text-foreground">
+                    <span className="font-semibold text-foreground">
                       {activeOtherUser?.name || activeOtherUser?.handle}
                     </span>{" "}
                     sent you a message request. Reply to accept the conversation.
@@ -686,7 +666,7 @@ export default function MessagesPage() {
               )}
 {activeConv?.relatedGigId && user?.role === "brand" && (
   <div className="px-5 py-3 border-b border-border-color bg-background shrink-0 flex items-center justify-between gap-3">
-    <p className="text-xs text-zinc-400">Ready to move forward with this gig?</p>
+    <p className="text-xs text-foreground">Ready to move forward with this gig?</p>
     <button
       onClick={() => handleBookGig(activeConv.relatedGigId)}
       className="px-3 py-1.5 rounded-lg bg-[#B90808] text-foreground text-xs font-bold hover:bg-[#a10707] transition shrink-0"
@@ -708,7 +688,7 @@ export default function MessagesPage() {
                           className="w-20 h-20 rounded-full object-cover bg-zinc-900"
                         />
                       ) : (
-                        <div className="w-20 h-20 rounded-full bg-zinc-800 flex items-center justify-center text-white font-bold text-2xl">
+                        <div className="w-20 h-20 rounded-full bg-zinc-800 flex items-center justify-center text-foreground font-bold text-2xl">
                           {activeOtherUser?.name?.[0]?.toUpperCase() ||
                             activeOtherUser?.handle?.[0]?.toUpperCase() ||
                             "?"}
@@ -716,16 +696,16 @@ export default function MessagesPage() {
                       )}
                     </div>
                     <div>
-                      <p className="text-base font-bold text-white">
+                      <p className="text-base font-bold text-foreground">
                         {activeOtherUser?.name || activeOtherUser?.handle}
                       </p>
                       {activeOtherUser?.handle && (
-                        <p className="text-sm text-zinc-500">
+                        <p className="text-sm text-foreground">
                           {activeOtherUser.handle}
                         </p>
                       )}
                     </div>
-                    <p className="text-xs text-zinc-600">
+                    <p className="text-xs text-foreground">
                       {messageSearch
                         ? "No messages match your search."
                         : "Send a friendly greeting to start chatting!"}
@@ -774,7 +754,7 @@ export default function MessagesPage() {
                           <div
                             className={`max-w-[75%] sm:max-w-[60%] px-4 py-2 text-sm font-normal leading-relaxed ${
                               isMine
-                                ? "bg-primary text-white rounded-[20px] rounded-br-md"
+                                ? "bg-primary text-foreground rounded-[20px] rounded-br-md"
                                 : "bg-zinc-800 text-zinc-100 rounded-[20px] rounded-bl-md"
                             }`}
                           >
@@ -807,8 +787,8 @@ export default function MessagesPage() {
 
               {/* Pending Attachment Preview */}
               {pendingFile && (
-                <div className="px-3 sm:px-4 pt-3 border-t border-zinc-800/60 bg-black shrink-0">
-                  <div className="flex items-center gap-3 bg-zinc-900 rounded-xl p-2.5">
+                <div className="px-3 sm:px-4 pt-3 border-t border-border-color bg-background shrink-0">
+                  <div className="flex items-center gap-3 bg-zinc-900 rounded-sm p-2.5">
                     {pendingPreviewUrl &&
                     pendingFile.type.startsWith("image/") ? (
                       <img
@@ -824,15 +804,15 @@ export default function MessagesPage() {
                         muted
                       />
                     ) : (
-                      <div className="w-12 h-12 rounded-lg bg-zinc-800 flex items-center justify-center text-zinc-400 shrink-0">
+                      <div className="w-12 h-12 rounded-lg bg-zinc-800 flex items-center justify-center text-foreground shrink-0">
                         <FiFileText size={18} />
                       </div>
                     )}
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-semibold text-white truncate">
+                      <p className="text-xs font-semibold text-foreground truncate">
                         {pendingFile.name}
                       </p>
-                      <p className="text-[10px] text-zinc-500">
+                      <p className="text-[10px] text-foreground">
                         {(pendingFile.size / 1024 / 1024).toFixed(1)} MB — ready
                         to send
                       </p>
@@ -840,7 +820,7 @@ export default function MessagesPage() {
                     <button
                       type="button"
                       onClick={clearPendingFile}
-                      className="p-1.5 rounded-lg text-zinc-500 hover:text-white hover:bg-zinc-800 transition shrink-0"
+                      className="p-1.5 rounded-lg text-foreground hover:text-white hover:bg-zinc-800 transition shrink-0"
                       title="Remove"
                     >
                       <FiX size={16} />
@@ -866,7 +846,7 @@ export default function MessagesPage() {
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
                     disabled={sending}
-                    className="p-2 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition disabled:opacity-50 shrink-0"
+                    className="p-2 rounded-full text-foreground hover:text-white hover:bg-zinc-800 transition disabled:opacity-50 shrink-0"
                     title="Attach image, video, or PDF"
                   >
                     <FiPaperclip size={18} />
@@ -878,7 +858,7 @@ export default function MessagesPage() {
                     }
                     value={messageBody}
                     onChange={(e) => setMessageBody(e.target.value)}
-                    className="flex-1 bg-transparent px-1 py-1.5 text-white placeholder-zinc-500 text-sm focus:outline-none"
+                    className="flex-1 bg-transparent px-1 py-1.5 text-foreground placeholder-text-foreground text-sm focus:outline-none"
                   />
                   <button
                     type="submit"

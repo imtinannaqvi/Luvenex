@@ -29,18 +29,18 @@ export default function ServicesMarquee() {
 
   // The sparkle/asterisk separator between words
   const Sparkle = () => (
-    <span className="mx-6 sm:mx-10 text-2xl sm:text-4xl text-foreground/90 select-none">✳</span>
+    <span className="mx-6 sm:mx-10 text-2xl sm:text-4xl text-pink select-none">✳</span>
   );
 
   // One full pass of all the words (rendered twice for a seamless loop)
   const Row = () => (
     <div className="flex items-center shrink-0">
       {names.map((name, i) => (
-        <div key={i} className="flex items-center">
-          <span className="uppercase font-black italic tracking-tight text-transparent text-5xl sm:text-7xl lg:text-7xl [-webkit-text-stroke:1.5px_var(--foreground)]">
+        <div key={i} className="flex items-center ">
+          <span className="uppercase font-black italic tracking-tight text-pink text-5xl sm:text-7xl lg:text-7xl ">
             {name}
           </span>
-          <Sparkle />
+          <Sparkle  />
         </div>
       ))}
     </div>

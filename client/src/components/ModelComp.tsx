@@ -32,10 +32,10 @@ export default function ModelCom() {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-10 sm:mb-12">
           <h2 className="text-2xl sm:text-4xl font-black italic text-foreground tracking-tight">
-            Featured <span className="text-[#B90808]">Creators</span>
+            Featured <span className="text-primary">Creators</span>
           </h2>
           <p className="text-sm sm:text-base text-foreground mt-3 max-w-md mx-auto">
-            A look at some of the talent already growing on Luvenex.
+            A look at some of the talent already  on Luvenex.
           </p>
         </div>
 
@@ -48,20 +48,32 @@ export default function ModelCom() {
               }`}
               style={{ transitionDelay: isVisible ? `${i * 120}ms` : "0ms" }}
             >
-              <div className="group relative aspect-[4/7] rounded-sm overflow-hidden bg-zinc-900">
+              <div className="group relative aspect-[5/10] rounded-sm overflow-hidden bg-zinc-900">
                 <img
                   src={m.image}
                   alt={m.name}
                   className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                 />
-              </div>
-              <div className="text-center mt-3">
-                <p className="text-sm sm:text-base font-bold text-foreground leading-tight">
-                  {m.name}
-                </p>
-                <p className="text-[11px] sm:text-xs text-foreground/70 mt-0.5">
-                  {m.role}
-                </p>
+
+                {/* Subtle gradient overlay for text legibility */}
+                <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-background/80 via-background/40 to-transparent pointer-events-none" />
+
+                {/* Left Bottom: Name & Role */}
+                <div className="absolute bottom-3 left-3 text-left z-10">
+                  <p className="text-sm sm:text-base font-bold text-foreground leading-tight">
+                    {m.name}
+                  </p>
+                  <p className="text-[11px] sm:text-xs text-foreground mt-0.5">
+                    {m.role}
+                  </p>
+                </div>
+
+                {/* Right Bottom: Featured by Luvenex (slightly raised) */}
+                <div className="absolute bottom-5 right-3 text-right z-10">
+                  <span className="text-[10px] sm:text-[12px] font-semibold text-green tracking-wide">
+                    Featured  by luvenex
+                  </span>
+                </div>
               </div>
             </div>
           ))}

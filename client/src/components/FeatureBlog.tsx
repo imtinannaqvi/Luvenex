@@ -93,8 +93,8 @@ export default function FeatureBlog() {
                     {blog.title}
                   </h3>
                 </div>
-                <p className="text-[14px] text-foreground  font-mono  pt-2 border-t border-[#222222]">
-                  BY: {blog.author?.name || blog.author || "LUVENEXADMIN98"}
+                <p className="text-[14px] text-foreground hover:text-pink  font-mono  pt-2 border-t border-[#222222]">
+                  BY: {blog.author?.name || blog.author || "Luvenex Team"}
                 </p>
               </div>
             </Link>

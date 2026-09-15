@@ -49,7 +49,7 @@ useEffect(() => {
       <h1 className="text-2xl font-bold text-foreground italic mb-6">Verification Requests</h1>
       {users.length === 0 ? (
         <div className="bg-background border border-line rounded-sm p-8 text-center">
-          <p className="text-muted text-sm">No pending requests.</p>
+          <p className="text-foreground text-sm">No pending requests.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -71,7 +71,7 @@ useEffect(() => {
               </div>
 
               <div className="mt-3 pt-3 border-t border-line/60 flex-1">
-                <p className="text-[10px] font-bold uppercase tracking-wide text-muted mb-1">Reason</p>
+                <p className="text-[10px] font-bold uppercase tracking-wide text-foreground mb-1">Reason</p>
                 <p className="text-xs text-shadow-foreground/80 leading-relaxed line-clamp-4">
                   {u.verificationRequest?.reason || "No reason provided."}
                 </p>

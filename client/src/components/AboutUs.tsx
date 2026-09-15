@@ -89,7 +89,7 @@ const AboutUs = () => {
             <span className="text-5xl lg:text-6xl font-black tracking-tight">
               {satisfactionCount}%
             </span>
-            <span className="text-gray-400 text-sm font-medium uppercase tracking-wider max-w-[120px]">
+            <span className="text-green text-sm font-medium uppercase tracking-wider max-w-[120px]">
               Customer Satisfaction
             </span>
           </div>
@@ -148,7 +148,7 @@ const AboutUs = () => {
             <span className="absolute inset-0 rounded-full bg-red-600 animate-ping opacity-30"></span>
 
             {/* Main button surface */}
-            <span className="relative flex h-full w-full flex-col items-center justify-center rounded-full bg-gradient-to-br from-red-500 to-red-700 text-white ring-2 ring-white/20 shadow-[0_10px_40px_rgba(239,68,68,.5)] transition-all duration-300 group-hover/btn:scale-110 group-hover/btn:shadow-[0_15px_50px_rgba(239,68,68,.65)]">
+            <span className="relative flex h-full w-full flex-col items-center justify-center rounded-full bg-green text-black ">
               <span className="text-[11px] sm:text-xs font-semibold tracking-wide">Explore Us</span>
               <span className="text-base sm:text-lg mt-0.5 transition-transform duration-300 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5">↗</span>
             </span>
